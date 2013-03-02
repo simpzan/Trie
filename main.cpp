@@ -1,8 +1,8 @@
 #include <iostream>
 #include <fstream>
+#include <cstdio>
 #include "ArrayTrie.h"
 
-#define WORDMAXSIZE 256
 
 using namespace std;
 
@@ -16,13 +16,19 @@ int main(int argc, const char **argv) {
 
 	ArrayTrie at;
 
-	char word[WORDMAXSIZE];
+	char word[NODESIZE];
 	uint64_t count = 0;
-	while (is.getline(word, WORDMAXSIZE)) {
-		string wordtmp(word);
-		at.addEntry(wordtmp, count);
+	while (is.getline(word, NODESIZE)) {
 		++count;
+		at.addEntry(word, count);
+
+		if (count%10000 == 0) {
+			cout << count << " size: " << at.sizeInMegaByte() << endl;
+			//getchar();
+		}
 	}
+	cout << "size: " << at.sizeInMegaByte() << endl;
+	getchar();
 
 	is.close();
 
