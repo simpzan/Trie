@@ -1,1 +1,3 @@
--I/Volumes/Docs/workspace/gtest-1.6.0/include/
+-I/Volumes/Docs/workspace/gtest-1.6.0/include/ \
+-I src \
+-I ../utils/src/

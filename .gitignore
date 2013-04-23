@@ -1,5 +1,11 @@
+/*
+
 *.swp
 *.o
-*.out
-depend
-words
+*.d
+
+!src/
+!test/
+!tool/
+!.gitignore
+!Makefile
