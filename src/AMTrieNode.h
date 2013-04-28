@@ -34,21 +34,21 @@ class AMTrieNode: public TrieNode {
 				}
 				delete _nodes;
 			}
-
 		}
 
-	public:
+		virtual void clear();
+
 		TrieNode *getChildNodeWithLabel(uint8_t ch);
 		void setChildNodeWithLabel(uint8_t ch, TrieNode *node);
 
-		uint64_t getValue() {
+		virtual uint64_t getValue() {
 			return _value;
 		}
-		void setValue(uint64_t value) {
+		virtual void setValue(uint64_t value) {
 			_value = value;
 		}
 
-		AMTrieNode *createNode() {
+		virtual AMTrieNode *createNode() {
 			AMTrieNode *node = new AMTrieNode;
 			return node;
 		}

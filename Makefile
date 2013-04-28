@@ -2,10 +2,8 @@ CC=g++
 CFLAGS=-ggdb -fpermissive
 
 GTEST= /usr/local
-INCLUDE= -I ${GTEST}/include -I src/ -I ../utils/src/ \
-		 -I ../taiju-0.0.3/include/taiju/
-LIB= ${addprefix ${GTEST}/lib/, libgtest.a libgtest_main.a} \
-	 ../taiju-0.0.3/lib/libtaiju.a
+INCLUDE= -I ${GTEST}/include -I src/ -I ../utils/src/ 
+LIB= ${addprefix ${GTEST}/lib/, libgtest.a libgtest_main.a libglog.a} 
 
 D_TEST=test
 D_SRC=src
@@ -26,9 +24,10 @@ SRC_SAMPLE=${wildcard ${D_SAMPLE}/*.${SUFFIX}}
 OBJ_SAMPLE=${patsubst ${D_SAMPLE}/%.cpp, ${D_OBJ}/%.o, ${SRC_SAMPLE}}
 
 SRC=$(wildcard ${D_SRC}/*.cpp)
-OBJ=${patsubst ${D_SRC}/%.cpp, ${D_OBJ}/%.o, ${SRC}}  ${OBJ_TEST} ${OBJ_SAMPLE}
-BIN=${addprefix ${D_BIN}/, main ${BIN_TEST} test_AMT }
+OBJ=${patsubst ${D_SRC}/%.cpp, ${D_OBJ}/%.o, ${SRC}}  
+BIN=${addprefix ${D_BIN}/, main ${BIN_TEST} test_AMT libArrayTrie.a }
 
+OBJ_ALL=${OBJ} ${OBJ_TEST} ${OBJ_SAMPLE}
 
 
 all: printSeparator ${D_BIN} ${BIN} 
@@ -38,7 +37,7 @@ all: printSeparator ${D_BIN} ${BIN}
 ${D_OBJ}/%.d : %.cpp 
 	@mkdir -p ${D_OBJ}
 	${CC} > $@    $< -MP -MM -MT ${@D}/${*F}.o ${INCLUDE}
-include $(OBJ:%.o=%.d)
+include $(OBJ_ALL:%.o=%.d)
 
 # compile cpp files.
 ${D_OBJ}/%.o : %.cpp
@@ -46,7 +45,7 @@ ${D_OBJ}/%.o : %.cpp
 
 # clean all build output files.
 clean:
-	rm -rf ${D_OBJ} ${D_BIN} *.o
+	rm -rf ${D_OBJ} ${D_BIN} *.o *.a
 .PHONY: clean
 
 # run test cases.
@@ -64,14 +63,20 @@ printSeparator:
 	@echo
 .PHONY: printSeparator
 
+release: CFLAGS += -DNDEBUG
+release: all
+
+
 
 # bin targets
-${D_BIN}/main: TrieNode.o main.o
+${D_BIN}/main: main.o ${OBJ}
 	${CC} -o $@  $^  ${LIB} 
 
 ${D_BIN}/test_AMT: test_AMT.o TrieNode.o AMTrieNode.o utils.o
 	${CC} -o $@  $^  ${LIB}
 
-${D_BIN}/${BIN_TEST}: ${OBJ_TEST}  TrieNode.o AMTrieNode.o LinkedTrieNode.o utils.o
+${D_BIN}/${BIN_TEST}: ${OBJ_TEST} ${OBJ}  TrieNode.o AMTrieNode.o LinkedTrieNode.o utils.o 
 	${CC} -o $@  $^  ${LIB}
 
+${D_BIN}/libArrayTrie.a: ${OBJ}
+	ar cru $@ $^

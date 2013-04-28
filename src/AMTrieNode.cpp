@@ -1,3 +1,4 @@
+#include <cassert>
 #include <iostream>
 #include <string>
 
@@ -28,8 +29,6 @@ int rank1(bitset<256> &map, int ch) {
 }
 
 TrieNode *AMTrieNode::getChildNodeWithLabel(uint8_t ch) {
-
-
 	int isON = _map[ch];
 	if (!isON) {
 		return NULL;
@@ -41,7 +40,6 @@ TrieNode *AMTrieNode::getChildNodeWithLabel(uint8_t ch) {
 }
 
 void AMTrieNode::setChildNodeWithLabel(uint8_t ch, TrieNode *node) {
-
 	int isON = _map[ch];
 	int rank = rank1(_map, ch);
 
@@ -55,7 +53,8 @@ void AMTrieNode::setChildNodeWithLabel(uint8_t ch, TrieNode *node) {
 
 		_map[ch] = 1;
 	}
-
 }
 
-
+void AMTrieNode::clear() {
+	assert(false);
+}

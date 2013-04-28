@@ -3,6 +3,8 @@
 #include <cstdio>
 #include "ArrayTrie.h"
 #include "LinkedTrie.h"
+#include "DfudsMapBuilder.h"
+#include "DfudsMap.h"
 
 using namespace std;
 
@@ -14,7 +16,7 @@ int main(int argc, const char **argv) {
 
 	ifstream is(argv[1]);
 
-	Trie *t = new ArrayTrie;
+	DfudsMapBuilder<uint32_t> *t = new DfudsMapBuilder<uint32_t>;
 
 	char word[NODESIZE];
 	uint64_t count = 0;
@@ -27,8 +29,9 @@ int main(int argc, const char **argv) {
 			//getchar();
 		}
 	}
-	cout << "size: " << t->sizeInMegaByte() << endl;
-	getchar();
+
+	ofstream os("words.idx");
+	t->write(os);
 
 	is.close();
 	delete t;

@@ -12,9 +12,7 @@ class LinkedTrieNode: public TrieNode {
 
 	public:
 		TrieNode *getChildNodeWithLabel(uint8_t ch);
-		void setChildNodeWithLabel(uint8_t ch, TrieNode *node) {
-			_children[ch] = node;
-		}
+		void setChildNodeWithLabel(uint8_t ch, TrieNode *node);
 
 		void setValue(uint64_t value) {
 			_value = value;
@@ -33,6 +31,8 @@ class LinkedTrieNode: public TrieNode {
 			return size;
 		}
 
+		virtual void clear();
+
 		std::map<uint8_t, TrieNode *> &children() {
 			return _children;
 		}
@@ -42,6 +42,7 @@ class LinkedTrieNode: public TrieNode {
 		std::map<uint8_t, TrieNode*> _children;
 		uint64_t _value;
 };
+
 
 #endif
 

@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "LinkedTrie.h"
+#include "DfudsTrie.h"
 
 using namespace std;
 
@@ -25,20 +26,6 @@ TEST_F(LinkedTrieTests, setGetEntry) {
 	_node->addEntry(key, expected);
 	value = _node->getEntry(key);
 	EXPECT_EQ(expected, value);
-}
-
-TEST_F(LinkedTrieTests, Dfuds) {
-	_node->addEntry("zzd", 3);
-	_node->addEntry("gook", 4);
-	_node->addEntry("test", 44);
-
-	_node->buildDfudsTrie();
-	cout << endl;
-	_node->write(cout);
-	cout << "|" << endl << endl;
-	
-	uint64_t value = _node->getEntry2("test");
-	EXPECT_EQ(44, value);
 }
 
 TEST_F(LinkedTrieTests, size) {
