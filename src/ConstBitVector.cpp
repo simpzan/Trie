@@ -5,29 +5,30 @@
 
 using namespace std;
 
-ConstBitVector::ConstBitVector():_bitCount(0) {
+ConstBitVector::ConstBitVector() : _bitCount(0), _units(NULL), _ranks(NULL) {
 
 }
 
 ConstBitVector::~ConstBitVector() {
-
+	if (_units)  delete _units;
+	if (_ranks)  delete _ranks;
 }
 
-void ConstBitVector::convertByte2BoolVector(uint8_t byte, int bit_count) {
+void ConstBitVector::convertByte2BoolVector(uint64_t byte, int bit_count) {
 	for (int i = 0; i < bit_count; i++) {
-		uint8_t mask = 1 << i;
+		uint64_t mask = 1ULL << i;
 		bool bit = byte & mask;
 		_bits.push_back(bit);
 	}
 }
 
-void ConstBitVector::convert2BoolVector(uint8_t *buf, uint64_t len) {
+void ConstBitVector::convert2BoolVector(uint64_t *buf, uint64_t len) {
 	int count = len - 1;
 	for (int bi = 0; bi < count; bi++) {
-		uint8_t tmp_byte = buf[bi];
+		uint64_t tmp_byte = buf[bi];
 		convertByte2BoolVector(tmp_byte, BIT_PER_UNIT);
 	}
-	uint8_t byte = buf[len-1];
+	uint64_t byte = buf[len-1];
 	int bit_count = _bitCount % BIT_PER_UNIT;
 	if (bit_count == 0)  bit_count = BIT_PER_UNIT;
 	convertByte2BoolVector(byte, bit_count);
@@ -39,15 +40,26 @@ bool ConstBitVector::read(istream &is) {
 	_bitCount = bitCount;
 
 	uint64_t byteCount = (bitCount + BIT_PER_UNIT - 1) / BIT_PER_UNIT;
-	uint8_t *buf = new uint8_t[byteCount];
-	is.read((char *)buf, byteCount);
+	_units = new uint64_t[byteCount];
+	is.read((char *)_units, byteCount*sizeof(uint64_t));
+	convert2BoolVector(_units, byteCount);
 
-	convert2BoolVector(buf, byteCount);
-
-	delete buf;
+	uint64_t count = 0;
+	is.read((char *)&count, sizeof(count));
+	_ranks = new uint64_t[count];
+	uint64_t size = sizeof(uint64_t) * count;
+	is.read((char *)_ranks, size);
 }
 
 void ConstBitVector::clear() {
+	if (_ranks) {
+		delete _ranks;
+		_ranks = NULL;
+	}
+	if (_units) {
+		delete _units;
+		_units = NULL;
+	}
 	_bits.clear();
 	_bitCount = 0;
 }
@@ -55,10 +67,42 @@ void ConstBitVector::clear() {
 bool ConstBitVector::operator[](uint64_t offset) {
 	assert(offset < _bitCount);
 	return _bits[offset];
+
+	uint64_t unit_id = offset / BIT_PER_UNIT;
+	uint64_t bit_id = offset % BIT_PER_UNIT;
+	return (_units[unit_id] >> bit_id) & 1;
+}
+
+uint64_t ConstBitVector::_rank1(uint64_t unit) {
+	unit = ((unit & 0xAAAAAAAAAAAAAAAAULL) >> 1)
+		+ (unit & 0x5555555555555555ULL);
+	unit = ((unit & 0xCCCCCCCCCCCCCCCCULL) >> 2)
+		+ (unit & 0x3333333333333333ULL);
+	unit = ((unit >> 4) + unit) & 0x0F0F0F0F0F0F0F0FULL;
+	unit += unit << 8;
+	unit += unit << 16;
+	unit += unit << 32;
+	return unit;
 }
 
 uint64_t ConstBitVector::rank1(uint64_t offset) {
-	assert(offset < _bits.size());
+	assert(offset < _bitCount);
+
+	uint64_t rank = _ranks[offset / BIT_PER_BLOCK];
+	uint64_t count = rank >> 24;
+	uint64_t unit_id = offset / BIT_PER_UNIT % UNIT_PER_BLOCK;
+	count += (rank >> ((unit_id - 1) * 8)) & 0xFF;
+
+	uint64_t bit_id = offset % BIT_PER_UNIT;
+	uint64_t mask = ~0ULL >> (BIT_PER_UNIT - bit_id - 1);
+	
+	uint64_t unit = _units[unit_id] & mask;
+	uint64_t count_one = _rank1(unit) >> 56;
+	return count + count_one;
+}
+
+uint64_t ConstBitVector::rank10(uint64_t offset) {
+	assert(offset < _bitCount);
 
 	uint64_t count = 0;
 	for (int i = 0; i <= offset; i++) {
@@ -84,7 +128,8 @@ uint64_t ConstBitVector::select0(uint64_t count) {
 }
 
 uint64_t ConstBitVector::select(uint64_t count, bool bit) {
-	assert(count < _bits.size());
+	assert(count < _bitCount);
+	//cerr << "warning: calling select without index." << endl;
 
 	int tmpCount = 0;
 	for (int ai = 0; ai < _bitCount; ai++) {
@@ -118,6 +163,7 @@ uint64_t ConstBitVector::findClose(uint64_t offset) {
 }
 
 uint64_t ConstBitVector::findOpen(uint64_t offset) {
+	//cerr << "warning: calling findOpen without index." << endl;
 	assert(_bits[offset]);
 
 	int count = 0;

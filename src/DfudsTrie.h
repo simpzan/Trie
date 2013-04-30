@@ -24,7 +24,9 @@ class DfudsTrie {
 	bool followKey(const char *key, bool near_search, 
 			uint64_t *id, int *prefixLen);
 	int findLabelRank(uint64_t base, int degree, uint8_t ch);
+	int findLabelRank2(uint64_t base, uint64_t id, uint8_t ch);
 	int rightNearLabelRank(uint64_t base, int degree, uint8_t ch);
+	int rightNearLabelRank2(uint64_t base, uint64_t id, uint8_t ch);
 	void readVector(std::istream &is, std::vector<uint8_t> &array);
 	uint64_t findChild(uint64_t offset, uint8_t ch, bool near_search);
 	uint64_t parent(uint64_t offset);

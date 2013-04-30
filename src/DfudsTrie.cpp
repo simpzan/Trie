@@ -3,11 +3,6 @@
 
 using namespace std;
 
-namespace {
-
-
-}
-
 void DfudsTrie::readVector(istream &is, vector<uint8_t> &array) {
 	uint64_t count = 0;
 	is.read((char *)&count, sizeof(uint64_t));
@@ -72,13 +67,19 @@ uint64_t DfudsTrie::rightNearFind(const char *key) {
 }
 
 int DfudsTrie::rightNearLabelRank(uint64_t base, int degree, uint8_t ch) {
-	int i = 0;
-	for (; i < degree; ++i) {
+	for (int i = 0; i < degree; ++i) {
 		uint8_t label = _labels[base + i];
-		if (ch <= label)  break;
+		if (ch <= label)  return i + 1;
 	}
-	if (i == degree)  return 0;
-	return i + 1;
+	return 0;
+}
+
+int DfudsTrie::rightNearLabelRank2(uint64_t base, uint64_t id, uint8_t ch) {
+	for (int i = 0; !_dfuds[id+i]; i++) {
+		uint8_t label = _labels[base + i];
+		if (ch <= label)  return (i + 1);
+	}
+	return 0;
 }
 
 uint64_t DfudsTrie::find(const char *key) {
@@ -131,13 +132,21 @@ uint64_t DfudsTrie::findChild(uint64_t offset, uint8_t ch, bool near_search) {
 
 	uint64_t rankOpen = _dfuds.rank0(offset) - 1;
 
-	int childRank = near_search ?  rightNearLabelRank(rankOpen - 1, degree, ch)
-		: findLabelRank(rankOpen - 1, degree, ch);
+	int childRank = near_search ?  rightNearLabelRank2(rankOpen - 1, offset, ch)
+		: findLabelRank2(rankOpen - 1, offset, ch);
 	if (!childRank)  return 0;
 
 	uint64_t tmpOffset = offsetClose2 - childRank;
 	uint64_t nextOffset = _dfuds.findClose(tmpOffset) + 1;
 	return nextOffset;
+}
+
+int DfudsTrie::findLabelRank2(uint64_t base, uint64_t id, uint8_t ch) {
+	for (int i = 0; !_dfuds[id+i]; ++i) {
+		uint8_t label = _labels[base+i];
+		if (ch == label)  return i+1;
+	}
+	return 0;
 }
 
 int DfudsTrie::findLabelRank(uint64_t base, int degree, uint8_t ch) {
