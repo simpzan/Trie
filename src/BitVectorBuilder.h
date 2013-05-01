@@ -23,12 +23,12 @@ public:
 	uint64_t size();
 	uint64_t count()  {  return _bits.size();  }
 
-	void clear() {  _bits.clear();  }
+	void clear();
 	void display(std::ostream &os);
 
 private:
-	void convert2BitArray(uint8_t *buf);
 	void appendRank(bool bit);
+	void convert2ByteVector(Vector<uint8_t> &bytes);
 
 private:
 	std::vector<bool> _bits;

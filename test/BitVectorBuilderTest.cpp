@@ -6,95 +6,100 @@
 
 using namespace std;
 
-TEST(BitVectorTest, test) {
+class BitVectorTest: public ::testing::Test {
+  protected:
+	BitVectorTest() {
+		bvb.append(false);
+
+		bvb.append(false);
+		bvb.append(false);
+		bvb.append(false);
+		bvb.append(true);
+
+		bvb.append(false);
+		bvb.append(true);
+
+		bvb.append(true);
+
+		bvb.append(false);
+		bvb.append(false);
+		bvb.append(true);
+
+		bvb.append(true);
+
+		bvb.append(true);
+
+		bvb.append(true);
+
+		stringstream ss;
+		bvb.write(ss);
+		cbv.read(ss);
+	}
+	~BitVectorTest() {}
+
 	BitVectorBuilder bvb;
-
-	bvb.append(false);
-	bvb.append(true);
-	bvb.append(true);
-	bvb.append(true);
-
-	bvb.append(false);
-	bvb.append(true);
-	bvb.append(false);
-	bvb.append(true);
-	bvb.append(true);
-
-	stringstream ss;
-	bvb.write(ss);
-
-
 	ConstBitVector cbv;
-	cbv.read(ss);
-	EXPECT_EQ(false, cbv[0]);
-	EXPECT_EQ(true, cbv[1]);
-	EXPECT_EQ(true, cbv[2]);
-	EXPECT_EQ(true, cbv[3]);
-	EXPECT_EQ(false, cbv[6]);
-	EXPECT_EQ(true, cbv[7]);
-	EXPECT_EQ(true, cbv[8]);
-	
-	uint64_t offset = 3;
+};
+
+TEST_F(BitVectorTest, rank) {
+ 	uint64_t offset = 3;
 	uint64_t count = cbv.rank1(offset);
-	uint64_t expected = 3;
+	uint64_t expected = 0;
 	EXPECT_EQ(expected, count);
 
-	offset = cbv.select1(count);
-	expected = 3;
-	EXPECT_EQ(expected, offset);
+	offset = 4;
+	count = cbv.rank1(offset);
+	expected = 1;
+	EXPECT_EQ(expected, count);
 
 	offset = 6;
 	count = cbv.rank0(offset);
-	expected = 3;
-	EXPECT_EQ(expected, count);
-
-	offset = cbv.select0(count);
-	expected = 6;
-	EXPECT_EQ(expected, offset);
-
-	offset = 4;
-	uint64_t closeOffset = cbv.findClose(offset);
 	expected = 5;
-	EXPECT_EQ(expected, closeOffset);
-
-	offset = 6;
-	closeOffset = cbv.findClose(offset);
-	expected = 7;
-	EXPECT_EQ(expected, closeOffset);
+	EXPECT_EQ(expected, count);
 }
 
-TEST(BitVectorTest, findOpen) {
-	BitVectorBuilder bvb;
+TEST_F(BitVectorTest, select) {
+	uint64_t count = 1;
+	uint64_t offset = cbv.select1(count);
+	uint64_t expected = 4;
+	EXPECT_EQ(expected, offset);
 
-	bvb.append(false);
+	count = 5;
+	offset = cbv.select0(count);
+	expected = 5;
+	EXPECT_EQ(expected, offset);
+}
 
-	bvb.append(false);
-	bvb.append(true);
-	
-	bvb.append(false);
-	bvb.append(true);
-	
-	bvb.append(false);
-	bvb.append(false);
-	bvb.append(true);
+TEST_F(BitVectorTest, access) {
+	EXPECT_EQ(false, cbv[0]);
+	EXPECT_EQ(true, cbv[4]);
+	EXPECT_EQ(true, cbv[6]);
+	EXPECT_EQ(true, cbv[7]);
+	EXPECT_EQ(false, cbv[8]);
+	EXPECT_EQ(true, cbv[10]);
+	EXPECT_EQ(true, cbv[13]);
+}
 
-	bvb.append(true);
+TEST_F(BitVectorTest, findClose) {
+	uint64_t offset = 0;
+	uint64_t offset_close = cbv.findClose(offset);
+	uint64_t expected = 13;
+	EXPECT_EQ(expected, offset_close);
 
-	bvb.append(true);
+	offset = 2;
+	offset_close = cbv.findClose(offset);
+	expected = 7;
+	EXPECT_EQ(expected, offset_close);
+}
 
-	stringstream ss;
-	bvb.write(ss);
-
-	ConstBitVector cbv;
-	cbv.read(ss);
-
-	uint64_t offset = 9;
+TEST_F(BitVectorTest, findOpen) {
+	uint64_t offset = 13;
 	uint64_t expected = 0;
 	uint64_t openOffset = cbv.findOpen(offset);
 	EXPECT_EQ(expected, openOffset);
 
 	offset = 7;
-	expected = 6;
+	expected = 2;
 	openOffset = cbv.findOpen(offset);
 	EXPECT_EQ(expected, openOffset);
 }

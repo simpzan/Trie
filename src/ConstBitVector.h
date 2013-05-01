@@ -11,6 +11,7 @@ public:
 	ConstBitVector();
 	~ConstBitVector();
 
+	uint64_t rank10(uint64_t offset);
 	uint64_t rank1(uint64_t offset);
 	uint64_t rank0(uint64_t offset);
 
@@ -34,12 +35,10 @@ private:
 
 private:
 	std::vector<bool> _bits;
-	uint8_t *_bytes;
-
+	Vector<uint8_t> _bytes;
 	Vector<uint32_t> _ranks_block;
 	Vector<uint8_t> _ranks_unit;
 	uint64_t _bitCount;
-	
 };
 
 #endif

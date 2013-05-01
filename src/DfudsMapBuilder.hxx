@@ -20,14 +20,6 @@ void DfudsMapBuilder<T>::write(ostream &os) {
 
 	uint64_t size = count * sizeof(T);
 	os.write((char *)_values.data(), size);
-
-	return;
-	cout << endl;
-	cout << "written values: " << count << endl;
-	for (int i = 0; i < count; ++i) {
-		cout << _values[i] << endl;
-	}
-	cout << endl;
 }
 
 template <typename T>

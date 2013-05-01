@@ -5,14 +5,30 @@
 
 using namespace std;
 
-ConstBitVector::ConstBitVector() : _bitCount(0), _bytes(NULL) {
+static unsigned char BitsSetTable256[256] = 
+{
+#   define B2(n) n,     n+1,     n+1,     n+2
+#   define B4(n) B2(n), B2(n+1), B2(n+1), B2(n+2)
+#   define B6(n) B4(n), B4(n+1), B4(n+1), B4(n+2)
+	B6(0), B6(1), B6(1), B6(2)
+};
+static bool g_table_initialized = false;
 
+void initializeTable() {
+	// To initially generate the table algorithmically:
+	BitsSetTable256[0] = 0;
+	for (int i = 0; i < 256; i++)
+	{
+		BitsSetTable256[i] = (i & 1) + BitsSetTable256[i / 2];
+	}
+	g_table_initialized = true;
+}
+
+ConstBitVector::ConstBitVector() : _bitCount(0) {
+	if (!g_table_initialized)  initializeTable();
 }
 
 ConstBitVector::~ConstBitVector() {
-	if (_bytes) {
-		delete _bytes;
-	}
 
 }
 
@@ -41,21 +57,16 @@ bool ConstBitVector::read(istream &is) {
 	is.read((char *)&bitCount, sizeof(uint64_t));
 	_bitCount = bitCount;
 
+	_bytes.read(is);
 	uint64_t byteCount = (bitCount + BIT_PER_BYTE - 1) / BIT_PER_BYTE;
-	_bytes = new uint8_t[byteCount];
-	is.read((char *)_bytes, byteCount);
 
-	convert2BoolVector(_bytes, byteCount);
+	convert2BoolVector(_bytes.data(), byteCount);
 
-	//_ranks_block.read(is);
-	//_ranks_unit.read(is);
+	_ranks_block.read(is);
+	_ranks_unit.read(is);
 }
 
 void ConstBitVector::clear() {
-	if (_bytes) {
-		delete _bytes;
-		_bytes = NULL;
-	}
 
 	_bits.clear();
 	_bitCount = 0;
@@ -72,7 +83,7 @@ bool ConstBitVector::operator[](uint64_t offset) {
 	return _bits[offset];
 }
 
-uint64_t ConstBitVector::rank1(uint64_t offset) {
+uint64_t ConstBitVector::rank10(uint64_t offset) {
 	assert(offset < _bits.size());
 
 	uint64_t count = 0;
@@ -82,6 +93,34 @@ uint64_t ConstBitVector::rank1(uint64_t offset) {
 		}
 		++count;
 	}
+	return count;
+}
+
+uint8_t countOne(uint8_t byte) {
+	uint8_t count = BitsSetTable256[byte];
+	return count;
+}
+
+uint64_t ConstBitVector::rank1(uint64_t offset) {
+	uint64_t block_id = offset / BIT_PER_BLOCK;
+	uint64_t count = _ranks_block[block_id]; 	// block
+
+	uint64_t unit_id = offset / BIT_PER_UNIT % UNIT_PER_BLOCK;
+	unit_id += block_id * 4;
+	count += _ranks_unit[unit_id];  // unit
+
+	uint64_t byte_id = offset / BIT_PER_UNIT / BIT_PER_BYTE;
+	uint64_t base = offset / BIT_PER_UNIT * BIT_PER_UNIT / BIT_PER_BYTE;
+	for (int i = 0; i < byte_id; ++i) {
+		uint8_t byte = _bytes[base + i];
+		count += countOne(byte);  // bytes
+	}
+
+	uint8_t byte = _bytes[base + byte_id];
+	uint8_t bit_id = offset % BIT_PER_BYTE;
+	uint8_t mask = 0xFF >> (7 - bit_id);
+	byte &= mask;
+	count += countOne(byte);  // bits
 	return count;
 }
 
@@ -100,7 +139,6 @@ uint64_t ConstBitVector::select0(uint64_t count) {
 
 uint64_t ConstBitVector::select(uint64_t count, bool bit) {
 	assert(count < _bits.size());
-
 	int tmpCount = 0;
 	for (int ai = 0; ai < _bitCount; ai++) {
 		if (_bits[ai] != bit) {
@@ -111,7 +149,6 @@ uint64_t ConstBitVector::select(uint64_t count, bool bit) {
 			return ai;
 		}
 	}
-
 	assert(false);
 	return 0;
 }

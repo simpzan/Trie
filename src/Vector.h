@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <iostream>
+#include <iterator>
 
 template <typename T>
 class Vector {
@@ -10,8 +11,9 @@ class Vector {
 	Vector() {}
 	~Vector() {}
 
-	void append(T &element) {  _elements.push_back(element);  }
+	void append(T element) {  _elements.push_back(element);  }
 	T &operator[](uint64_t index);
+	T *data() {  return _elements.data();  }
 
 	void read(std::istream &is);
 	void write(std::ostream &os);
@@ -48,9 +50,13 @@ template <typename T>
 inline void Vector<T>::read(std::istream &is) {
 	uint64_t count = 0;
 	is.read((char *)&count, sizeof(count));
-	_elements.reserve(count);
+	
 	uint64_t size = sizeof(T) * count;
-	is.read((char *)_elements.data(), size);
+	T *buffer = new T[count];
+	is.read((char *)buffer, size);
+	std::vector<T> elements(buffer, buffer + count);
+	_elements.swap(elements);
+	delete buffer;
 }
 
 #endif
