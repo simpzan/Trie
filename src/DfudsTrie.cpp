@@ -3,27 +3,13 @@
 
 using namespace std;
 
-void DfudsTrie::readVector(istream &is, vector<uint8_t> &array) {
-	uint64_t count = 0;
-	is.read((char *)&count, sizeof(uint64_t));
-	uint8_t *buf = new uint8_t[count];
-
-	is.read((char *)buf, count);
-	for (int bi = 0; bi < count; bi++) {
-		array.push_back(buf[bi]);
-	}
-
-	delete buf;
-}
-
 void DfudsTrie::read(istream &is) {
 	_dfuds.read(is);
-	readVector(is, _labels);
-	_isTerminal.read(is);
+	_labels.read(is);
+	_is_keys.read(is);
 
-#ifndef NDEBUG
-	display(cout);
-#endif	
+	int print = 0;
+	if (print)  display(cout);
 }
 
 uint64_t DfudsTrie::rightNearFind(const char *key) {
@@ -45,25 +31,29 @@ uint64_t DfudsTrie::rightNearFind(const char *key) {
 
 	// -1 to move to the end of previous node.
 	uint64_t count = _dfuds.rank1(offset - 1);
+    assert(count != 0);
+	uint64_t result = 0;
 	uint64_t is_terminal_offset = count - 1;
-	uint64_t result = _isTerminal.rank1(is_terminal_offset);
+	result = _is_keys.rank1(is_terminal_offset);
+
 	++result;
 
-#ifndef NDEBUG
-	cout << "right near find: " << key << endl;
-	string aKey;
-	string keyword(key);
-	int i = result;
-	this->select(i, aKey);
-	cout << i << " : " << aKey << endl;
-	//while (keyword <= aKey) {
-	while (i) {
-		--i;
-		this->select(i, aKey);
-		cout << i << " : " << aKey << endl;
+	int print = 0;
+	if (print)  {
+		cout << "result: " << result << endl;
+		printAllKeys();
 	}
-#endif
+
 	return result;
+}
+
+void DfudsTrie::printAllKeys() {
+	string aKey;
+	int count = _is_keys.rank1(_is_keys.count());
+	for (int i = 0; i < count; ++i) {
+		select(i, aKey);
+		cout << i << ":" << aKey << endl;
+	}
 }
 
 int DfudsTrie::rightNearLabelRank(uint64_t base, int degree, uint8_t ch) {
@@ -90,20 +80,7 @@ uint64_t DfudsTrie::find(const char *key) {
 	uint64_t count = _dfuds.rank1(offset - 1);
 	uint64_t is_terminal_offset = count - 1;
 	// +1 to include node for the offset.
-	uint64_t result = _isTerminal.rank1(is_terminal_offset + 1);
-#ifndef NDEBUG
-	cout << "exact find: " << key << endl;
-	string aKey;
-	string keyword(key);
-	int i = result;
-	this->select(i, aKey);
-	cout << i << " : " << aKey << endl;
-	while (keyword <= aKey) {
-		--i;
-		this->select(i, aKey);
-		cout << i << " : " << aKey << endl;
-	}
-#endif
+	uint64_t result = _is_keys.rank1(is_terminal_offset + 1);
 	return result;
 }
 
@@ -157,21 +134,24 @@ int DfudsTrie::findLabelRank(uint64_t base, int degree, uint8_t ch) {
 	return 0;
 }
 
-void displayCollection(const vector<uint8_t> &array);
 void DfudsTrie::display(ostream &os) {
+	os << "Dfuds: ";
 	_dfuds.display(os);
-	_isTerminal.display(os);
-	displayCollection(_labels);
+	os << "Labels: ";
+	_labels.display(os);
+	os << "IsKeys: ";
+	_is_keys.display(os);
+	os << endl;
 }
 
 void DfudsTrie::clear() {
 	_dfuds.clear();
 	_labels.clear();
-	_isTerminal.clear();
+	_is_keys.clear();
 }
 
 uint64_t DfudsTrie::parent(uint64_t offset) {
-	uint64_t openOffset = _dfuds.findOpen(offset - 1);
+	uint64_t openOffset = _dfuds.findOpenNaive(offset - 1);
 	uint64_t closeRank = _dfuds.rank1(openOffset);
 	if (closeRank == 0)  return 1;
 	uint64_t result = _dfuds.select1(closeRank) + 1;
@@ -187,7 +167,7 @@ uint8_t DfudsTrie::degree(uint64_t offset) {
 }
 
 uint8_t DfudsTrie::label(uint64_t parent, uint64_t child) {
-	uint64_t openOffset = _dfuds.findOpen(child - 1);
+	uint64_t openOffset = _dfuds.findOpenNaive(child - 1);
 	int degree = this->degree(parent);
 	uint8_t childRank = parent + degree - openOffset;
 
@@ -199,7 +179,7 @@ uint8_t DfudsTrie::label(uint64_t parent, uint64_t child) {
 void DfudsTrie::select(uint64_t rank, string &key) {
 	key.clear();
 	if (rank == 0)  return;
-	uint64_t nodeOffset = _isTerminal.select1(rank);
+	uint64_t nodeOffset = _is_keys.select1(rank);
 	uint64_t id = _dfuds.select1(nodeOffset) + 1;
 
 	while (id != 1) {
@@ -211,5 +191,5 @@ void DfudsTrie::select(uint64_t rank, string &key) {
 }
 
 uint64_t DfudsTrie::rightMost(uint64_t offset) {
-	return _dfuds.findClose(offset - 1);
+	return _dfuds.findCloseNaive(offset - 1);
 }

@@ -5,14 +5,15 @@
 #include <stdint.h>
 #include <iostream>
 
-#include "BitVectorBuilder.h"
+#include "BalancedBitVectorBuilder.h"
+#include "Vector.h"
 #include "Trie.h"
 #include "LinkedTrieNode.h"
 
 class DfudsTrieBuilder : public Trie, public TrieVisitorInterface {
   public:
-	DfudsTrieBuilder();
-	virtual ~DfudsTrieBuilder();
+	DfudsTrieBuilder() : Trie(new LinkedTrieNode) {}
+	virtual ~DfudsTrieBuilder() {}
 
 	void buildDfuds();
 	virtual void write(std::ostream &os);
@@ -25,9 +26,9 @@ class DfudsTrieBuilder : public Trie, public TrieVisitorInterface {
 	void writeVector(std::ostream &os, std::vector<uint8_t> &array);
 
   private:
-	BitVectorBuilder _dfuds;
-	std::vector<uint8_t> _labels;
-	BitVectorBuilder _isTerminal;
+	BalancedBitVectorBuilder _dfuds;
+	Vector<uint8_t> _labels;
+	BitVectorBuilder _is_keys;
 };
 
 #endif

@@ -1,39 +1,11 @@
-#include <map>
-
 #include "DfudsTrieBuilder.h"
+#include <map>
 
 using namespace std;
 
-DfudsTrieBuilder::DfudsTrieBuilder() : Trie(new LinkedTrieNode) {
-
-}
-
-DfudsTrieBuilder::~DfudsTrieBuilder() {
-
-}
-
-void displayCollection(const vector<uint8_t> &array) {
-	int count = array.size();
-	cout << "===content of array: " << count << endl;
-	for (int i = 0; i < array.size(); i++) {
-		cout << i << ":" << array[i] << " ";
-	}
-	cout << endl << "===end" << endl;
-}
-
 void DfudsTrieBuilder::buildDfuds() {
 	_dfuds.append(false);
-
 	root()->traversePreorderly(*this);
-
-#ifndef NDEBUG
-	cout << "dfuds:" << _dfuds.count() << endl;
-	_dfuds.display(cout);
-	cout << "is_terminal:" << _isTerminal.count() << endl;
-	displayCollection(_labels);
-	cout << "labels:" << _labels.size() << endl;
-	_isTerminal.display(cout);
-#endif
 }
 
 bool DfudsTrieBuilder::visitNode(TrieNode &aNode) {
@@ -43,33 +15,27 @@ bool DfudsTrieBuilder::visitNode(TrieNode &aNode) {
 			itr != children.end();
 			++itr) {
 		_dfuds.append(false);
-		_labels.push_back(itr->first);
+		_labels.append(itr->first);
 	}
 	_dfuds.append(true);
 
 	bool isTerminal = node->getValue() != 0;
-	_isTerminal.append(isTerminal);
-}
-
-void DfudsTrieBuilder::writeVector(ostream &os, vector<uint8_t> &array) {
-	uint64_t count = array.size();
-	os.write((char *)&count, sizeof(uint64_t));
-	os.write((char *)array.data(), count);
+	_is_keys.append(isTerminal);
 }
 
 void DfudsTrieBuilder::write(ostream &os) {
 	buildDfuds();
 
 	_dfuds.write(os);
-	writeVector(os, _labels);
-	_isTerminal.write(os);
+	_labels.write(os);
+	_is_keys.write(os);
 }
 
 void DfudsTrieBuilder::clear() {
 	Trie::clear();
 	_dfuds.clear();
 	_labels.clear();
-	_isTerminal.clear();
+	_is_keys.clear();
 }
 
 uint64_t DfudsTrieBuilder::size() {

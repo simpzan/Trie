@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <sstream>
+#include <fstream>
 
 #include "DfudsTrie.h"
 #include "DfudsTrieBuilder.h"
@@ -121,4 +122,59 @@ TEST(DfudsTrieTest, select) {
 
 	trie.select(3, key);
 	EXPECT_STREQ("test", key.c_str());
+}
+
+TEST(DfudsTrieTest, kk) {
+	ifstream is("oleometer.words");
+	assert(is.good());
+	string word;
+
+	DfudsTrieBuilder builder;
+	int i = 0;
+	while (is.good()) {
+		is >> word;
+		//cout << word << endl;
+		++i;
+		builder.addEntry(word.c_str(), i);
+	}
+
+	stringstream ss;
+	builder.write(ss);
+
+	DfudsTrie map;
+	map.read(ss);
+
+//	uint64_t value = map.rightNearFind("oleometer");
+//	EXPECT_EQ(7, value);
+	uint64_t id = map._dfuds.findClose(13);
+	EXPECT_EQ(96, id);
+
+
+	uint64_t unit = 0;
+	uint8_t *p = (uint8_t *)&unit;
+	*p = 7;
+	ASSERT_EQ(7, unit);
+}
+
+TEST(DfudsTrieTest, findClose) {
+	ifstream is("findClose.words");
+	assert(is.good());
+	string word;
+
+	DfudsTrieBuilder builder;
+	int i = 0;
+	while (is.good()) {
+		is >> word;
+		++i;
+		builder.addEntry(word.c_str(), i);
+	}
+
+	stringstream ss;
+	builder.write(ss);
+
+	DfudsTrie map;
+	map.read(ss);
+
+	uint64_t value = map.rightNearFind("Awabakal");
+	//EXPECT_EQ(7, value);
 }

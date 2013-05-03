@@ -5,7 +5,9 @@
 #include <stdint.h>
 
 #include "DfudsTrie.h"
+#include "Vector.h"
 #include "Interface.h"
+
 
 template <typename T>
 class DfudsMap : public MapInterface<T> {
@@ -22,7 +24,7 @@ class DfudsMap : public MapInterface<T> {
 	void clear();
 	void display(std::ostream &is);
   private:
-	std::vector<T> _values;
+	Vector<T> _values;
 	DfudsTrie _trie;
 	bool _is_leaf;
 };

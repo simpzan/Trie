@@ -82,12 +82,12 @@ TEST_F(BitVectorTest, access) {
 
 TEST_F(BitVectorTest, findClose) {
 	uint64_t offset = 0;
-	uint64_t offset_close = cbv.findClose(offset);
+	uint64_t offset_close = cbv.findCloseNaive(offset);
 	uint64_t expected = 13;
 	EXPECT_EQ(expected, offset_close);
 
 	offset = 2;
-	offset_close = cbv.findClose(offset);
+	offset_close = cbv.findCloseNaive(offset);
 	expected = 7;
 	EXPECT_EQ(expected, offset_close);
 }
@@ -95,11 +95,82 @@ TEST_F(BitVectorTest, findClose) {
 TEST_F(BitVectorTest, findOpen) {
 	uint64_t offset = 13;
 	uint64_t expected = 0;
-	uint64_t openOffset = cbv.findOpen(offset);
+	uint64_t openOffset = cbv.findOpenNaive(offset);
 	EXPECT_EQ(expected, openOffset);
 
 	offset = 7;
 	expected = 2;
-	openOffset = cbv.findOpen(offset);
+	openOffset = cbv.findOpenNaive(offset);
 	EXPECT_EQ(expected, openOffset);
+}
+
+TEST(BitVectorTest2, rank) {
+	BitVectorBuilder builder;
+	for (int i = 0; i < 801; ++i) {
+		builder.append(false);
+	}
+	for (int i = 0; i < 801; ++i) {
+		builder.append(true);
+	}
+	stringstream ss;
+	builder.write(ss);
+	ConstBitVector bv;
+	bv.read(ss);
+
+	uint64_t id = 0;
+	uint64_t count = bv.rank1(id);
+	uint64_t expected = 0;
+	EXPECT_EQ(expected, count);
+	count = bv.rank0(id);
+	expected = 1;
+	EXPECT_EQ(expected, count);
+
+	id = 800;
+	count = bv.rank1(id);
+	expected = 0;
+	EXPECT_EQ(expected, count);
+	count = bv.rank0(id);
+	expected = 801;
+	EXPECT_EQ(expected, count);
+
+	id = 1601;
+	count = bv.rank1(id);
+	expected = 801;
+	EXPECT_EQ(expected, count);
+	count = bv.rank0(id);
+	EXPECT_EQ(expected, count);
+}
+
+TEST(BitVectorTest2, rank2) {
+	BitVectorBuilder builder;
+	for (int i = 0; i < 802; ++i) {
+		builder.append(false);
+		builder.append(true);
+	}
+	stringstream ss;
+	builder.write(ss);
+	ConstBitVector bv;
+	bv.read(ss);
+
+	uint64_t id = 0;
+	uint64_t count = bv.rank1(id);
+	uint64_t expected = 0;
+	EXPECT_EQ(expected, count);
+	count = bv.rank0(id);
+	expected = 1;
+	EXPECT_EQ(expected, count);
+
+	id = 801;
+	count = bv.rank1(id);
+	expected = 401;
+	EXPECT_EQ(expected, count);
+	count = bv.rank0(id);
+	EXPECT_EQ(expected, count);
+
+	id = 1603;
+	count = bv.rank1(id);
+	expected = 802;
+	EXPECT_EQ(expected, count);
+	count = bv.rank0(id);
+	EXPECT_EQ(expected, count);
 }

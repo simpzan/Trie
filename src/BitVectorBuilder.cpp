@@ -1,15 +1,32 @@
 #include "BitVectorBuilder.h"
 
+#include <cassert>
+#include <map>
+
 using namespace std;
+
+namespace {
+void convert2ByteVector(const vector<bool> &bits, Vector<uint8_t> &bytes) {
+	uint64_t bitCount = bits.size();
+	uint8_t tmp_byte = 0;
+	for (int bi = 0; bi < bitCount; bi++) {
+		int shift = bi % BIT_PER_BYTE;
+		uint8_t mask = 1 << shift;
+		if (bits[bi]) {
+			tmp_byte |= mask;
+		}
+		if (bi % BIT_PER_BYTE == BIT_PER_BYTE - 1) {
+			bytes.append(tmp_byte);
+			tmp_byte = 0;
+		}
+	}
+	if (bitCount % BIT_PER_BYTE != 0)  bytes.append(tmp_byte);	
+}
+
+} // namespace
 
 void BitVectorBuilder::appendRank(bool bit) {
 	uint64_t count = _bits.size();
-	if (count == 0) {
-		_ranks_block.append(0);
-		_ranks_unit.append(0);
-		return;
-	}
-
 	if (count % BIT_PER_BLOCK == 0) {
 		_ranks_block.append(_count_one);
 		_rank_block = _count_one;
@@ -25,32 +42,17 @@ void BitVectorBuilder::append(bool bit) {
 	if (bit)  ++_count_one;
 }
 
-void BitVectorBuilder::convert2ByteVector(Vector<uint8_t> &bytes) {
-	uint64_t bitCount = _bits.size();
-	uint8_t tmp_byte = 0;
-	for (int bi = 0; bi < bitCount; bi++) {
-		int shift = bi % BIT_PER_BYTE;
-		uint8_t mask = 1 << shift;
-		if (_bits[bi]) {
-			tmp_byte |= mask;
-		}
+void BitVectorBuilder::writeBoolVector(ostream &os, const vector<bool> &bits) {
+	uint64_t bitCount = bits.size();
+	os.write((char *)&bitCount, sizeof(bitCount));
 
-		if (bi % BIT_PER_BYTE == BIT_PER_BYTE - 1) {
-			bytes.append(tmp_byte);
-			tmp_byte = 0;
-		}
-	}
-
-	if (bitCount % BIT_PER_BYTE != 0)  bytes.append(tmp_byte);	
+	Vector<uint8_t> bytes;
+	convert2ByteVector(bits, bytes);
+	bytes.write(os);
 }
 
 void BitVectorBuilder::write(ostream &os) {
-	uint64_t bitCount = _bits.size();
-	os.write((char *)&bitCount, sizeof(uint64_t));
-
-	Vector<uint8_t> bytes;
-	convert2ByteVector(bytes);
-	bytes.write(os);
+	this->writeBoolVector(os, _bits);
 
 	_ranks_block.write(os);
 	_ranks_unit.write(os);
@@ -82,3 +84,4 @@ void BitVectorBuilder::clear() {
 	_count_one = 0;
 	_rank_block = 0;
 }
+

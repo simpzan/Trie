@@ -3,6 +3,8 @@
 
 #include <vector>
 #include "ConstBitVector.h"
+#include "ConstBalancedBitVector.h"
+#include "Vector.h"
 #include "Interface.h"
 
 class DfudsTrie {
@@ -16,6 +18,7 @@ class DfudsTrie {
 	uint64_t find(const char *key);
 	uint64_t rightNearFind(const char *key);
 
+	void printAllKeys();
 	void display(std::ostream &os);
 	void clear();
 	void select(uint64_t rank, std::string &key);
@@ -34,9 +37,11 @@ class DfudsTrie {
 	uint8_t label(uint64_t parent, uint64_t child);
 	uint64_t rightMost(uint64_t offset);
 
-	ConstBitVector _dfuds;
-	std::vector<uint8_t> _labels;
-	ConstBitVector _isTerminal;
+	ConstBalancedBitVector _dfuds;
+	Vector<uint8_t> _labels;
+	ConstBitVector _is_keys;
+
+	friend class DfudsTrieTest_kk_Test;
 };
 
 #endif

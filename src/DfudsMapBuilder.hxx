@@ -6,7 +6,7 @@ bool DfudsMapBuilder<T>::visitNode(TrieNode &node) {
 	DfudsTrieBuilder::visitNode(node);
 
 	uint64_t value = node.getValue();
-	if (value)  _values.push_back(value);
+	if (value)  _values.append(value);
 }
 
 template <typename T>
@@ -14,12 +14,7 @@ void DfudsMapBuilder<T>::write(ostream &os) {
 	os.write((char *)&_is_leaf, 1);
 
 	DfudsTrieBuilder::write(os);
-
-	uint64_t count = _values.size();
-	os.write((char *)&count, sizeof(count));
-
-	uint64_t size = count * sizeof(T);
-	os.write((char *)_values.data(), size);
+	_values.write(os);
 }
 
 template <typename T>

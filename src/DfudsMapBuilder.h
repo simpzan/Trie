@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "DfudsTrieBuilder.h"
+#include "Vector.h"
 #include "Interface.h"
 
 template <typename T>
@@ -28,7 +29,7 @@ class DfudsMapBuilder : public DfudsTrieBuilder, public MapBuilderInterface<T> {
 	virtual void set_is_leaf(bool is_leaf)  {  _is_leaf = is_leaf;  }
 
   private:
-	std::vector<T> _values;
+	Vector<T> _values;
 	int _block_size;
 	bool _is_leaf;
 };
