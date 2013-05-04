@@ -12,7 +12,7 @@
 
 class ConstBitVector {
  public:
-  ConstBitVector();
+  ConstBitVector() : _count_bit(0) {}
   virtual ~ConstBitVector() {}
 
   bool operator[](uint64_t offset) const;
