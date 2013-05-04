@@ -52,3 +52,15 @@ TEST(BalancedBitVectorTest2, shortTest) {
 	result = bv.findClose(1);
 	EXPECT_EQ(2, result);
 }
+
+TEST_F(BalancedBitVectorTest, findOpen) {
+	uint64_t offset = 1601;
+	uint64_t expected = 1600;
+	uint64_t openOffset = cbv.findOpenNaive(offset);
+	EXPECT_EQ(expected, openOffset);
+
+	offset = 1;
+	expected = 0;
+	openOffset = cbv.findOpenNaive(offset);
+	EXPECT_EQ(expected, openOffset);
+}

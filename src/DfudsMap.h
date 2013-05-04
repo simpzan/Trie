@@ -8,25 +8,25 @@
 #include "Vector.h"
 #include "Interface.h"
 
-
 template <typename T>
 class DfudsMap : public MapInterface<T> {
-  public:
-	DfudsMap() : _is_leaf(true) {}
-	~DfudsMap() {}
-	
-	virtual bool load(std::istream &is);
-	virtual bool find(const char *key, T &value);
+ public:
+  DfudsMap() : _is_leaf(true) {}
+  virtual ~DfudsMap() {}
 
-	virtual bool is_leaf()  {  return _is_leaf;  }
-	virtual void set_is_leaf(bool is_leaf)  {  _is_leaf = is_leaf;  }
+  virtual bool load(std::istream &is);
+  virtual bool find(const char *key, T &value);
 
-	void clear();
-	void display(std::ostream &is);
-  private:
-	Vector<T> _values;
-	DfudsTrie _trie;
-	bool _is_leaf;
+  virtual bool is_leaf()  {  return _is_leaf;  }
+  virtual void set_is_leaf(bool is_leaf)  {  _is_leaf = is_leaf;  }
+
+  void clear();
+  void display(std::ostream &is);
+
+ private:
+  Vector<T> _values;
+  DfudsTrie _trie;
+  bool _is_leaf;
 };
 
 #include "DfudsMap.hxx"

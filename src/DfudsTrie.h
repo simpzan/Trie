@@ -8,40 +8,34 @@
 #include "Interface.h"
 
 class DfudsTrie {
-  public:
-	DfudsTrie() {}
-	~DfudsTrie() {}
+ public:
+  DfudsTrie() {}
+  ~DfudsTrie() {}
 
-	void read(std::istream &is);
-	// return the rank of the key in this trie. 
-	// return 0, if the key does not exist.
-	uint64_t find(const char *key);
-	uint64_t rightNearFind(const char *key);
+  // return the rank of the key in this trie. 
+  // return 0, if the key does not exist.
+  uint64_t find(const char *key) const;
+  uint64_t rightNearFind(const char *key) const;
 
-	void printAllKeys();
-	void display(std::ostream &os);
-	void clear();
-	void select(uint64_t rank, std::string &key);
+  // extract the rank-th key in trie.
+  // not efficient yet, cause there's no bit vector select index.
+  void select(uint64_t rank, std::string &key) const;
 
-  private:
-	bool followKey(const char *key, bool near_search, 
-			uint64_t *id, int *prefixLen);
-	int findLabelRank(uint64_t base, int degree, uint8_t ch);
-	int findLabelRank2(uint64_t base, uint64_t id, uint8_t ch);
-	int rightNearLabelRank(uint64_t base, int degree, uint8_t ch);
-	int rightNearLabelRank2(uint64_t base, uint64_t id, uint8_t ch);
-	void readVector(std::istream &is, std::vector<uint8_t> &array);
-	uint64_t findChild(uint64_t offset, uint8_t ch, bool near_search);
-	uint64_t parent(uint64_t offset);
-	uint8_t degree(uint64_t offset);
-	uint8_t label(uint64_t parent, uint64_t child);
-	uint64_t rightMost(uint64_t offset);
+  void read(std::istream &is);
+  void clear();
 
-	ConstBalancedBitVector _dfuds;
-	Vector<uint8_t> _labels;
-	ConstBitVector _is_keys;
+  void display(std::ostream &os) const;
 
-	friend class DfudsTrieTest_kk_Test;
+ private:
+  bool followKey(const char *key, int near_search, 
+      uint64_t *id, int *prefixLen) const;
+  uint64_t findChild(uint64_t offset, uint8_t ch, int near_search) const;
+
+  ConstBalancedBitVector _dfuds;
+  Vector<uint8_t> _labels;
+  ConstBitVector _is_keys;
+
+  friend class DfudsTrieTest_kk_Test;
 };
 
 #endif

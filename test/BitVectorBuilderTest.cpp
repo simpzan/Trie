@@ -60,12 +60,12 @@ TEST_F(BitVectorTest, rank) {
 
 TEST_F(BitVectorTest, select) {
 	uint64_t count = 1;
-	uint64_t offset = cbv.select1(count);
+	uint64_t offset = cbv.select1Naive(count);
 	uint64_t expected = 4;
 	EXPECT_EQ(expected, offset);
 
 	count = 5;
-	offset = cbv.select0(count);
+	offset = cbv.select0Naive(count);
 	expected = 5;
 	EXPECT_EQ(expected, offset);
 }
@@ -80,29 +80,6 @@ TEST_F(BitVectorTest, access) {
 	EXPECT_EQ(true, cbv[13]);
 }
 
-TEST_F(BitVectorTest, findClose) {
-	uint64_t offset = 0;
-	uint64_t offset_close = cbv.findCloseNaive(offset);
-	uint64_t expected = 13;
-	EXPECT_EQ(expected, offset_close);
-
-	offset = 2;
-	offset_close = cbv.findCloseNaive(offset);
-	expected = 7;
-	EXPECT_EQ(expected, offset_close);
-}
-
-TEST_F(BitVectorTest, findOpen) {
-	uint64_t offset = 13;
-	uint64_t expected = 0;
-	uint64_t openOffset = cbv.findOpenNaive(offset);
-	EXPECT_EQ(expected, openOffset);
-
-	offset = 7;
-	expected = 2;
-	openOffset = cbv.findOpenNaive(offset);
-	EXPECT_EQ(expected, openOffset);
-}
 
 TEST(BitVectorTest2, rank) {
 	BitVectorBuilder builder;

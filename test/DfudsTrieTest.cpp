@@ -7,7 +7,6 @@
 
 using namespace std;
 
-
 TEST(DfudsTrieTest, rightNearFind) {
 	DfudsTrieBuilder builder;
 	//builder.addEntry("go", 232);
@@ -178,3 +177,4 @@ TEST(DfudsTrieTest, findClose) {
 	uint64_t value = map.rightNearFind("Awabakal");
 	//EXPECT_EQ(7, value);
 }
+

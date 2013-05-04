@@ -10,10 +10,15 @@ class ConstBalancedBitVector : public ConstBitVector {
 	virtual ~ConstBalancedBitVector() {}
 
 	uint64_t findClose(uint64_t id) const;
+	uint64_t findCloseNaive(uint64_t id) const;
+	uint64_t findOpenNaive(uint64_t id) const;
+	uint64_t excess(uint64_t id) const {  return rank0(id) - rank1(id);  }
+	uint64_t encloseNaive(uint64_t id) const;
 
 	virtual void read(std::istream &is);
 	virtual void clear();
 	virtual void display(std::ostream &os) const;
+	void display() const;
 
   private:
 	ConstBitVector _is_fars;

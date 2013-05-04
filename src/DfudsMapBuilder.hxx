@@ -19,6 +19,7 @@ void DfudsMapBuilder<T>::write(ostream &os) {
 
 template <typename T>
 bool DfudsMapBuilder<T>::canAddEntry(const char *key, T value) {
+  // new generated size + existing size.
 	int count_new_node = root()->countNewNodeWillCreatedWhenInsertKey(key);
 	int size_dfuds = count_new_node * 2 - 1;
 	int size_labels = count_new_node;
