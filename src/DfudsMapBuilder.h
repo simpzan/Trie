@@ -34,6 +34,6 @@ class DfudsMapBuilder : public DfudsTrieBuilder, public MapBuilderInterface<T> {
 	bool _is_leaf;
 };
 
-#include "DfudsMapBuilder.hxx"
+//#include "DfudsMapBuilder.hxx"
 
 #endif

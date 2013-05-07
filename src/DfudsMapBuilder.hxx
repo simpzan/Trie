@@ -1,10 +1,10 @@
+#include "DfudsMapBuilder.h"
 
 using namespace std;
 
 template <typename T>
 bool DfudsMapBuilder<T>::visitNode(TrieNode &node) {
 	DfudsTrieBuilder::visitNode(node);
-
 	uint64_t value = node.getValue();
 	if (value)  _values.append(value);
 }
@@ -25,8 +25,8 @@ bool DfudsMapBuilder<T>::canAddEntry(const char *key, T value) {
 	int size_labels = count_new_node;
 	int size_is_terminal = 1;
 	int size_value = sizeof(value);
-
 	int size_extra = size_dfuds + size_labels + size_is_terminal + size_value;
+
 	uint64_t size_all = size() + size_extra;
 
 	return size_all <= _block_size;

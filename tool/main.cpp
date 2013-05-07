@@ -3,13 +3,12 @@
 #include <cstdio>
 #include "ArrayTrie.h"
 #include "LinkedTrie.h"
-#include "DfudsMapBuilder.h"
-#include "DfudsMap.h"
+#include "DfudsMapBuilder.hxx"
+#include "DfudsMap.hxx"
 
 using namespace std;
 
 int main(int argc, const char **argv) {
-
 	if (argc < 2) {
 		cout << "Usage: " << argv[0] << " wordlist" << endl;
 	}

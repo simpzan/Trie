@@ -1,8 +1,8 @@
 #include <fstream>
 #include <gtest/gtest.h>
 
-#include "DfudsMapBuilder.h"
-#include "DfudsMap.h"
+#include "DfudsMapBuilder.hxx"
+#include "DfudsMap.hxx"
 
 using namespace std;
 

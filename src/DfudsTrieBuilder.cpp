@@ -11,9 +11,8 @@ void DfudsTrieBuilder::buildDfuds() {
 bool DfudsTrieBuilder::visitNode(TrieNode &aNode) {
   LinkedTrieNode *node = (LinkedTrieNode *)&aNode;
   map<uint8_t, TrieNode *> &children = node->children();
-  for(map<uint8_t, TrieNode *>::iterator itr = children.begin();
-      itr != children.end();
-      ++itr) {
+  typedef map<uint8_t, TrieNode *>::const_iterator IteratorType;
+  for(IteratorType itr = children.begin(); itr != children.end(); ++itr) {
     _dfuds.append(false);
     _labels.append(itr->first);
   }
