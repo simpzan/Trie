@@ -5,10 +5,24 @@ using namespace std;
 
 namespace {
 
+// find the right most node in the subtree rooted at offset.
+// there are 2 methods:
+// 1, findClose( dfuds.enclose(id) ).
+// 2, continuously findClose to search the double close position.
+// this function use method 2.
 uint64_t rightMost(const ConstBalancedBitVector &dfuds, uint64_t offset) {
   if (dfuds.bitAt(offset))  return offset;
-  uint64_t id_open = dfuds.encloseNaive(offset);
-  return dfuds.findClose(id_open);
+
+  uint64_t id = offset;
+  int i = 0;
+  while (!dfuds.bitAt(id)) {
+    id = dfuds.findClose(id) + 1;
+    ++i;
+  }
+  if (i > 16) {
+    cout << "rightMost iteration:" << i << endl;
+  }
+  return id;
 }
 
 uint8_t degree(const ConstBalancedBitVector &dfuds, uint64_t id) {

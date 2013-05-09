@@ -7,6 +7,7 @@
 #include "DfudsTrie.h"
 #include "Vector.h"
 #include "Interface.h"
+#include "DACWrapper.h"
 
 template <typename T>
 class DfudsMap : public MapInterface<T> {
@@ -24,11 +25,12 @@ class DfudsMap : public MapInterface<T> {
   void display(std::ostream &is);
 
  private:
-  Vector<T> _values;
+  DACWrapper _values;
+  //Vector<T> _values;
   DfudsTrie _trie;
   bool _is_leaf;
 };
 
-//#include "DfudsMap.hxx"
+#include "DfudsMap.hxx"
 
 #endif

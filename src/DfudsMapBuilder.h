@@ -14,7 +14,7 @@ class DfudsMapBuilder : public DfudsTrieBuilder, public MapBuilderInterface<T> {
 	virtual ~DfudsMapBuilder() {}
 
 	virtual bool visitNode(TrieNode &aNode);
-	virtual uint64_t size();
+	virtual uint64_t sizeWithNewNodeCount(uint32_t count);
 	virtual void write(std::ostream &os);
 
 	virtual bool canAddEntry(const char *key, T value);
@@ -34,6 +34,6 @@ class DfudsMapBuilder : public DfudsTrieBuilder, public MapBuilderInterface<T> {
 	bool _is_leaf;
 };
 
-//#include "DfudsMapBuilder.hxx"
+#include "DfudsMapBuilder.hxx"
 
 #endif

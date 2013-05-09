@@ -9,6 +9,7 @@
 #include "Vector.h"
 #include "Trie.h"
 #include "LinkedTrieNode.h"
+#include "DACWrapper.h"
 
 class DfudsTrieBuilder : public Trie, public TrieVisitorInterface {
  public:
@@ -18,7 +19,7 @@ class DfudsTrieBuilder : public Trie, public TrieVisitorInterface {
   void buildDfuds();
   virtual void write(std::ostream &os);
   virtual void clear();
-  virtual uint64_t size();
+  virtual uint64_t sizeWithNewNodeCount(uint32_t count);
 
   virtual bool visitNode(TrieNode &node);
 

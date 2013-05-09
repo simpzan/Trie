@@ -37,10 +37,10 @@ void DfudsTrieBuilder::clear() {
   _is_keys.clear();
 }
 
-uint64_t DfudsTrieBuilder::size() {
-  int total_nodes = node_count();
-  int size_dfuds = sizeof(uint64_t) + total_nodes * 2;
-  int size_is_teminal = sizeof(uint64_t) + total_nodes;
-  int size_labels = sizeof(uint64_t) + total_nodes - 1;
+uint64_t DfudsTrieBuilder::sizeWithNewNodeCount(uint32_t count) {
+  int count_nodes = node_count() + count;
+  int size_dfuds = BalancedBitVectorBuilder::sizeWithBitcount(count_nodes * 2);
+  int size_is_teminal = BitVectorBuilder::sizeWithBitcount(count_nodes);
+  int size_labels = Vector<uint8_t>::sizeWithCount(count_nodes - 1);
   return size_dfuds + size_is_teminal + size_labels;
 }

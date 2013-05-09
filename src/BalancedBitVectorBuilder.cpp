@@ -65,7 +65,6 @@ void buildFindCloseIndex(const vector<bool> &bits,
 
 } // namespace
 
-
 void BalancedBitVectorBuilder::write(ostream &os) {
 	buildFindCloseIndex(bits(), _is_fars, _is_pioneers, _pioneers);
 
@@ -80,4 +79,19 @@ void BalancedBitVectorBuilder::clear() {
 	_is_fars.clear();
 	_is_pioneers.clear();
 	_pioneers.clear();
+}
+
+uint64_t BalancedBitVectorBuilder::sizeWithBitcount(uint64_t count) {
+  uint64_t size_parent = BitVectorBuilder::sizeWithBitcount(count);
+
+  uint64_t count_node = count / 2;
+  uint64_t size_is_fars = BitVectorBuilder::sizeWithBitcount(count_node);
+
+  uint32_t count_far = count_node / 2;
+  uint32_t size_is_pioneers = BitVectorBuilder::sizeWithBitcount(count_far);
+
+  uint32_t count_pioneer = count_far / BIT_PER_UNIT;
+  uint32_t size_pioneers = Vector<uint32_t>::sizeWithCount(count_pioneer);
+
+  return size_parent + size_is_fars + size_is_pioneers + size_pioneers;
 }

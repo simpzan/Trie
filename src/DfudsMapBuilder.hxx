@@ -1,6 +1,4 @@
-#include "DfudsMapBuilder.h"
-
-using namespace std;
+#include "DACWrapper.h"
 
 template <typename T>
 bool DfudsMapBuilder<T>::visitNode(TrieNode &node) {
@@ -10,25 +8,27 @@ bool DfudsMapBuilder<T>::visitNode(TrieNode &node) {
 }
 
 template <typename T>
-void DfudsMapBuilder<T>::write(ostream &os) {
+void DfudsMapBuilder<T>::write(std::ostream &os) {
 	os.write((char *)&_is_leaf, 1);
 
 	DfudsTrieBuilder::write(os);
-	_values.write(os);
+	//_values.write(os);
+  DACWrapper dac(_values.data(), _values.count());
+  dac.write(os);
 }
 
 template <typename T>
 bool DfudsMapBuilder<T>::canAddEntry(const char *key, T value) {
   // new generated size + existing size.
 	int count_new_node = root()->countNewNodeWillCreatedWhenInsertKey(key);
-	int size_dfuds = count_new_node * 2 - 1;
-	int size_labels = count_new_node;
-	int size_is_terminal = 1;
-	int size_value = sizeof(value);
-	int size_extra = size_dfuds + size_labels + size_is_terminal + size_value;
 
-	uint64_t size_all = size() + size_extra;
+	uint64_t size_all = sizeWithNewNodeCount(count_new_node);
+  
+  using namespace std;
 
+  //std::cout << "new node:" << count_new_node << std::endl;
+  //cout << "size_all:" << size_all << endl;
+  //cout << "block_size:" << _block_size << std::endl;
 	return size_all <= _block_size;
 }
 
@@ -44,11 +44,11 @@ void DfudsMapBuilder<T>::clear() {
 }
 
 template <typename T>
-uint64_t DfudsMapBuilder<T>::size() {
-	uint64_t size = DfudsTrieBuilder::size();
-	uint64_t value_count = this->value_count();
-	uint64_t size_values = sizeof(uint64_t) + value_count * sizeof(T);
-	return size + size_values + 1;
+uint64_t DfudsMapBuilder<T>::sizeWithNewNodeCount(uint32_t count) {
+	uint64_t size_parent = DfudsTrieBuilder::sizeWithNewNodeCount(count);
+	uint64_t count_values = this->value_count() + 1;
+	uint64_t size_values = Vector<T>::sizeWithCount(count_values);
+	return size_parent + size_values + 1;
 }
 
 template <typename T>

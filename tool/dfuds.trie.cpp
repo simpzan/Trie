@@ -3,8 +3,8 @@
 #include <cstdio>
 #include "ArrayTrie.h"
 #include "LinkedTrie.h"
-#include "DfudsMapBuilder.h"
-#include "DfudsMap.h"
+#include "DfudsTrieBuilder.h"
+#include "DfudsTrie.h"
 
 using namespace std;
 
@@ -16,7 +16,7 @@ int main(int argc, const char **argv) {
 
 	ifstream is(argv[1]);
 
-	DfudsMapBuilder<uint32_t> *t = new DfudsMapBuilder<uint32_t>;
+	DfudsTrieBuilder *t = new DfudsTrieBuilder;
 
 	char word[NODESIZE];
 	uint64_t count = 0;
@@ -39,3 +39,4 @@ int main(int argc, const char **argv) {
 
 	return 0;
 }
+

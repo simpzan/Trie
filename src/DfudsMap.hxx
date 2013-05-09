@@ -1,9 +1,6 @@
-#include "DfudsMap.h"
-
-using namespace std;
 
 template <typename T>
-bool DfudsMap<T>::load(istream &is) {
+bool DfudsMap<T>::load(std::istream &is) {
 	clear();
 	is.read((char *)&_is_leaf, 1);
 
@@ -31,12 +28,12 @@ void DfudsMap<T>::clear() {
 }
 
 template <typename T>
-void DfudsMap<T>::display(ostream &is) {
-	_trie.display(is);
-	int count = _values.size();
-	cout << "values: " << count << endl;
-	for (int i = 0; i < count; ++i) {
-		is << _values[i] << "\t";
-	}
-	cout << endl;
+void DfudsMap<T>::display(std::ostream &is) {
+ /* _trie.display(is);*/
+	//int count = _values.size();
+  //std::cout << "values: " << count << std::endl;
+	//for (int i = 0; i < count; ++i) {
+		//is << _values[i] << "\t";
+	//}
+  /*std::cout << std::endl;*/
 }

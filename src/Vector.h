@@ -6,12 +6,6 @@
 #include <iostream>
 #include <iterator>
 
-enum DisplayType {
-  kBinary,
-  kChar,
-  kInt,
-};
-
 template <typename T>
 class Vector {
  public:
@@ -20,19 +14,39 @@ class Vector {
 
   T &operator[](uint64_t index);
   const T &operator[](uint64_t index) const;
+  T *data() {  return _elements.data();  }
+
+  void insert(uint32_t pos, const T &value) {
+    _elements.insert(_elements.begin() + pos, value);
+  }
+  
   uint64_t count() const {  return _elements.size();  }
   uint64_t size() const;
 
   void display(std::ostream &os) const;
 
   void append(T element) {  _elements.push_back(element);  }
+  void appendValues(const T *elements, int len);
   void read(std::istream &is);
   void write(std::ostream &os) const;
   void clear() {  _elements.clear();  }
 
+  static uint64_t sizeWithCount(uint64_t count);
+
  private:
   std::vector<T> _elements;
 };
+
+template <typename T>
+void Vector<T>::appendValues(const T *elements, int len) {
+  _elements.insert(_elements.end(), elements, elements + len);
+}
+
+template <typename T>
+uint64_t Vector<T>::sizeWithCount(uint64_t count) {
+  uint64_t size = sizeof(uint64_t) + count * sizeof(T);
+  return size;
+}
 
 template <typename T>
 inline T &Vector<T>::operator[](uint64_t index) {

@@ -77,6 +77,16 @@ uint64_t BitVectorBuilder::size() {
 	return size;
 }
 
+uint64_t BitVectorBuilder::sizeWithBitcount(uint32_t count) {
+  uint64_t count_byte = (count + 7) / 8;
+  uint64_t size_bits = Vector<uint8_t>::sizeWithCount(count_byte);
+  uint64_t count_ranks_block = count / BIT_PER_BLOCK + 1;
+  uint64_t size_ranks_block = Vector<uint32_t>::sizeWithCount(count_ranks_block);
+  uint32_t count_ranks_unit = count_ranks_block * 3;
+  uint64_t size_ranks_unit = Vector<uint8_t>::sizeWithCount(count_ranks_unit);
+  return size_bits + size_ranks_block + size_ranks_unit;
+}
+
 void BitVectorBuilder::clear() {
 	_bits.clear();
 	_ranks_block.clear();

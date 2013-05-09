@@ -1,47 +1,40 @@
 CC=g++
-CFLAGS=-ggdb -fpermissive
+CFLAGS=-ggdb
+SUFFIX=cpp
+INCLUDE= -I src/ -I ../utils/src -I ../DACS_optimization_no_restrictions/src
+LIBS= -lleveldb ../DACS_optimization_no_restrictions/libDAC.a ../utils/libutils.a
+BIN=libArrayTrie.a
+RUN=unit_test
 
-GTEST= /usr/local
-INCLUDE= -I ${GTEST}/include -I src/ -I ../utils/src/ 
-LIB= ${addprefix ${GTEST}/lib/, libgtest.a libgtest_main.a libglog.a} 
+######################## variable
 
 D_TEST=test
+D_TOOL=tool
 D_SRC=src
 D_OBJ=obj
 D_BIN=bin
-D_SAMPLE=tool
 
 DIR_TO_CREATE=${D_OBJ} ${D_BIN}
-VPATH=${D_SRC}/:${D_OBJ}/:${D_TEST}/:${D_SAMPLE}/: ../utils/obj
+VPATH=${D_SRC}/:${D_OBJ}/:${D_TEST}/:${D_TOOL}
 
-SUFFIX=cpp
+SRC_TEST=${wildcard ${D_TEST}/*.${SUFFIX}}
+OBJ_TEST=${patsubst ${D_TEST}/%.${SUFFIX}, ${D_OBJ}/%.o, ${SRC_TEST}}
+BIN_TEST=${D_BIN}/unit_test
 
-SRC_TEST=${wildcard ${D_TEST}/*.cpp}
-OBJ_TEST=${patsubst ${D_TEST}/%.cpp, ${D_OBJ}/%.o, ${SRC_TEST}}
-BIN_TEST=gtest_main
+SRC_TOOL=${wildcard ${D_TOOL}/*.${SUFFIX}}
+OBJ_TOOL=${patsubst ${D_TOOL}/%.${SUFFIX}, ${D_OBJ}/%.o, ${SRC_TOOL}}
+BIN_TOOL=${patsubst ${D_TOOL}/%.${SUFFIX}, ${D_BIN}/%, ${SRC_TOOL}}
 
-SRC_SAMPLE=${wildcard ${D_SAMPLE}/*.${SUFFIX}}
-OBJ_SAMPLE=${patsubst ${D_SAMPLE}/%.cpp, ${D_OBJ}/%.o, ${SRC_SAMPLE}}
+SRC=$(wildcard ${D_SRC}/*.${SUFFIX})
+OBJ=${patsubst ${D_SRC}/%.${SUFFIX}, ${D_OBJ}/%.o, ${SRC}}
 
-SRC=$(wildcard ${D_SRC}/*.cpp)
-OBJ=${patsubst ${D_SRC}/%.cpp, ${D_OBJ}/%.o, ${SRC}}  
-BIN=${addprefix ${D_BIN}/, main ${BIN_TEST} test_AMT libArrayTrie.a }
+OBJ_ALL=${OBJ_TEST} ${OBJ_TOOL} ${OBJ}
+BIN_ALL=${BIN} ${BIN_TEST} ${BIN_TOOL}
 
-OBJ_ALL=${OBJ} ${OBJ_TEST} ${OBJ_SAMPLE}
+######################## phony
 
-
-all: printSeparator ${D_BIN} ${BIN} 
+all: printSeparator ${D_BIN} ${BIN_ALL} 
 .PHONY: all
-
-# generate dependency files.
-${D_OBJ}/%.d : %.cpp 
-	@mkdir -p ${D_OBJ}
-	${CC} > $@    $< -MP -MM -MT ${@D}/${*F}.o ${INCLUDE}
-include $(OBJ_ALL:%.o=%.d)
-
-# compile cpp files.
-${D_OBJ}/%.o : %.cpp
-	$(CC) $< -o $@ -c ${INCLUDE} ${CFLAGS}
 
 # clean all build output files.
 clean:
@@ -50,33 +43,44 @@ clean:
 
 # run test cases.
 test: all
-	./${D_BIN}/${BIN_TEST}
+	./${BIN_TEST}
 .PHONY: test
 
-# create dirs.
-${DIR_TO_CREATE}:
-	mkdir -p $@
+# short cut to run
+run: all
+	./${D_BIN}/${RUN}
 
+# just print several dummy lines.
 printSeparator:
 	@echo
 	@echo ====== dependency generation finished =======
 	@echo
 .PHONY: printSeparator
 
-release: CFLAGS += -DNDEBUG
-release: all
+######################## build
 
-
-
-# bin targets
-${D_BIN}/main: main.o ${OBJ}
-	${CC} -o $@  $^  ${LIB} 
-
-${D_BIN}/test_AMT: test_AMT.o TrieNode.o AMTrieNode.o utils.o
-	${CC} -o $@  $^  ${LIB}
-
-${D_BIN}/${BIN_TEST}: ${OBJ_TEST} ${OBJ}  TrieNode.o AMTrieNode.o LinkedTrieNode.o utils.o 
-	${CC} -o $@  $^  ${LIB}
-
-${D_BIN}/libArrayTrie.a: ${OBJ}
+# build the static library.
+${BIN}: ${OBJ}
 	ar cru $@ $^
+
+# unit test
+${BIN_TEST}: ${OBJ_TEST} ${BIN}
+	${CC} -o $@  $^  ${LIBS} -lgtest_main -lgtest
+
+# build tools
+${D_BIN}/%: %.o ${BIN}
+	${CC} -o $@  $^  ${LIBS} 
+
+# generate dependency files.
+${D_OBJ}/%.d : %.${SUFFIX}
+	@mkdir -p ${D_OBJ}
+	${CC} > $@    $< -MP -MM -MT ${@D}/${*F}.o ${INCLUDE}
+include $(OBJ_ALL:%.o=%.d)
+
+# compile src files.
+${D_OBJ}/%.o : %.${SUFFIX}
+	$(CC) $< -o $@ -c ${INCLUDE} ${CFLAGS}
+
+# create dirs.
+${DIR_TO_CREATE}:
+	mkdir -p $@
