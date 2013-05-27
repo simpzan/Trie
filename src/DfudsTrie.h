@@ -4,7 +4,7 @@
 #include <vector>
 #include "ConstBitVector.h"
 #include "ConstBalancedBitVector.h"
-#include "Vector.h"
+#include "ConstVector.h"
 #include "Interface.h"
 
 class DfudsTrie {
@@ -22,6 +22,7 @@ class DfudsTrie {
   void select(uint64_t rank, std::string &key) const;
 
   void read(std::istream &is);
+  uint32_t mmap(const uint8_t *address);
   void clear();
 
   void display(std::ostream &os) const;
@@ -32,7 +33,7 @@ class DfudsTrie {
   uint64_t findChild(uint64_t offset, uint8_t ch, int near_search) const;
 
   ConstBalancedBitVector _dfuds;
-  Vector<uint8_t> _labels;
+  ConstVector<uint8_t> _labels;
   ConstBitVector _is_keys;
 
   friend class DfudsTrieTest_kk_Test;

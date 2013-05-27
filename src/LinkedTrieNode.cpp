@@ -4,7 +4,6 @@
 using namespace std;
 
 typedef map<uint8_t, TrieNode*>::const_iterator ChildrenMapIterator;
-typedef map<uint8_t, uint64_t>::const_iterator ValuesMapIterator;
 
 namespace {
 
@@ -21,7 +20,7 @@ void destory(map<uint8_t, TrieNode *> &children) {
 
 
 LinkedTrieNode::~LinkedTrieNode() {
-	::destory(_children);
+	destory(_children);
 }
 
 TrieNode *LinkedTrieNode::getChildNodeWithLabel(uint8_t ch) {

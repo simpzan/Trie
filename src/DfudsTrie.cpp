@@ -33,7 +33,7 @@ uint8_t degree(const ConstBalancedBitVector &dfuds, uint64_t id) {
 }
 
 uint8_t label(const ConstBalancedBitVector &dfuds, 
-    const Vector<uint8_t> &labels, uint64_t parent, uint64_t child) {
+    const ConstVector<uint8_t> &labels, uint64_t parent, uint64_t child) {
   uint64_t openOffset = dfuds.findOpenNaive(child - 1);
   int degree = ::degree(dfuds, parent);
   uint8_t childRank = parent + degree - openOffset;
@@ -52,7 +52,7 @@ uint64_t parent(const ConstBalancedBitVector &dfuds, uint64_t offset) {
 }
 
 int findLabelRank(const ConstBalancedBitVector &dfuds, uint64_t id, 
-    const Vector<uint8_t> &labels, uint64_t base, uint8_t ch) {
+    const ConstVector<uint8_t> &labels, uint64_t base, uint8_t ch) {
   for (int i = 0; !dfuds.bitAt(id+i); ++i) {
     uint8_t label = labels[base + i];
     if (ch == label)  return (i + 1);
@@ -61,7 +61,7 @@ int findLabelRank(const ConstBalancedBitVector &dfuds, uint64_t id,
 }
 
 int rightNearLabelRank(const ConstBalancedBitVector &dfuds, uint64_t id, 
-    const Vector<uint8_t> &labels, uint64_t base, uint8_t ch) {
+    const ConstVector<uint8_t> &labels, uint64_t base, uint8_t ch) {
   for (int i = 0; !dfuds[id+i]; i++) {
     uint8_t label = labels[base + i];
     if (ch <= label)  return (i + 1);
@@ -129,6 +129,20 @@ void DfudsTrie::read(istream &is) {
   _is_keys.read(is);
 }
 
+uint32_t DfudsTrie::mmap(const uint8_t *address) {
+  const uint8_t *tmp_address = address;
+  uint32_t consumed_size = _dfuds.mmap(tmp_address);
+  tmp_address += consumed_size;
+
+  consumed_size = _labels.mmap(tmp_address);
+  tmp_address += consumed_size;
+
+  consumed_size = _is_keys.mmap(tmp_address);
+  tmp_address += consumed_size;
+
+  return tmp_address - address;
+}
+
 void DfudsTrie::clear() {
   _dfuds.clear();
   _labels.clear();
@@ -139,7 +153,7 @@ void DfudsTrie::display(ostream &os) const {
   os << "Dfuds: ";
   _dfuds.display(os);
   os << "Labels: ";
-  _labels.display(os);
+  _labels.display();
   os << "IsKeys: ";
   _is_keys.display(os);
   os << endl;

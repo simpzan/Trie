@@ -1,10 +1,11 @@
 CC=g++
+CFLAGS=-O3
 CFLAGS=-ggdb
 SUFFIX=cpp
-INCLUDE= -I src/ -I ../utils/src -I ../DACS_optimization_no_restrictions/src
-LIBS= -lleveldb ../DACS_optimization_no_restrictions/libDAC.a ../utils/libutils.a
+INCLUDE= -I src/ -I ../include/
+LIBS=-L ../lib -lleveldb -lDAC -lutils
 BIN=libArrayTrie.a
-RUN=unit_test
+RUN=dfuds_trie
 
 ######################## variable
 
@@ -28,6 +29,9 @@ BIN_TOOL=${patsubst ${D_TOOL}/%.${SUFFIX}, ${D_BIN}/%, ${SRC_TOOL}}
 SRC=$(wildcard ${D_SRC}/*.${SUFFIX})
 OBJ=${patsubst ${D_SRC}/%.${SUFFIX}, ${D_OBJ}/%.o, ${SRC}}
 
+HEADERS=${wildcard ${D_SRC}/*.h} ${wildcard ${D_SRC}/*.hxx}
+INSTALLED_HEADERS=${patsubst ${D_SRC}/%, ../include/%, ${HEADERS}}
+
 OBJ_ALL=${OBJ_TEST} ${OBJ_TOOL} ${OBJ}
 BIN_ALL=${BIN} ${BIN_TEST} ${BIN_TOOL}
 
@@ -50,6 +54,18 @@ test: all
 run: all
 	./${D_BIN}/${RUN}
 
+# install
+install: all
+	cp ${HEADERS} ../include/
+	cp ${BIN} ../lib/
+.PHONY: install
+
+# uninstall
+uninstall:
+	rm -f ${INSTALLED_HEADERS}
+	rm -f ../lib/${BIN}
+.PHONY: uninstall
+
 # just print several dummy lines.
 printSeparator:
 	@echo
@@ -69,7 +85,7 @@ ${BIN_TEST}: ${OBJ_TEST} ${BIN}
 
 # build tools
 ${D_BIN}/%: %.o ${BIN}
-	${CC} -o $@  $^  ${LIBS} 
+	${CC} -o $@  $^  ${LIBS} ${INCLUDE}
 
 # generate dependency files.
 ${D_OBJ}/%.d : %.${SUFFIX}

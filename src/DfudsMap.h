@@ -17,9 +17,9 @@ class DfudsMap : public MapInterface<T> {
 
   virtual bool load(std::istream &is);
   virtual bool find(const char *key, T &value);
+  virtual bool mmap(const uint8_t *address);
 
   virtual bool is_leaf()  {  return _is_leaf;  }
-  virtual void set_is_leaf(bool is_leaf)  {  _is_leaf = is_leaf;  }
 
   void clear();
   void display(std::ostream &is);

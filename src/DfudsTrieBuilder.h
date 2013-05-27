@@ -1,8 +1,8 @@
 #ifndef DFUDS_TRIE_BUILDER_H
 #define DFUDS_TRIE_BUILDER_H
 
-#include <vector>
 #include <stdint.h>
+#include <vector>
 #include <iostream>
 
 #include "BalancedBitVectorBuilder.h"

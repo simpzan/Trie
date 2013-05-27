@@ -10,6 +10,11 @@ bool DfudsMap<T>::load(std::istream &is) {
 }
 
 template <typename T>
+bool DfudsMap<T>::mmap(const uint8_t *address) {
+  assert(false); // DACWrapper has not implemented mmap yet.
+}
+
+template <typename T>
 bool DfudsMap<T>::find(const char *key, T &value) {
 	uint64_t rank = _is_leaf ? _trie.find(key) : _trie.rightNearFind(key);
 	if (!rank) {
@@ -37,3 +42,4 @@ void DfudsMap<T>::display(std::ostream &is) {
 	//}
   /*std::cout << std::endl;*/
 }
+
