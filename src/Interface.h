@@ -21,7 +21,8 @@ class MapInterface {
   MapInterface() {}
   virtual ~MapInterface() {}
 
-  virtual bool find(const char *key, T& value) = 0;
+  virtual bool find(const char *key, T &value) = 0;
+  virtual bool lowerBound(const char *key, T &value) = 0;
   virtual bool load(std::istream &is) = 0;
   virtual bool mmap(const uint8_t *address) {  assert(false);  }
   virtual void display() const {}

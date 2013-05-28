@@ -58,7 +58,6 @@ bool FrontCoder::find(const string &key, uint32_t &rank) {
     rank = 0;
     return false;
   }
-  
 
   while (lcp < key_len && tmp_index < key_count) {
     // skip keys whose lcp is too big.

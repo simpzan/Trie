@@ -18,11 +18,6 @@ class BTreeNode : public MapInterface<T> {
   BTreeNode() : _isLeafNode(false) {}
   virtual ~BTreeNode() {}
 
-  // find the KV pair whose K meet key.
-  // behavior diff on leaf node and internal node.
-  virtual bool findEntry(const char *key, T &value);
-  // load node data from file at the offset.
-  bool load(std::fstream &is, uint64_t offset);
   virtual bool mmap(const uint8_t *address);
 
   // display the content of this node to stdout. for debugging.
@@ -33,6 +28,7 @@ class BTreeNode : public MapInterface<T> {
 
   virtual bool load(std::istream &is);
   virtual bool find(const char *key, T &value);
+  virtual bool lowerBound(const char *key, T &value);
 
  protected:
   // find the first key equal or greater than the key.

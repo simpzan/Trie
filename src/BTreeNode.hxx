@@ -36,40 +36,35 @@ int BTreeNode<T>::lowerBoundNaive(const char *key) {
 }
 
 template <typename T>
-bool BTreeNode<T>::findEntry(const char *key, T &value) {
+bool BTreeNode<T>::lowerBound(const char *key, T &value) {
   value = 0;
-
   int lowerBound = this->lowerBound(key);
-  if (lowerBound == _keys.count()) {
-    return false;
-  }
+  if (lowerBound == _keys.count())  return false;
 
-  if (_isLeafNode) {
-    uint32_t offset = _keys[lowerBound];
-    const char *aKey = (const char *)_string_buffer.data() + offset;
-    if (strcasecmp(aKey, key)!=0) {
-      // not equal case-insensitively, search failed.
-      return false;
-    }
-  }
   value = _values[lowerBound];
   return true;
 }
 
 template <typename T>
 bool BTreeNode<T>::find(const char *key, T &value) {
-  return findEntry(key, value);
-}
+  value = 0;
 
-template <typename T>
-bool BTreeNode<T>::load(fstream &is, uint64_t offset) {
-  is.seekg(offset);
-  return load(is);
+  int lowerBound = this->lowerBound(key);
+  if (lowerBound == _keys.count())  return false;
+
+  uint32_t offset = _keys[lowerBound];
+  const char *aKey = (const char *)_string_buffer.data() + offset;
+  if (strcasecmp(aKey, key)!=0) {
+    // not equal case-insensitively, search failed.
+    return false;
+  }
+  value = _values[lowerBound];
+  return true;
 }
 
 template <typename T>
 bool BTreeNode<T>::load(istream &is) {
-   is.read((char *)&_isLeafNode, 1);
+  is.read((char *)&_isLeafNode, 1);
   _values.read(is);
   _string_buffer.read(is);
   _keys.read(is);

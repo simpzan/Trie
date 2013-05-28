@@ -70,6 +70,14 @@ class FCNode : public MapInterface<T> {
     }
     return true;
   }
+  virtual bool lowerBound(const char *key, T &value) {
+    value = 0;
+    uint32_t rank;
+    bool found = _coder.find(key, rank);
+    if (!found || rank == _coder.count())  return false;
+    value = _values[rank];
+    return true;
+  }
   virtual bool load(std::istream &is) {
     is.read((char *)&_isLeafNode, 1);
     _coder.load(is);

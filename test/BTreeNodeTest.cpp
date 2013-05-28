@@ -22,17 +22,17 @@ TEST(BTreeNodeTest, test) {
   node.load(ss);
 
   ValueT value;
-  node.findEntry(key, value);
+  node.find(key, value);
   EXPECT_EQ(expected, value);
 
   key = "test";
   expected = 0;
-  node.findEntry(key, value);
+  node.find(key, value);
   EXPECT_EQ(expected, value);
 
   key = "kay";
   expected = 3;
-  node.findEntry(key, value);
+  node.lowerBound(key, value);
   EXPECT_EQ(expected, value);
 }
 
