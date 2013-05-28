@@ -143,16 +143,10 @@ TEST(DfudsTrieTest, kk) {
 	DfudsTrie map;
 	map.read(ss);
 
-//	uint64_t value = map.rightNearFind("oleometer");
-//	EXPECT_EQ(7, value);
-	uint64_t id = map._dfuds.findClose(13);
-	EXPECT_EQ(96, id);
-
-
-	uint64_t unit = 0;
-	uint8_t *p = (uint8_t *)&unit;
-	*p = 7;
-	ASSERT_EQ(7, unit);
+  uint64_t value = map.rightNearFind("oleometer");
+  EXPECT_EQ(7, value);
+	//uint64_t id = map._dfuds.findClose(13);
+	//EXPECT_EQ(96, id);
 }
 
 TEST(DfudsTrieTest, findClose) {

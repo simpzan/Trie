@@ -28,15 +28,20 @@ class DfudsTrie {
   void display(std::ostream &os) const;
 
  private:
-  bool followKey(const char *key, int near_search, 
-      uint64_t *id, int *prefixLen) const;
-  uint64_t findChild(uint64_t offset, uint8_t ch, int near_search) const;
+  uint8_t _degree(uint64_t id) const;
+  uint8_t _childRank(uint64_t id, uint8_t ch) const;
+  uint8_t _childLowerBound(uint64_t id, uint8_t ch) const;
+  uint64_t _childSelect(uint64_t id, uint8_t rank) const;
+  uint64_t _keyRank(uint64_t id) const;
+  bool _followKey(const char *key, uint64_t *id, int *prefixLen) const;
+  uint64_t _generalizedSibling(uint64_t id) const;
+
+  uint64_t _parent(uint64_t id) const;
+  uint8_t _label(uint64_t parent, uint64_t child) const;
 
   ConstBalancedBitVector _dfuds;
   ConstVector<uint8_t> _labels;
   ConstBitVector _is_keys;
-
-  friend class DfudsTrieTest_kk_Test;
 };
 
 #endif
