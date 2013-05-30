@@ -38,6 +38,8 @@ void Trie::addEntry(const char *key, uint64_t value) {
 	int node_count = strlen(key) - prefixLen;
 	_node_count += node_count;
 	++_value_count;
+
+  _largest_key = key;
 }
 
 uint64_t Trie::getEntry(const char *key) {

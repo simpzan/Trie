@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <vector>
 #include <iostream>
+#include <sstream>
 
 #include "BalancedBitVectorBuilder.h"
 #include "Vector.h"
@@ -27,6 +28,18 @@ class DfudsTrieBuilder : public Trie, public TrieVisitorInterface {
   BalancedBitVectorBuilder _dfuds;
   Vector<uint8_t> _labels;
   BitVectorBuilder _is_keys;
+};
+
+class DfudsTrieLCPBuilder : public DfudsTrieBuilder {
+  public:
+  DfudsTrieLCPBuilder() {}
+  ~DfudsTrieLCPBuilder() {}
+
+  virtual void write(std::ostream &os);
+
+  private:
+  void _buildWriteOffsets(std::stringstream &ss);
+  
 };
 
 #endif

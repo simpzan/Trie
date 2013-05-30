@@ -1,5 +1,6 @@
-#include "DfudsTrieBuilder.h"
 #include <map>
+#include "DfudsTrieBuilder.h"
+#include "DfudsTrie.h"
 
 using namespace std;
 
@@ -22,6 +23,7 @@ bool DfudsTrieBuilder::visitNode(TrieNode &aNode) {
   _is_keys.append(isTerminal);
 }
 
+
 void DfudsTrieBuilder::write(ostream &os) {
   buildDfuds();
 
@@ -43,4 +45,23 @@ uint64_t DfudsTrieBuilder::sizeWithNewNodeCount(uint32_t count) {
   int size_is_teminal = BitVectorBuilder::sizeWithBitcount(count_nodes);
   int size_labels = Vector<uint8_t>::sizeWithCount(count_nodes - 1);
   return size_dfuds + size_is_teminal + size_labels;
+}
+
+void DfudsTrieLCPBuilder::_buildWriteOffsets(stringstream &ss) {
+  string key = Trie::get_largest_key();
+  Vector<uint32_t> offsets(key.size());
+
+  DfudsTrie trie;
+  trie.read(ss);
+  trie.computeOffsets(key, offsets);
+  offsets.write(ss);
+}
+
+void DfudsTrieLCPBuilder::write(ostream &os) {
+  stringstream ss;
+  DfudsTrieBuilder::write(ss);
+  _buildWriteOffsets(ss);
+
+  string str = ss.str();
+  os.write(str.c_str(), str.size());
 }

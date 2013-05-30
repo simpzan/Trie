@@ -12,8 +12,9 @@
 template <typename T>
 class DfudsMap : public MapInterface<T> {
  public:
-  DfudsMap() : _is_leaf(true) {}
-  virtual ~DfudsMap() {}
+  DfudsMap() : _is_leaf(true), _trie(new DfudsTrie) {}
+  DfudsMap(DfudsTrie *trie) : _is_leaf(true), _trie(trie) {}
+  virtual ~DfudsMap() {  delete _trie;  }
 
   virtual bool load(std::istream &is);
   virtual bool mmap(const uint8_t *address);
@@ -25,11 +26,26 @@ class DfudsMap : public MapInterface<T> {
   void clear();
   void display(std::ostream &is);
 
- private:
+ protected:
+  DfudsTrie *_trie;
   DACWrapper _values;
+
+ private:
   //Vector<T> _values;
-  DfudsTrie _trie;
   bool _is_leaf;
+};
+
+template <typename T>
+class DfudsMapLCP : public DfudsMap<T> {
+  public:
+  DfudsMapLCP() : DfudsMap<T>(new DfudsTrieLCP) {}
+  ~DfudsMapLCP() {}
+
+  virtual bool findWithLCP(const char *key, T &value, uint8_t *lcp);
+  virtual bool lowerBoundWithLCP(const char *key, T &value, uint8_t *lcp);
+
+  private:
+  
 };
 
 #include "DfudsMap.hxx"

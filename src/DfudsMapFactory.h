@@ -29,4 +29,26 @@ inline MapBuilderInterface<T> *DfudsMapFactory<T>::newMapBuilder() {
 	return builder;
 }
 
+template <typename T>
+class DfudsMapLCPFactory : public MapFactory<T> {
+  public:
+  DfudsMapLCPFactory() {}
+  virtual ~DfudsMapLCPFactory() {}
+
+  virtual MapInterface<T> *newMap() {
+    DfudsMapLCP<T> *map = new DfudsMapLCP<T>;
+    this->_nodes.push_back(map);
+    return map;
+  }
+
+  virtual MapBuilderInterface<T> *newMapBuilder() {
+    DfudsMapLCPBuilder<T> *builder = new DfudsMapLCPBuilder<T>;
+    this->_builders.push_back(builder);
+    return builder;
+  }
+
+  private:
+  
+};
+
 #endif

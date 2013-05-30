@@ -74,7 +74,7 @@ class FCNode : public MapInterface<T> {
     value = 0;
     uint32_t rank;
     bool found = _coder.find(key, rank);
-    if (!found || rank == _coder.count())  return false;
+    if (rank == _coder.count())  return false;
     value = _values[rank];
     return true;
   }

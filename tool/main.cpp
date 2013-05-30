@@ -32,7 +32,7 @@ int main(int argc, const char **argv) {
 
   string idx_name = string(argv[1]) + ".idx";
 	ofstream os(idx_name.c_str());
-	t->write(os);
+	t->save(os);
 
 	is.close();
 	delete t;

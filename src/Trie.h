@@ -28,10 +28,13 @@ class Trie {
   uint64_t value_count() {  return _value_count;  }
   void clear();
 
+  const std::string &get_largest_key() const {  return _largest_key;  }
+
  private:
   TrieNode *_root;
   uint64_t _node_count;
   uint64_t _value_count;
+  std::string _largest_key;
 };
 
 #endif

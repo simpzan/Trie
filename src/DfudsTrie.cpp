@@ -3,9 +3,67 @@
 
 using namespace std;
 
+void DfudsTrieLCP::read(istream &is) {
+  DfudsTrie::read(is);
+  _offsets.read(is);
+
+  //display();
+}
+
+uint64_t DfudsTrieLCP::findLCP(const char *key, uint8_t *lcp) const {
+  uint64_t offset = 1;
+  if (lcp && *lcp) {
+    offset = _offsets[*lcp - 1];
+    key += *lcp;
+  }
+  int key_len = 0;
+  bool found = _followKey(key, offset, &key_len);
+  if (lcp)  *lcp += key_len;
+  if (!found)  return 0;
+
+  return _keyRank(offset);
+}
+
+uint64_t DfudsTrieLCP::rightNearFindLCP(const char *key, uint8_t *lcp) const {
+  uint64_t offset = 1;
+  if (lcp && *lcp) {
+    offset = _offsets[*lcp - 1];
+    key += *lcp;
+  }
+  int keyLen = 0;
+  int depth = 0;
+  bool found = _followKey(key, offset, &keyLen, &depth);
+  if (!found) {
+    uint8_t ch = key[keyLen];
+    uint8_t rank = _childLowerBound(offset, ch);
+    if (rank != 0) {
+      offset = _childSelect(offset, rank);
+    }
+    else {
+      offset = _generalizedSibling(offset); 
+      keyLen = depth;
+    }
+    if (offset == 0) {
+      return 0;
+    } 
+  }
+  if (lcp)  *lcp += keyLen;
+
+  uint64_t rank = _keyRank(offset - 1) + 1;
+  return rank;
+}
+
+uint64_t DfudsTrie::findLCP(const char *key, uint8_t *lcp) const {
+  return find(key);
+}
+
+uint64_t DfudsTrie::rightNearFindLCP(const char *key, uint8_t *lcp) const {
+  return rightNearFind(key);
+}
+
 uint64_t DfudsTrie::find(const char *key) const {
   uint64_t offset = 1;
-  bool found = _followKey(key, &offset, NULL);
+  bool found = _followKey(key, offset, NULL);
   if (!found)  return 0;
 
   return _keyRank(offset);
@@ -14,7 +72,7 @@ uint64_t DfudsTrie::find(const char *key) const {
 uint64_t DfudsTrie::rightNearFind(const char *key) const {
   uint64_t offset = 1;
   int keyLen = 0;
-  bool found = _followKey(key, &offset, &keyLen);
+  bool found = _followKey(key, offset, &keyLen);
   if (!found) {
     uint8_t ch = key[keyLen];
     uint8_t rank = _childLowerBound(offset, ch);
@@ -49,6 +107,7 @@ void DfudsTrie::select(uint64_t rank, string &key) const {
   }
 }
 
+
 void DfudsTrie::read(istream &is) {
   _dfuds.read(is);
   _labels.read(is);
@@ -75,29 +134,54 @@ void DfudsTrie::clear() {
   _is_keys.clear();
 }
 
-void DfudsTrie::display(ostream &os) const {
-  os << "Dfuds: ";
-  _dfuds.display(os);
-  os << "Labels: ";
-  _labels.display();
-  os << "IsKeys: ";
-  _is_keys.display(os);
-  os << endl;
+void DfudsTrie::display() const {
+  string key;
+  select(1, key);
+  cout << "first: " << key << endl;
+  int count = _is_keys.rank1(_is_keys.count() - 1);
+  select(count, key);
+  cout << "last: " << key << endl;
+
+/*  ostream &os = cout;*/
+  //os << "Dfuds: ";
+  //_dfuds.display(os);
+  //os << "Labels: ";
+  //_labels.display();
+  //os << "IsKeys: ";
+  //_is_keys.display(os);
+  /*os << endl;*/
 }
 
-bool DfudsTrie::_followKey(const char *key, uint64_t *id, int *prefixLen) const {
+void DfudsTrie::computeOffsets(const string &key, 
+    Vector<uint32_t> &offsets) const {
+  int key_len = key.size();
+  uint32_t offset = 1;
+  for (int i = 0; i < key_len; ++i) {
+    uint8_t rank = _childRank(offset, key[i]);
+    assert(rank);
+    offset = _childSelect(offset, rank);
+    assert(offset);
+    offsets[i] = offset;
+  }
+}
+
+bool DfudsTrie::_followKey(const char *key, 
+    uint64_t &id, int *prefixLen, int *depth) const {
   int keyLen = strlen(key);
-  uint64_t offset = 1;
+  uint64_t offset = id;
   int ki = 0;
+  int last = 0;
   for (; ki < keyLen; ki++) {
     uint8_t ch = key[ki];
     uint8_t rank = _childRank(offset, ch);
     if (rank == 0)  break;
+    if (!_dfuds.bitAt(offset + rank))  last = ki;
 
     offset = _childSelect(offset, rank);
   }
-  if (id)  *id = offset;
+  id = offset;
   if (prefixLen)  *prefixLen = ki;
+  if (depth) *depth = last;
   return ki == keyLen;
 }
 

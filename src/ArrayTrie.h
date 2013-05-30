@@ -6,8 +6,8 @@
 
 class ArrayTrie :public Trie {
 public:
-	ArrayTrie(): Trie(new ArrayTrieNode) {};
-	virtual ~ArrayTrie() {};
+	ArrayTrie(): Trie(new ArrayTrieNode) {}
+	virtual ~ArrayTrie() {}
 };
 
 #endif

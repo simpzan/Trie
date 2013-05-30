@@ -1,17 +1,10 @@
 #include "FrontCoder.h"
 #include <algorithm>
+#include "utils.h"
 
 using namespace std;
 
 namespace {
-
-uint8_t computeLCP(const char *lastKey, const char *thisKey) {
-  int count = min(strlen(lastKey), strlen(thisKey));
-  for (int i = 0; i < count; ++i) {
-    if (lastKey[i] != thisKey[i])  return i;
-  }
-  return count;
-}
 
 int compareString(const char *l, const char *r) {
   int diff =0;

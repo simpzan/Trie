@@ -5,6 +5,7 @@
 #include "ConstBitVector.h"
 #include "ConstBalancedBitVector.h"
 #include "ConstVector.h"
+#include "Vector.h"
 #include "Interface.h"
 
 class DfudsTrie {
@@ -21,27 +22,49 @@ class DfudsTrie {
   // not efficient yet, cause there's no bit vector select index.
   void select(uint64_t rank, std::string &key) const;
 
-  void read(std::istream &is);
+  virtual void read(std::istream &is);
   uint32_t mmap(const uint8_t *address);
   void clear();
 
-  void display(std::ostream &os) const;
+  void display() const;
+  void computeOffsets(const std::string &key, Vector<uint32_t> &offsets) const;
+  // return the rank of the key in this trie. 
+  // return 0, if the key does not exist.
+  virtual uint64_t findLCP(const char *key, uint8_t *lcp) const;
+  virtual uint64_t rightNearFindLCP(const char *key, uint8_t *lcp) const;
 
- private:
-  uint8_t _degree(uint64_t id) const;
+ protected:
   uint8_t _childRank(uint64_t id, uint8_t ch) const;
-  uint8_t _childLowerBound(uint64_t id, uint8_t ch) const;
   uint64_t _childSelect(uint64_t id, uint8_t rank) const;
+  bool _followKey(const char *key, uint64_t &id, int *prefixLen, int *depth = NULL) const;
   uint64_t _keyRank(uint64_t id) const;
-  bool _followKey(const char *key, uint64_t *id, int *prefixLen) const;
+  uint8_t _degree(uint64_t id) const;
+  uint8_t _childLowerBound(uint64_t id, uint8_t ch) const;
   uint64_t _generalizedSibling(uint64_t id) const;
 
   uint64_t _parent(uint64_t id) const;
   uint8_t _label(uint64_t parent, uint64_t child) const;
 
+ private:
   ConstBalancedBitVector _dfuds;
   ConstVector<uint8_t> _labels;
   ConstBitVector _is_keys;
+};
+
+class DfudsTrieLCP : public DfudsTrie {
+  public:
+  DfudsTrieLCP() {}
+  ~DfudsTrieLCP() {}
+
+  virtual void read(std::istream &is);
+  // return the rank of the key in this trie. 
+  // return 0, if the key does not exist.
+  uint64_t findLCP(const char *key, uint8_t *lcp) const;
+  uint64_t rightNearFindLCP(const char *key, uint8_t *lcp) const;
+
+  private:
+  ConstVector<uint32_t> _offsets;
+
 };
 
 #endif

@@ -1,10 +1,31 @@
 
+
+template <typename T>
+bool DfudsMapLCP<T>::lowerBoundWithLCP(const char *key, T &value, uint8_t *lcp) {
+  value = 0;
+  uint64_t rank = this->_trie->rightNearFindLCP(key, lcp);
+  if (rank == 0)  return false;
+
+  value = this->_values[rank - 1];
+  return true;
+}
+
+template <typename T>
+bool DfudsMapLCP<T>::findWithLCP(const char *key, T &value, uint8_t *lcp) {
+  value = 0;
+  uint64_t rank = this->_trie->findLCP(key, lcp);
+  if (rank == 0)  return false;
+
+  value = this->_values[rank-1];
+  return true;
+}
+
 template <typename T>
 bool DfudsMap<T>::load(std::istream &is) {
   clear();
   is.read((char *)&_is_leaf, 1);
 
-  _trie.read(is);
+  _trie->read(is);
   _values.read(is);
   return true;
 }
@@ -16,11 +37,9 @@ bool DfudsMap<T>::mmap(const uint8_t *address) {
 
 template <typename T>
 bool DfudsMap<T>::find(const char *key, T &value) {
-  uint64_t rank = _trie.find(key);
-  if (rank == 0) {
-    value = 0;
-    return false;
-  }
+  value = 0;
+  uint64_t rank = _trie->find(key);
+  if (rank == 0)  return false;
 
   value = _values[rank-1];
   return true;
@@ -28,11 +47,9 @@ bool DfudsMap<T>::find(const char *key, T &value) {
 
 template <typename T>
 bool DfudsMap<T>::lowerBound(const char *key, T &value) {
-  uint64_t rank = _trie.rightNearFind(key);
-  if (rank == 0) {
-    value = 0;
-    return false;
-  }
+  value = 0;
+  uint64_t rank = _trie->rightNearFind(key);
+  if (rank == 0)  return false;
 
   value = _values[rank - 1];
   return true;
@@ -40,7 +57,7 @@ bool DfudsMap<T>::lowerBound(const char *key, T &value) {
 
 template <typename T>
 void DfudsMap<T>::clear() {
-  _trie.clear();
+  _trie->clear();
   _values.clear();
 }
 

@@ -22,7 +22,13 @@ class MapInterface {
   virtual ~MapInterface() {}
 
   virtual bool find(const char *key, T &value) = 0;
+  virtual bool findWithLCP(const char *key, T &value, uint8_t *lcp) {
+    return find(key, value);
+  }
   virtual bool lowerBound(const char *key, T &value) = 0;
+  virtual bool lowerBoundWithLCP(const char *key, T &value, uint8_t *lcp) {
+    return lowerBound(key, value);
+  }
   virtual bool load(std::istream &is) = 0;
   virtual bool mmap(const uint8_t *address) {  assert(false);  }
   virtual void display() const {}
