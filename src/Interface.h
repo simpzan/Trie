@@ -1,6 +1,7 @@
 #ifndef MAP_INTERFACE_H
 #define MAP_INTERFACE_H
 
+#include <stdint.h>
 #include <cassert>
 #include <vector>
 #include <iostream>

@@ -165,6 +165,7 @@ void DfudsTrie::computeOffsets(const string &key,
   }
 }
 
+// id: inout type. 
 bool DfudsTrie::_followKey(const char *key, 
     uint64_t &id, int *prefixLen, int *depth) const {
   int keyLen = strlen(key);

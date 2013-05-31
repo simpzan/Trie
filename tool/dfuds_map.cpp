@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdio>
+#include <algorithm>
 #include "utils.h"
 #include "timer.h"
 #include "Interface.h"
