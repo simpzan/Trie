@@ -14,7 +14,7 @@ class BTreeNodeBuilder : public MapBuilderInterface<T> {
 
   virtual bool canAddEntry(const char *key, T value);
   virtual void addEntry(const char *key, T value);
-  virtual uint64_t save(std::ostream &os);
+  virtual uint32_t save(std::ostream &os);
   virtual void clear();
 
   virtual bool is_leaf() { return _isLeafNode; }
@@ -89,8 +89,8 @@ void BTreeNodeBuilder<T>::addEntry(const char *key, T value) {
 }
 
 template <typename T>
-uint64_t BTreeNodeBuilder<T>::save(std::ostream &os) {
-  uint64_t offset = os.tellp();
+uint32_t BTreeNodeBuilder<T>::save(std::ostream &os) {
+  uint32_t offset = os.tellp();
   os.write((char *)&_isLeafNode, 1);
   _values.write(os);
   _string_buffer.write(os);
@@ -104,7 +104,7 @@ class BTreeNodeCompressedBuilder : public BTreeNodeBuilder<T> {
   BTreeNodeCompressedBuilder() {}
   ~BTreeNodeCompressedBuilder() {}
 
-  uint64_t save(std::ostream &os) {
+  uint32_t save(std::ostream &os) {
     std::stringstream ss;
     BTreeNodeBuilder<T>::save(ss);
     std::string input = ss.str();

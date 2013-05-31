@@ -13,7 +13,7 @@ class FCNodeBuilder : public MapBuilderInterface<T> {
   virtual ~FCNodeBuilder() {}
 
   virtual bool canAddEntry(const char *key, T value) {
-    uint64_t size = _coder.size() + _values.size() + 1;
+    uint32_t size = _coder.size() + _values.size() + 1;
     return size <= _block_size;
   }
 
@@ -22,8 +22,8 @@ class FCNodeBuilder : public MapBuilderInterface<T> {
     _values.append(value);
   }
 
-  virtual uint64_t save(std::ostream &os) {
-    uint64_t offset = os.tellp();
+  virtual uint32_t save(std::ostream &os) {
+    uint32_t offset = os.tellp();
     os.write((char *)&_isLeafNode, 1);
     _coder.save(os);
     _values.write(os);
@@ -88,7 +88,7 @@ class FCNode : public MapInterface<T> {
     const uint8_t *tmp_address = address;
     _isLeafNode = *tmp_address;
     ++tmp_address;
-    uint64_t consumed_size = _coder.mmap(tmp_address);
+    uint32_t consumed_size = _coder.mmap(tmp_address);
     tmp_address += consumed_size;
     _values.mmap(tmp_address);
   }

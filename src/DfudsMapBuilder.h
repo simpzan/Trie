@@ -16,7 +16,7 @@ class DfudsMapBuilder : public MapBuilderInterface<T>, public TrieVisitorInterfa
 
   virtual bool canAddEntry(const char *key, T value);
   virtual void addEntry(const char *key, T value);
-  virtual uint64_t save(std::ostream &os);
+  virtual uint32_t save(std::ostream &os);
   virtual void clear();
 
   virtual void set_is_leaf(bool is_leaf)  {  _is_leaf = is_leaf;  }
@@ -24,7 +24,7 @@ class DfudsMapBuilder : public MapBuilderInterface<T>, public TrieVisitorInterfa
   virtual void set_block_size(int block_size) {  _block_size = block_size;  }
 
   virtual bool visitNode(TrieNode &aNode);
-  virtual uint64_t sizeWithNewNodeCount(uint32_t count);
+  virtual uint32_t sizeWithNewNodeCount(uint32_t count);
 
  private:
   DfudsTrieBuilder *_trie;

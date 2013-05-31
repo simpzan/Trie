@@ -45,7 +45,7 @@ class MapBuilderInterface {
 
   virtual bool canAddEntry(const char *key, T value) = 0;
   virtual void addEntry(const char *key, T value) = 0;
-  virtual uint64_t save(std::ostream &os) = 0;
+  virtual uint32_t save(std::ostream &os) = 0;
   virtual void clear() = 0;
 
   virtual void set_is_leaf(bool is_leaf) = 0;

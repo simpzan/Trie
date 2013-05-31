@@ -12,12 +12,12 @@ class FrontCoderBuilder {
   ~FrontCoderBuilder() {}
 
   void add(const std::string &key);
-  uint64_t save(std::ostream &os);
+  uint32_t save(std::ostream &os);
   void clear();
 
   const uint8_t *firstKey() const;
-  uint64_t count() const {  return _LCPs.count();  }
-  uint64_t size() const;
+  uint32_t count() const {  return _LCPs.count();  }
+  uint32_t size() const;
 
  private:
   Vector<uint8_t> _LCPs;
@@ -26,7 +26,7 @@ class FrontCoderBuilder {
   std::string _lastKey;
 };
 
-inline uint64_t FrontCoderBuilder::size() const {
+inline uint32_t FrontCoderBuilder::size() const {
   return _LCPs.size() + _suffix_lengths.size() + _suffixes.size();
 }
 
@@ -37,10 +37,10 @@ class FrontCoder {
 
   bool find(const std::string &key, uint32_t &rank);
   bool load(std::istream &is);
-  uint64_t mmap(const uint8_t *address);
+  uint32_t mmap(const uint8_t *address);
   void clear();
   const uint8_t *firstKey() const;
-  uint64_t count() const {  return _LCPs.count();  }
+  uint32_t count() const {  return _LCPs.count();  }
   void display() const;
   
   private:
@@ -53,7 +53,7 @@ inline void FrontCoder::display() const {
   std::ostream &os = std::cout;
   int count = this->count();
   std::string lastKey;
-  uint64_t offset = 0;
+  uint32_t offset = 0;
   for (int i = 0; i < count; ++i) {
     std::string key(lastKey.c_str(), _LCPs[i]);
     key += (char *)_suffixes.data() + offset;
@@ -84,15 +84,15 @@ inline bool FrontCoder::load(std::istream &is) {
   return true;
 }
 
-inline uint64_t FrontCoderBuilder::save(std::ostream &os) {
-  uint64_t offset = os.tellp();
+inline uint32_t FrontCoderBuilder::save(std::ostream &os) {
+  uint32_t offset = os.tellp();
   _LCPs.write(os);
   _suffix_lengths.write(os);
   _suffixes.write(os);
   return offset;
 }
 
-inline uint64_t FrontCoder::mmap(const uint8_t *address) {
+inline uint32_t FrontCoder::mmap(const uint8_t *address) {
   const uint8_t *tmp_address = address;
   uint32_t consumed_size = _LCPs.mmap(tmp_address);
   tmp_address += consumed_size;

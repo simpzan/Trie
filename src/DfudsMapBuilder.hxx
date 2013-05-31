@@ -2,13 +2,13 @@
 
 template <typename T>
 bool DfudsMapBuilder<T>::visitNode(TrieNode &node) {
-	uint64_t value = node.getValue();
+	uint32_t value = node.getValue();
 	if (value)  _values.append(value);
 }
 
 template <typename T>
-uint64_t DfudsMapBuilder<T>::save(std::ostream &os) {
-	uint64_t offset = os.tellp();
+uint32_t DfudsMapBuilder<T>::save(std::ostream &os) {
+	uint32_t offset = os.tellp();
 	os.write((char *)&_is_leaf, 1);
 
 	_trie->write(os);
@@ -25,7 +25,7 @@ bool DfudsMapBuilder<T>::canAddEntry(const char *key, T value) {
   // new generated size + existing size.
 	int count_new_node = _trie->root()->countNewNodeWillCreatedWhenInsertKey(key);
 
-	uint64_t size_all = sizeWithNewNodeCount(count_new_node);
+	uint32_t size_all = sizeWithNewNodeCount(count_new_node);
   
   using namespace std;
 
@@ -47,10 +47,10 @@ void DfudsMapBuilder<T>::clear() {
 }
 
 template <typename T>
-uint64_t DfudsMapBuilder<T>::sizeWithNewNodeCount(uint32_t count) {
-	uint64_t size_parent = _trie->sizeWithNewNodeCount(count);
-	uint64_t count_values = _trie->value_count() + 1;
-	uint64_t size_values = Vector<T>::sizeWithCount(count_values);
+uint32_t DfudsMapBuilder<T>::sizeWithNewNodeCount(uint32_t count) {
+	uint32_t size_parent = _trie->sizeWithNewNodeCount(count);
+	uint32_t count_values = _trie->value_count() + 1;
+	uint32_t size_values = Vector<T>::sizeWithCount(count_values);
 	return size_parent + size_values + 1;
 }
 

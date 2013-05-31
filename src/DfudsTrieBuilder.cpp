@@ -39,7 +39,7 @@ void DfudsTrieBuilder::clear() {
   _is_keys.clear();
 }
 
-uint64_t DfudsTrieBuilder::sizeWithNewNodeCount(uint32_t count) {
+uint32_t DfudsTrieBuilder::sizeWithNewNodeCount(uint32_t count) {
   int count_nodes = node_count() + count;
   int size_dfuds = BalancedBitVectorBuilder::sizeWithBitcount(count_nodes * 2);
   int size_is_teminal = BitVectorBuilder::sizeWithBitcount(count_nodes);

@@ -20,7 +20,7 @@ class DfudsTrieBuilder : public Trie, public TrieVisitorInterface {
   void buildDfuds();
   virtual void write(std::ostream &os);
   virtual void clear();
-  virtual uint64_t sizeWithNewNodeCount(uint32_t count);
+  virtual uint32_t sizeWithNewNodeCount(uint32_t count);
 
   virtual bool visitNode(TrieNode &node);
 
