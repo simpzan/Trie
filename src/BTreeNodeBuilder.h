@@ -12,16 +12,14 @@ class BTreeNodeBuilder : public MapBuilderInterface<T> {
   BTreeNodeBuilder() {}
   virtual ~BTreeNodeBuilder() {}
 
-  virtual bool canAddEntry(const char *key, T value);
+  virtual bool canAddEntry(const char *key, T value, uint32_t limit);
   virtual void addEntry(const char *key, T value);
+  virtual void undoAdd();
   virtual uint32_t save(std::ostream &os);
   virtual void clear();
 
   virtual bool is_leaf() { return _isLeafNode; }
   virtual void set_is_leaf(bool isLeafNode) {  _isLeafNode = isLeafNode;  }
-
-  virtual int block_size() {  return _block_size;  }
-  virtual void set_block_size(int block_size) {  _block_size = block_size;  }
 
   uint32_t count() {  return _keys.count();  }
 
@@ -35,13 +33,12 @@ class BTreeNodeBuilder : public MapBuilderInterface<T> {
   Vector<uint32_t> _keys;
 
   bool _isLeafNode;
-  int _block_size;
 };
 
 template <typename T>
-bool BTreeNodeBuilder<T>::canAddEntry(const char *key, T value) {
+bool BTreeNodeBuilder<T>::canAddEntry(const char *key, T value, uint32_t limit) {
   uint32_t size = sizeWithNewEntry(key, value);
-  return size <= _block_size;
+  return size <= limit;
 }
 
 template <typename T>
@@ -86,6 +83,11 @@ void BTreeNodeBuilder<T>::addEntry(const char *key, T value) {
   _keys.insert(lowerBound, offset);
   _string_buffer.appendValues((const uint8_t *)key, strlen(key) + 1);
   _values.insert(lowerBound, value);
+}
+
+template <typename T>
+void BTreeNodeBuilder<T>::undoAdd() {
+  assert(false);
 }
 
 template <typename T>

@@ -8,7 +8,6 @@ typedef uint32_t ValueT;
 
 TEST(BTreeNodeTest, test) {
   BTreeNodeBuilder<ValueT> builder;
-  builder.set_block_size(1024*4);
   builder.set_is_leaf(false);
 
   const char *key = "key";

@@ -43,15 +43,16 @@ class MapBuilderInterface {
   MapBuilderInterface() {}
   virtual ~MapBuilderInterface() {}
 
-  virtual bool canAddEntry(const char *key, T value) = 0;
+  virtual bool canAddEntry(const char *key, T value) {
+    return canAddEntry(key, value, 4096);
+  }
+  virtual bool canAddEntry(const char *key, T value, uint32_t limit) = 0;
   virtual void addEntry(const char *key, T value) = 0;
+  virtual void undoAdd() = 0;
   virtual uint32_t save(std::ostream &os) = 0;
   virtual void clear() = 0;
 
   virtual void set_is_leaf(bool is_leaf) = 0;
-
-  virtual int block_size() = 0;
-  virtual void set_block_size(int block_size) = 0;
 };
 
 template <typename T>

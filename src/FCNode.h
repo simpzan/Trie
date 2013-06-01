@@ -12,14 +12,18 @@ class FCNodeBuilder : public MapBuilderInterface<T> {
   FCNodeBuilder() {}
   virtual ~FCNodeBuilder() {}
 
-  virtual bool canAddEntry(const char *key, T value) {
-    uint32_t size = _coder.size() + _values.size() + 1;
-    return size <= _block_size;
+  virtual bool canAddEntry(const char *key, T value, uint32_t limit) {
+    uint32_t size = _coder.sizeAfterInsertKey(key) + _values.size() + sizeof(T);
+    return size + 1 <= limit;
   }
 
   virtual void addEntry(const char *key, T value) {
     _coder.add(key);
     _values.append(value);
+  }
+
+  virtual void undoAdd() {
+    assert(false);
   }
 
   virtual uint32_t save(std::ostream &os) {
@@ -38,16 +42,12 @@ class FCNodeBuilder : public MapBuilderInterface<T> {
   virtual bool is_leaf() { return _isLeafNode; }
   virtual void set_is_leaf(bool isLeafNode) {  _isLeafNode = isLeafNode;  }
 
-  virtual int block_size() {  return _block_size;  }
-  virtual void set_block_size(int block_size) {  _block_size = block_size;  }
-
   uint32_t count() {  return _values.count();  }
 
  private:
   FrontCoderBuilder _coder;
   Vector<T> _values;
   bool _isLeafNode;
-  int _block_size;
 };
 
 template <typename T>

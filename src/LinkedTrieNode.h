@@ -6,32 +6,23 @@
 
 class LinkedTrieNode: public TrieNode {
  public:
-  LinkedTrieNode():_value(0) {}
+  LinkedTrieNode() {}
   virtual ~LinkedTrieNode();
 
-  TrieNode *getChildNodeWithLabel(uint8_t ch);
-  void setChildNodeWithLabel(uint8_t ch, TrieNode *node);
+  virtual TrieNode *getChildNodeWithLabel(uint8_t ch);
+  virtual void setChildNodeWithLabel(uint8_t ch, TrieNode *node);
+  virtual int childCount() {  return _children.size();  }
 
-  void setValue(uint64_t value) {  _value = value;  }
-  uint64_t getValue() {  return _value;  }
-
-  LinkedTrieNode *createNode() {
+  virtual void clear();
+  virtual LinkedTrieNode *createNode() {
     LinkedTrieNode *node = new LinkedTrieNode();
     return node;
   }
-
-  uint32_t sizeOfThisNode() {
-    uint32_t size = sizeof(_value) + sizeof(_children);
-    return size;
-  }
-
-  virtual void clear();
 
   std::map<uint8_t, TrieNode *> &children() {  return _children;  }
 
  private:
   std::map<uint8_t, TrieNode*> _children;
-  uint64_t _value;
 };
 
 

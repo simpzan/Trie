@@ -14,22 +14,22 @@ class DfudsMapBuilder : public MapBuilderInterface<T>, public TrieVisitorInterfa
   DfudsMapBuilder(DfudsTrieBuilder *trie) : _is_leaf(false), _trie(trie) {}
   virtual ~DfudsMapBuilder() {  delete _trie;  }
 
-  virtual bool canAddEntry(const char *key, T value);
-  virtual void addEntry(const char *key, T value);
+  virtual bool canAddEntry(const char *key, T value, uint32_t limit);
+  virtual void addEntry(const char *key, T value) { 
+    _trie->addEntry(key, value);  
+  }
+  virtual void undoAdd() {  _trie->undoAdd();  }
   virtual uint32_t save(std::ostream &os);
   virtual void clear();
 
   virtual void set_is_leaf(bool is_leaf)  {  _is_leaf = is_leaf;  }
-  virtual int block_size() {  return _block_size;  }
-  virtual void set_block_size(int block_size) {  _block_size = block_size;  }
 
-  virtual bool visitNode(TrieNode &aNode);
-  virtual uint32_t sizeWithNewNodeCount(uint32_t count);
+  virtual bool visitNode(TrieNode *aNode);
+  virtual uint32_t sizeWithNodeCount(uint32_t count);
 
  private:
   DfudsTrieBuilder *_trie;
   Vector<T> _values;
-  int _block_size;
   bool _is_leaf;
 };
 

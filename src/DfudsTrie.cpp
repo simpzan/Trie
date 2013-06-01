@@ -142,14 +142,14 @@ void DfudsTrie::display() const {
   select(count, key);
   cout << "last: " << key << endl;
 
-/*  ostream &os = cout;*/
-  //os << "Dfuds: ";
-  //_dfuds.display(os);
-  //os << "Labels: ";
-  //_labels.display();
-  //os << "IsKeys: ";
-  //_is_keys.display(os);
-  /*os << endl;*/
+  ostream &os = cout;
+  os << "Dfuds: ";
+  _dfuds.display(os);
+  os << "Labels: ";
+  _labels.display();
+  os << "IsKeys: ";
+  _is_keys.display(os);
+  os << endl;
 }
 
 void DfudsTrie::computeOffsets(const string &key, 

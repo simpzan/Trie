@@ -6,11 +6,11 @@ using namespace std;
 
 void DfudsTrieBuilder::buildDfuds() {
   _dfuds.append(false);
-  root()->traversePreorderly(*this);
+  traversePreorderly(*this);
 }
 
-bool DfudsTrieBuilder::visitNode(TrieNode &aNode) {
-  LinkedTrieNode *node = (LinkedTrieNode *)&aNode;
+bool DfudsTrieBuilder::visitNode(TrieNode *aNode) {
+  LinkedTrieNode *node = (LinkedTrieNode *)aNode;
   map<uint8_t, TrieNode *> &children = node->children();
   typedef map<uint8_t, TrieNode *>::const_iterator IteratorType;
   for(IteratorType itr = children.begin(); itr != children.end(); ++itr) {
@@ -22,7 +22,6 @@ bool DfudsTrieBuilder::visitNode(TrieNode &aNode) {
   bool isTerminal = node->getValue() != 0;
   _is_keys.append(isTerminal);
 }
-
 
 void DfudsTrieBuilder::write(ostream &os) {
   buildDfuds();
@@ -39,8 +38,8 @@ void DfudsTrieBuilder::clear() {
   _is_keys.clear();
 }
 
-uint32_t DfudsTrieBuilder::sizeWithNewNodeCount(uint32_t count) {
-  int count_nodes = node_count() + count;
+uint32_t DfudsTrieBuilder::sizeWithNodeCount(uint32_t count) {
+  int count_nodes = count;
   int size_dfuds = BalancedBitVectorBuilder::sizeWithBitcount(count_nodes * 2);
   int size_is_teminal = BitVectorBuilder::sizeWithBitcount(count_nodes);
   int size_labels = Vector<uint8_t>::sizeWithCount(count_nodes - 1);
@@ -48,7 +47,7 @@ uint32_t DfudsTrieBuilder::sizeWithNewNodeCount(uint32_t count) {
 }
 
 void DfudsTrieLCPBuilder::_buildWriteOffsets(stringstream &ss) {
-  string key = Trie::get_largest_key();
+  string key = Trie::get_last_key();
   Vector<uint32_t> offsets(key.size());
 
   DfudsTrie trie;

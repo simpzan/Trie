@@ -7,7 +7,6 @@
 #include "Interface.h"
 #include "file-map.h"
 
-#include "ArrayTrie.h"
 #include "LinkedTrie.h"
 
 #include "BTreeNodeBuilder.h"
@@ -19,6 +18,8 @@
 #include "DfudsMapBuilder.h"
 
 #include "FCNode.h"
+
+#define NODESIZE 256
 
 using namespace std;
 typedef uint32_t ValueT;

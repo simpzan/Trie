@@ -18,6 +18,7 @@ class FrontCoderBuilder {
   const uint8_t *firstKey() const;
   uint32_t count() const {  return _LCPs.count();  }
   uint32_t size() const;
+  uint32_t sizeAfterInsertKey(const std::string &key);
 
  private:
   Vector<uint8_t> _LCPs;

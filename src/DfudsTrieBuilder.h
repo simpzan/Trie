@@ -20,9 +20,9 @@ class DfudsTrieBuilder : public Trie, public TrieVisitorInterface {
   void buildDfuds();
   virtual void write(std::ostream &os);
   virtual void clear();
-  virtual uint32_t sizeWithNewNodeCount(uint32_t count);
+  virtual uint32_t sizeWithNodeCount(uint32_t count);
 
-  virtual bool visitNode(TrieNode &node);
+  virtual bool visitNode(TrieNode *node);
 
  private:
   BalancedBitVectorBuilder _dfuds;

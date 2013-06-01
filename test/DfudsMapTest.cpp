@@ -36,6 +36,19 @@ TEST(DfudsMapTest, t) {
 	EXPECT_EQ(8, value);
 }
 
+TEST(DfudsMapTest, canAdd) {
+	DfudsMapBuilder<ValueT> builder;	
+	builder.addEntry("zzd", 3);
+	builder.addEntry("gook", 4);
+	builder.addEntry("test", 44);
+
+  builder.canAddEntry("testing", 333, 4096);
+	stringstream ss;
+	builder.save(ss);
+  uint32_t size = ss.str().size();
+  
+}
+
 TEST(DfudsMapTest, test) {
 	DfudsMapBuilder<ValueT> builder;	
 	builder.addEntry("zzd", 3);

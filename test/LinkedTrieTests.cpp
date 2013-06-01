@@ -28,19 +28,5 @@ TEST_F(LinkedTrieTests, setGetEntry) {
 	EXPECT_EQ(expected, value);
 }
 
-TEST_F(LinkedTrieTests, size) {
-
-	uint32_t size = _node->sizeInByte();
-	uint32_t expected = 56;
-	EXPECT_EQ(expected, size);
-
-	const char *key = "abc";
-	uint64_t value = 33;
-	_node->addEntry(key, value);
-
-	size = _node->sizeInByte();
-	EXPECT_LT(expected, size);
-
-}
 
 

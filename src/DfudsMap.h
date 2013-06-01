@@ -28,10 +28,10 @@ class DfudsMap : public MapInterface<T> {
 
  protected:
   DfudsTrie *_trie;
-  DACWrapper _values;
+  Vector<T> _values;
+  //DACWrapper _values;
 
  private:
-  //Vector<T> _values;
   bool _is_leaf;
 };
 

@@ -2,42 +2,32 @@
 #include <iostream>
 
 using namespace std;
-
 typedef map<uint8_t, TrieNode*>::const_iterator ChildrenMapIterator;
 
-namespace {
-
-void destory(map<uint8_t, TrieNode *> &children) {
-	for (ChildrenMapIterator itr = children.begin(), end = children.end();
-			itr!=end;
-			++itr) {
-		TrieNode *child = itr->second;
-		delete child;
-	}
-}
-
-} // namespace
-
-
 LinkedTrieNode::~LinkedTrieNode() {
-	destory(_children);
+  clear();
 }
 
 TrieNode *LinkedTrieNode::getChildNodeWithLabel(uint8_t ch) {
 	ChildrenMapIterator itr = _children.find(ch);
-	if (itr == _children.end()) {
-		return NULL;
-	}
+	if (itr == _children.end())  return NULL;
 
 	return itr->second;
 }
 
 void LinkedTrieNode::setChildNodeWithLabel(uint8_t ch, TrieNode *node) {
+  TrieNode *existing = getChildNodeWithLabel(ch);
 	_children[ch] = node;
 }
 
 void LinkedTrieNode::clear() {
-	::destory(_children);
+	for (ChildrenMapIterator itr = _children.begin(), end = _children.end();
+			itr != end;
+			++itr) {
+		TrieNode *child = itr->second;
+    child->clear();
+		delete child;
+	}
 	_children.clear();
-	_value = 0;
+  TrieNode::clear();
 }

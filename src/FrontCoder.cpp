@@ -22,6 +22,13 @@ int compareString(const char *l, const char *r) {
 
 }
 
+uint32_t FrontCoderBuilder::sizeAfterInsertKey(const std::string &key) {
+  uint8_t lcp = computeLCP(_lastKey.c_str(), key.c_str());
+  uint8_t suffix_len = key.size() - lcp + 1;
+  uint32_t size_this = suffix_len + 1 + 1;
+  return size_this + size();
+}
+
 void FrontCoderBuilder::add(const std::string &key) {
   const std::string &thisKey = key;
   const std::string &lastKey = _lastKey;

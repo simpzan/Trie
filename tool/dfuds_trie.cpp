@@ -1,80 +1,49 @@
-#include <iostream>
-#include <fstream>
-#include <cstdio>
-#include "ArrayTrie.h"
-#include "LinkedTrie.h"
 #include "DfudsTrieBuilder.h"
 #include "DfudsTrie.h"
 #include "utils.h"
-#include "timer.h"
-#include "Interface.h"
 
 using namespace std;
 
-bool build(const string &source_filename, const string &idx_filename) {
- 	ifstream is(source_filename.c_str());
-	DfudsTrieBuilder *t = new DfudsTrieBuilder;
-	char word[NODESIZE];
-	uint64_t count = 0;
-	while (is.getline(word, NODESIZE)) {
-		++count;
-		t->addEntry(word, count);
+void build(const char *file, const string &idx, vector<string> &tokens) {
+  
+  DfudsTrieBuilder builder;
+  int count = tokens.size();
+  for (int i = 0; i < count; ++i) {
+    builder.addEntry(tokens[i].c_str(), i);
+  }
 
-		if (count%10000 == 0) {
-			cout << count << " size: " << endl; //<< t->sizeInByte() << endl;
-		}
-	}
-	ofstream os(idx_filename.c_str());
-	t->write(os);
-	delete t; 
-  return true;
+  ofstream os(idx.c_str());
+  builder.write(os);
 }
 
-void search(const string &idx_filename, const vector<string> &tokens) {
-  ifstream is(idx_filename.c_str());
+void search(const char *idx, const vector<string> &tokens) {
+  ifstream is(idx);
+  assert(is.good());
   DfudsTrie trie;
   trie.read(is);
-  
-  string token;
-  uint64_t value;
+
+  uint32_t value = 0;
   int count = tokens.size();
-
-  Timer timer;
   for (int i = 0; i < count; ++i) {
-    token = tokens[i];
-    value = trie.find(token.c_str());
+    value = trie.find(tokens[i].c_str());
+    assert(value == i);
   }
-  timer.Stop();
-  cout << "count:" << count << endl;
-  cout << "cpu time(s):" << timer.ElapsedTimeCPU() / 1000000
-    << " avg(us):" << timer.ElapsedTimeCPU()/count << endl
-    << "wall time(s):" << timer.ElapsedTime() / 1000000
-    << " avg(us):" << timer.ElapsedTime()/count << endl;
+  cout << "search done" << endl;
 }
 
-int main(int argc, const char **argv) {
-	if (argc < 2) {
-		cout << "Usage: " << argv[0] << " wordlist" << endl;
-    exit(1);
-	}
+int main(int argc, const char *argv[])
+{
+  cout << "test" << endl;
   
-  string source_filename(argv[1]);
-  string idx_filename = source_filename + ".idx";
-  bool result;
-//  = build(source_filename, idx_filename);
-//  assert(result);
-//  cout << "build done" << endl;
+  vector<string> tokens;  
+  const char *file = "/Volumes/Docs/workspace/testbed/ArrayTrie/words.sorted";
+  loadTokensFromFile(file, tokens);
 
-  vector<string> tokens;
-  result = loadTokensFromFile(argv[1], tokens);
-  if (!result) {
-    cout << "load token failed" << endl;
-    return -1;
-  }
-  cout << "tokens count:" << tokens.size() << endl;
-  cout << tokens[0] << endl;
-  search(idx_filename, tokens);
-
-	return 0;
+  string idx(file);
+  idx += ".dfuds.trie";
+  //build(file, idx, tokens);
+  
+  search(idx.c_str(), tokens);
+  
+  return 0;
 }
-
