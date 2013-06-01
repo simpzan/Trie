@@ -14,9 +14,9 @@ uint32_t DfudsMapBuilder<T>::save(std::ostream &os) {
 	_trie->write(os);
 
   _trie->traversePreorderly(*this);
-  //DACWrapper dac(_values.data(), _values.count());
-  //dac.write(os);
-  _values.write(os);
+  DACWrapper dac(_values.data(), _values.count());
+  dac.write(os);
+  //_values.write(os);
 
   return offset;
 }
