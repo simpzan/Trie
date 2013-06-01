@@ -5,7 +5,6 @@
 using namespace std;
 
 void build(const char *file, const string &idx, vector<string> &tokens) {
-  
   DfudsTrieBuilder builder;
   int count = tokens.size();
   for (int i = 0; i < count; ++i) {
@@ -14,6 +13,8 @@ void build(const char *file, const string &idx, vector<string> &tokens) {
 
   ofstream os(idx.c_str());
   builder.write(os);
+  
+  cout << "build done" << endl;
 }
 
 void search(const char *idx, const vector<string> &tokens) {
@@ -31,19 +32,16 @@ void search(const char *idx, const vector<string> &tokens) {
   cout << "search done" << endl;
 }
 
-int main(int argc, const char *argv[])
-{
-  cout << "test" << endl;
-  
-  vector<string> tokens;  
-  const char *file = "/Volumes/Docs/workspace/testbed/ArrayTrie/words.sorted";
+int main(int argc, const char *argv[]) {
+  vector<string> tokens;
+  const char *file = "/Volumes/Docs/workspace/testbed/Trie/words.sorted";
   loadTokensFromFile(file, tokens);
 
   string idx(file);
   idx += ".dfuds.trie";
-  //build(file, idx, tokens);
+  build(file, idx, tokens);
   
-  search(idx.c_str(), tokens);
+//  search(idx.c_str(), tokens);
   
   return 0;
 }

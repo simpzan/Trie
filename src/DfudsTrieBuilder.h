@@ -9,12 +9,12 @@
 #include "BalancedBitVectorBuilder.h"
 #include "Vector.h"
 #include "Trie.h"
-#include "LinkedTrieNode.h"
+#include "LinkedTrie.h"
 #include "DACWrapper.h"
 
-class DfudsTrieBuilder : public Trie, public TrieVisitorInterface {
+class DfudsTrieBuilder : public LinkedTrie, public TrieVisitorInterface {
  public:
-  DfudsTrieBuilder() : Trie(new LinkedTrieNode) {}
+  DfudsTrieBuilder() {}
   virtual ~DfudsTrieBuilder() {}
 
   void buildDfuds();

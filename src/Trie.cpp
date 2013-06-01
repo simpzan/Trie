@@ -67,7 +67,7 @@ void Trie::undoAdd() {
   }
   char ch = _last_key[i];
   assert(node->getChildNodeWithLabel(ch) == node);
-  node->setChildNodeWithLabel(ch, NULL);
+  node->removeChildNodeWithLabel(ch);
 
   TrieNode *node_to_delete = nodes[i+1];
   node_to_delete->clear();

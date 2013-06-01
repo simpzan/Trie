@@ -1,3 +1,6 @@
+#ifndef DFUDS_MAP_BUILDER_HXX
+#define DFUDS_MAP_BUILDER_HXX
+
 #include "DACWrapper.h"
 
 template <typename T>
@@ -12,8 +15,8 @@ uint32_t DfudsMapBuilder<T>::save(std::ostream &os) {
 	os.write((char *)&_is_leaf, 1);
 
 	_trie->write(os);
-
   _trie->traversePreorderly(*this);
+
   DACWrapper dac(_values.data(), _values.count());
   dac.write(os);
   //_values.write(os);
@@ -42,3 +45,5 @@ uint32_t DfudsMapBuilder<T>::sizeWithNodeCount(uint32_t count) {
 	uint32_t size_values = Vector<T>::sizeWithCount(count_values);
 	return size_parent + size_values + 1;
 }
+
+#endif

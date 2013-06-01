@@ -24,6 +24,7 @@ class TrieNode {
 
   virtual TrieNode *getChildNodeWithLabel(uint8_t ch) = 0;
   virtual void setChildNodeWithLabel(uint8_t ch, TrieNode* node) = 0;
+  virtual void removeChildNodeWithLabel(uint8_t ch) = 0;
   virtual int childCount() = 0;
 
   virtual void clear() {  _value = 0;  };
@@ -32,9 +33,9 @@ class TrieNode {
   TrieValueT getValue() {  return _value;  };
   void setValue(TrieValueT value) {  _value = value;  }
 
-  void traversePreorderly(TrieVisitorInterface &visitor);
-  void getStringsInSubtrie(const std::string &prefix, 
-      std::map<std::string, TrieValueT>& entries);
+  virtual void traversePreorderly(TrieVisitorInterface &visitor) = 0;
+  virtual void getStringsInSubtrie(const std::string &prefix, 
+      std::map<std::string, TrieValueT>& entries) = 0;
 
  private:
   TrieValueT _value;
