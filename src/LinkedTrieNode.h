@@ -30,6 +30,5 @@ class LinkedTrieNode: public TrieNode {
   std::map<uint8_t, TrieNode*> _children;
 };
 
-
 #endif
 

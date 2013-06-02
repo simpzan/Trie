@@ -18,7 +18,7 @@ TrieNode *LinkedTrieNode::getChildNodeWithLabel(uint8_t ch) {
 
 void LinkedTrieNode::setChildNodeWithLabel(uint8_t ch, TrieNode *node) {
   assert(node);
-  removeChildNodeWithLabel(ch);
+  //removeChildNodeWithLabel(ch);
 	_children[ch] = node;
 }
 
@@ -31,13 +31,13 @@ void LinkedTrieNode::removeChildNodeWithLabel(uint8_t ch) {
 }
 
 void LinkedTrieNode::clear() {
-	for (ChildrenMapIterator itr = _children.begin(), end = _children.end();
-			itr != end;
-			++itr) {
-		TrieNode *child = itr->second;
-    child->clear();
-		delete child;
-	}
+ /* for (ChildrenMapIterator itr = _children.begin(), end = _children.end();*/
+			//itr != end;
+			//++itr) {
+		//TrieNode *child = itr->second;
+    //child->clear();
+		//delete child;
+	/*}*/
 	_children.clear();
   TrieNode::clear();
 }
