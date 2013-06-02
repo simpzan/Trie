@@ -1,8 +1,13 @@
 #ifndef LINKEDTRIENODE_H
 #define LINKEDTRIENODE_H
 
+#include <stdint.h>
+#include <boost/ptr_container/ptr_map.hpp>
 #include <map>
 #include "TrieNode.h"
+
+using boost::ptr_map;
+typedef ptr_map<uint8_t, TrieNode>::const_iterator ChildrenMapIterator;
 
 class LinkedTrieNode: public TrieNode {
  public:
@@ -24,10 +29,15 @@ class LinkedTrieNode: public TrieNode {
   virtual void getStringsInSubtrie(const std::string &prefix, 
       std::map<std::string, TrieValueT> &entries);
 
-  std::map<uint8_t, TrieNode *> &children() {  return _children;  }
-
+  void getLabels(std::vector<uint8_t> &labels) {
+    for (ChildrenMapIterator itr = _children.begin(), end = _children.end();
+        itr != end;
+        ++itr) {
+      labels.push_back(itr->first);
+    }
+  }
  private:
-  std::map<uint8_t, TrieNode*> _children;
+  boost::ptr_map<uint8_t, TrieNode> _children;
 };
 
 #endif
