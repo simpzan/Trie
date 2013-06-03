@@ -11,11 +11,12 @@ void DfudsTrieBuilder::buildDfuds() {
 
 bool DfudsTrieBuilder::visitNode(TrieNode *aNode) {
   LinkedTrieNode *node = (LinkedTrieNode *)aNode;
-  map<uint8_t, TrieNode *> &children = node->children();
-  typedef map<uint8_t, TrieNode *>::const_iterator IteratorType;
-  for(IteratorType itr = children.begin(); itr != children.end(); ++itr) {
+  vector<uint8_t> labels;
+  node->getLabels(labels);
+  int count = labels.size();
+  for (int i = 0; i < count; ++i) {
     _dfuds.append(false);
-    _labels.append(itr->first);
+    _labels.append(labels[i]);
   }
   _dfuds.append(true);
 
