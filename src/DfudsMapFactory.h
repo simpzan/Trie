@@ -1,9 +1,9 @@
 #ifndef DFUDS_MAP_FACTORY_H
 #define DFUDS_MAP_FACTORY_H
 
+#include "DfudsMapBuilder.h"
 #include "Interface.h"
 #include "DfudsMap.h"
-#include "DfudsMapBuilder.h"
 
 template <typename T>
 class DfudsMapFactory : public MapFactory<T> {
