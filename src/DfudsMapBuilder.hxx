@@ -43,6 +43,7 @@ uint32_t DfudsMapBuilder<T>::sizeWithNodeCount(uint32_t count) {
 
 	uint32_t count_values = _trie->value_count() + 1;
 	uint32_t size_values = Vector<T>::sizeWithCount(count_values);
+  size_values /= 4;
 	return size_parent + size_values + 1;
 }
 
