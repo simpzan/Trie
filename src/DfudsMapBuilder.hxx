@@ -7,6 +7,7 @@ template <typename T>
 bool DfudsMapBuilder<T>::visitNode(TrieNode *node) {
 	uint32_t value = node->getValue();
 	if (value)  _values.append(value);
+  return true;
 }
 
 template <typename T>

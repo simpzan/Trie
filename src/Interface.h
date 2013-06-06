@@ -59,7 +59,7 @@ template <typename T>
 class MapFactoryInterface {
  public:
   MapFactoryInterface() {}
-  ~MapFactoryInterface() {}
+  virtual ~MapFactoryInterface() {}
 
   virtual MapInterface<T>* newMap() = 0;
   virtual MapBuilderInterface<T>* newMapBuilder() = 0;

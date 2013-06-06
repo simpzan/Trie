@@ -91,6 +91,7 @@ class FCNode : public MapInterface<T> {
     uint32_t consumed_size = _coder.mmap(tmp_address);
     tmp_address += consumed_size;
     _values.mmap(tmp_address);
+    return true;
   }
 
   virtual bool is_leaf() { return _isLeafNode; }

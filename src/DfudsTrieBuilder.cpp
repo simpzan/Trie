@@ -22,6 +22,7 @@ bool DfudsTrieBuilder::visitNode(TrieNode *aNode) {
 
   bool isTerminal = node->getValue() != 0;
   _is_keys.append(isTerminal);
+  return true;
 }
 
 void DfudsTrieBuilder::write(ostream &os) {
