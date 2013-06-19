@@ -34,21 +34,21 @@ void LinkedTrieNode::clear() {
   TrieNode::clear();
 }
 
-void LinkedTrieNode::traversePreorderly(TrieVisitorInterface &visitor) {
-   visitor.visitNode(this);
+void LinkedTrieNode::traverseDFS(TrieNodeVisitorInterface &visitor) {
+   visitor.visitNode(*this);
 
    for (ChildrenMapIterator itr = _children.begin(), end = _children.end();
        itr != end;
        ++itr) {
      TrieNode *node = (TrieNode *)itr->second;
      assert(node);
-     node->traversePreorderly(visitor);
+     node->traverseDFS(visitor);
    }
 }
 
 void LinkedTrieNode::getStringsInSubtrie(const string &prefix, 
-    map<string, TrieValueT> &entries) {
-  TrieValueT value = getValue();
+    map<string, TrieValueType> &entries) {
+  TrieValueType value = getValue();
   if (value)  entries[prefix] = value;
 
   for (ChildrenMapIterator itr = _children.begin(), end = _children.end();

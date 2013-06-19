@@ -5,19 +5,9 @@
 #include <string>
 #include <vector>
 #include <map>
+#include "TrieNodeInterface.h"
 
-typedef uint64_t TrieValueT;
-
-class TrieNode;
-class TrieVisitorInterface {
- public:
-  TrieVisitorInterface() {}
-  virtual ~TrieVisitorInterface() {}
-
-  virtual bool visitNode(TrieNode *node) = 0;
-};
-
-class TrieNode {
+class TrieNode : public TrieNodeInterface {
  public:
   TrieNode() : _value(0) {}
   virtual ~TrieNode() {}
@@ -30,15 +20,15 @@ class TrieNode {
   virtual void clear() {  _value = 0;  };
   virtual TrieNode *createNode() = 0;
 
-  TrieValueT getValue() {  return _value;  };
-  void setValue(TrieValueT value) {  _value = value;  }
+  virtual TrieValueType getValue() {  return _value;  };
+  virtual void setValue(TrieValueType value) {  _value = value;  }
 
-  virtual void traversePreorderly(TrieVisitorInterface &visitor) = 0;
+  virtual void traverseDFS(TrieNodeVisitorInterface &visitor) = 0;
   virtual void getStringsInSubtrie(const std::string &prefix, 
-      std::map<std::string, TrieValueT>& entries) = 0;
+      std::map<std::string, TrieValueType>& entries) = 0;
 
  private:
-  TrieValueT _value;
+  TrieValueType _value;
 };
 
 #endif

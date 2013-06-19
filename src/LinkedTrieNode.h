@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 #include <boost/ptr_container/ptr_map.hpp>
-#include <map>
 #include "TrieNode.h"
 
 using boost::ptr_map;
@@ -14,6 +13,9 @@ class LinkedTrieNode: public TrieNode {
   LinkedTrieNode() {}
   virtual ~LinkedTrieNode();
 
+  virtual TrieNodeInterface *getChildWithCharLabel(uint8_t ch) {
+    return getChildNodeWithLabel(ch);
+  }
   virtual TrieNode *getChildNodeWithLabel(uint8_t ch);
   virtual void setChildNodeWithLabel(uint8_t ch, TrieNode *node);
   virtual void removeChildNodeWithLabel(uint8_t ch);
@@ -25,17 +27,19 @@ class LinkedTrieNode: public TrieNode {
     return node;
   }
 
-  virtual void traversePreorderly(TrieVisitorInterface &visitor);
+  virtual void traverseDFS(TrieNodeVisitorInterface &visitor);
   virtual void getStringsInSubtrie(const std::string &prefix, 
-      std::map<std::string, TrieValueT> &entries);
+      std::map<std::string, TrieValueType> &entries);
 
-  void getLabels(std::vector<uint8_t> &labels) {
+  void getCharLabels(std::vector<uint8_t> &labels) {
     for (ChildrenMapIterator itr = _children.begin(), end = _children.end();
         itr != end;
         ++itr) {
       labels.push_back(itr->first);
     }
   }
+
+  uint32_t id;
  private:
   boost::ptr_map<uint8_t, TrieNode> _children;
 };
