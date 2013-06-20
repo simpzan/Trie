@@ -1,4 +1,5 @@
 #include "Trie.h"
+#include "utils.h"
 
 using namespace std;
 
@@ -32,6 +33,23 @@ bool Trie::_followKey(const char *key, vector<TrieNode *> &nodes) {
     nodes.push_back(next);
   }
   return true;
+}
+
+void Trie::generateIds(const std::vector<TrieNode *> &nodes, std::vector<uint32_t> &ids) {
+  int count = nodes.size();
+  for (int i = 0; i < count; ++i) {
+    ids.push_back(nodes[i]->get_id());
+  }
+}
+
+void Trie::addKeys(const std::vector<std::string> &labels, std::vector<TrieNode *> &nodes) {
+  int count = labels.size();
+  for (int i = 0; i < count; ++i) {
+    string reversed;
+    reverseKey(labels[i].c_str(), reversed);
+    TrieNode *node = addKey(reversed.c_str());
+    nodes.push_back(node);
+  }
 }
 
 TrieNode *Trie::addKey(const char *key) {
@@ -73,4 +91,16 @@ bool Trie::findEntry(const char *key, TrieValueType &value) {
   return true;
 }
 
+void Trie::computePrefix(TrieNode *node, std::string &label) {
+  LinkedTrieNode *aNode = (LinkedTrieNode *)node;
+  LinkedTrieNode *parent;
+  while (1) {
+    parent = aNode->get_parent();
+    if (parent == NULL)  break;
+
+    uint8_t ch = parent->getLabelWithChild(aNode);
+    label = (char)ch + label;
+    aNode = parent;
+  }
+}
 

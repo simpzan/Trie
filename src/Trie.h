@@ -19,6 +19,8 @@ class Trie : public TrieInterface {
   virtual ~Trie() {  if (_root)  delete _root;  }
 
   TrieNode *addKey(const char *key);
+  void addKeys(const std::vector<std::string> &labels, std::vector<TrieNode *> &nodes);
+  void generateIds(const std::vector<TrieNode *> &nodes, std::vector<uint32_t> &ids);
   virtual void addEntry(const char *key, TrieValueType value);
   virtual void clear();
 
@@ -26,13 +28,13 @@ class Trie : public TrieInterface {
   virtual uint32_t getNodeCount() const {  return _node_count;  }
   virtual uint32_t getKeyCount() const {  return _value_count;  }
 
+  virtual TrieNodeInterface *root() {  return _root;  }
   virtual void traverseDFS(TrieNodeVisitorInterface &visitor) {
     _root->traverseDFS(visitor);  
   }
 
   TrieBfsIterator BfsIterator() {  return TrieBfsIterator(*this);  }
-
-  virtual TrieNodeInterface *root() {  return _root;  }
+  void computePrefix(TrieNode *node, std::string &label);
   
  private:
   bool _followKey(const char *key, std::vector<TrieNode *> &nodes);

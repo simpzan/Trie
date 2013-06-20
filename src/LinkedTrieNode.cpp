@@ -15,10 +15,21 @@ TrieNode *LinkedTrieNode::getChildNodeWithLabel(uint8_t ch) {
 	return (TrieNode *)itr->second;
 }
 
+uint8_t LinkedTrieNode::getLabelWithChild(TrieNode *child) {
+   for (ChildrenMapIterator itr = _children.begin(), end = _children.end();
+       itr != end;
+       ++itr) {
+     if (child == itr->second)  return itr->first;
+   }
+   assert(false);
+}
+
 void LinkedTrieNode::setChildNodeWithLabel(uint8_t ch, TrieNode *node) {
   assert(node);
   //removeChildNodeWithLabel(ch);
 	_children.insert(ch, node);
+  LinkedTrieNode *child = (LinkedTrieNode *)node;
+  child->_parent = this;
 }
 
 void LinkedTrieNode::removeChildNodeWithLabel(uint8_t ch) {
