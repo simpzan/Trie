@@ -2,6 +2,7 @@
 #include <sdsl/util.hpp>
 #include "LoudsTrie.h"
 #include "Trie.h"
+#include "utils.h"
 
 using namespace std;
 using namespace sdsl;
@@ -155,7 +156,6 @@ void LoudsTrie::computePrefix(uint32_t node, std::string &prefix) {
   while (true) {
     this->parent(child, parent, ch);
     //cout << child << endl;
-
     prefix += ch;
     if (parent == root())  break;
     child = parent;
@@ -166,4 +166,31 @@ void LoudsTrie::display() {
   cout << "louds:" << _louds.size() << endl << _louds << endl;
   cout << "labels" << endl;
   _labels.display(cout);
+}
+
+void addKeys(const vector<string> &labels, LinkedTrie &trie, 
+    vector<TrieNode *> &nodes) {
+  int count = labels.size();
+  for (int i = 0; i < count; ++i) {
+    string reversed;
+    reverseKey(labels[i].c_str(), reversed);
+    TrieNode *node = trie.addKey(reversed.c_str());
+    nodes.push_back(node);
+  }
+}
+
+void collectIds(const std::vector<TrieNode *> &nodes, std::vector<uint32_t> &ids) {
+  int count = nodes.size();
+  for (int i = 0; i < count; ++i) {
+    ids.push_back(nodes[i]->get_id());
+  }
+}
+
+void LoudsTrie::convert(const std::vector<std::string> &labels, 
+    std::vector<uint32_t> &ids) {
+  LinkedTrie trie;
+  vector<TrieNode *> nodes;
+  addKeys(labels, trie, nodes);
+  build(trie);
+  collectIds(nodes, ids);
 }

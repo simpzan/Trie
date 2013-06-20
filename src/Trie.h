@@ -12,15 +12,13 @@
 #include "TrieNode.h"
 #include "LinkedTrieNode.h"
 #include "PTrie.h"
+#include "LoudsTrie.h"
 
 class Trie : public TrieInterface {
  public:
   Trie(TrieNode *node) : _root(node), _node_count(1), _value_count(0) {}
   virtual ~Trie() {  if (_root)  delete _root;  }
 
-  TrieNode *addKey(const char *key);
-  void addKeys(const std::vector<std::string> &labels, std::vector<TrieNode *> &nodes);
-  void generateIds(const std::vector<TrieNode *> &nodes, std::vector<uint32_t> &ids);
   virtual void addEntry(const char *key, TrieValueType value);
   virtual void clear();
 
@@ -33,7 +31,7 @@ class Trie : public TrieInterface {
     _root->traverseDFS(visitor);  
   }
 
-  TrieBfsIterator BfsIterator() {  return TrieBfsIterator(*this);  }
+  TrieNode *addKey(const char *key);
   void computePrefix(TrieNode *node, std::string &label);
   
  private:
@@ -45,6 +43,18 @@ class Trie : public TrieInterface {
   uint64_t _node_count;
   uint64_t _value_count;
 };
+
+inline void Trie::clear() {
+  _root->clear();
+  _node_count = 1;
+  _value_count = 0;
+}
+
+inline void Trie::addEntry(const char *key, TrieValueType value) {
+  TrieNode *newNode = addKey(key);
+  newNode->setValue(value);
+  ++_value_count;
+}
 
 class LinkedTrie :public Trie {
   public:

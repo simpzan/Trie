@@ -11,6 +11,8 @@ class LoudsTrie {
   LoudsTrie() {}
   ~LoudsTrie() {}
 
+  void convert(const std::vector<std::string> &labels, 
+      std::vector<uint32_t> &ids);
   bool build(TrieInterface &trie);
   bool load(std::istream &is);
   bool serialize(std::ostream &os) const;

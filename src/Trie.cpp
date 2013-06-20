@@ -3,12 +3,6 @@
 
 using namespace std;
 
-inline void Trie::clear() {
-  _root->clear();
-  _node_count = 1;
-  _value_count = 0;
-}
-
 void Trie::_createNodes(const char *key, TrieNode *node, 
     vector<TrieNode *> &nodes) {
   int count = strlen(key);
@@ -35,23 +29,6 @@ bool Trie::_followKey(const char *key, vector<TrieNode *> &nodes) {
   return true;
 }
 
-void Trie::generateIds(const std::vector<TrieNode *> &nodes, std::vector<uint32_t> &ids) {
-  int count = nodes.size();
-  for (int i = 0; i < count; ++i) {
-    ids.push_back(nodes[i]->get_id());
-  }
-}
-
-void Trie::addKeys(const std::vector<std::string> &labels, std::vector<TrieNode *> &nodes) {
-  int count = labels.size();
-  for (int i = 0; i < count; ++i) {
-    string reversed;
-    reverseKey(labels[i].c_str(), reversed);
-    TrieNode *node = addKey(reversed.c_str());
-    nodes.push_back(node);
-  }
-}
-
 TrieNode *Trie::addKey(const char *key) {
   assert(strlen(key));
 
@@ -70,12 +47,6 @@ TrieNode *Trie::addKey(const char *key) {
   _node_count += node_count;
   
   return nodes.back();
-}
-
-void Trie::addEntry(const char *key, TrieValueType value) {
-  TrieNode *newNode = addKey(key);
-  newNode->setValue(value);
-  ++_value_count;
 }
 
 bool Trie::findEntry(const char *key, TrieValueType &value) {
