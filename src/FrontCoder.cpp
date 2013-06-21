@@ -6,7 +6,9 @@ using namespace std;
 
 namespace {
 
-int compareString(const char *l, const char *r) {
+int compareString(const char*pl, const char *pr) {
+  const uint8_t *l = (const uint8_t *)pl;
+  const uint8_t *r = (const uint8_t *)pr;
   int diff =0;
   while (*l && *r) {
     diff = *l - *r;

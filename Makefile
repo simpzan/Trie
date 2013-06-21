@@ -1,9 +1,8 @@
 CC=g++
-CFLAGS=-O3
 CFLAGS=-ggdb
 SUFFIX=cpp
 INCLUDE= -I src/ -I ../include/
-LIBS=-L ../lib -lleveldb -lDAC -lutils -pthread
+LIBS=-L ../lib -lleveldb -lDAC -lutils -pthread -lsdsl -lcds
 BIN=libArrayTrie.a
 RUN=dfuds_trie
 
@@ -65,6 +64,9 @@ uninstall:
 	rm -f ${INSTALLED_HEADERS}
 	rm -f ../lib/${BIN}
 .PHONY: uninstall
+
+release: CFLAGS=-O3
+release: install
 
 # just print several dummy lines.
 printSeparator:

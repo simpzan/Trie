@@ -102,6 +102,7 @@ inline uint32_t FrontCoder::mmap(const uint8_t *address) {
   tmp_address += consumed_size;
 
   consumed_size = _suffixes.mmap(tmp_address);
+  return true;
 }
 
 inline const uint8_t *FrontCoder::firstKey() const {

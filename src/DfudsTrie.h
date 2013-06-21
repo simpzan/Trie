@@ -1,70 +1,46 @@
 #ifndef DFUDS_TRIE_H
 #define DFUDS_TRIE_H
 
-#include <vector>
-#include "ConstBitVector.h"
-#include "ConstBalancedBitVector.h"
-#include "ConstVector.h"
-#include "Vector.h"
-#include "Interface.h"
+#include <sdsl/int_vector.hpp> // for the bit_vector class
+#include <sdsl/bit_vectors.hpp>
+#include <sdsl/util.hpp> // for counting the set bits in a bit_vector 
+#include <sdsl/rank_support.hpp> // for rank data structures
+#include <sdsl/select_support_mcl.hpp>
+#include <sdsl/bp_support.hpp>
 
-class DfudsTrie {
+#include "PTrieNode.h"
+#include "Vector.h"
+#include "DACWrapper.h"
+#include "SuccinctMap.h"
+
+typedef sdsl::bp_support_sada<256, 32, sdsl::rank_support_v<>, sdsl::select_support_mcl<0, 1> > dfuds_support;
+
+class DfudsTrie : public TrieNodeVisitorInterface {
  public:
   DfudsTrie() {}
-  ~DfudsTrie() {}
+  virtual ~DfudsTrie() {}
 
-  // return the rank of the key in this trie. 
-  // return 0, if the key does not exist.
-  uint32_t find(const char *key) const;
-  uint32_t rightNearFind(const char *key) const;
+  virtual bool visitNode(TrieNodeInterface &node);
+  bool build(TrieInterface &trie); 
+  bool load(std::istream &is);
+  bool serialize(std::ostream &os) const; 
+  void clear(); 
 
-  // extract the rank-th key in trie.
-  // not efficient yet, cause there's no bit vector select index.
-  void select(uint32_t rank, std::string &key) const;
-
-  virtual void read(std::istream &is);
-  uint32_t mmap(const uint8_t *address);
-  void clear();
-
-  void display() const;
-  void computeOffsets(const std::string &key, Vector<uint32_t> &offsets) const;
-  // return the rank of the key in this trie. 
-  // return 0, if the key does not exist.
-  virtual uint32_t findLCP(const char *key, uint8_t *lcp) const;
-  virtual uint32_t rightNearFindLCP(const char *key, uint8_t *lcp) const;
-
- protected:
-  uint8_t _childRank(uint32_t id, uint8_t ch) const;
-  uint32_t _childSelect(uint32_t id, uint8_t rank) const;
-  bool _followKey(const char *key, uint32_t &id, int *prefixLen, int *depth = NULL) const;
-  uint32_t _keyRank(uint32_t id) const;
-  uint8_t _degree(uint32_t id) const;
-  uint8_t _childLowerBound(uint32_t id, uint8_t ch) const;
-  uint32_t _generalizedSibling(uint32_t id) const;
-
-  uint32_t _parent(uint32_t id) const;
-  uint8_t _label(uint32_t parent, uint32_t child) const;
+  void computePrefix(uint32_t node, std::string &prefix);
+  void display();
 
  private:
-  ConstBalancedBitVector _dfuds;
-  ConstVector<uint8_t> _labels;
-  ConstBitVector _is_keys;
-};
+  void _preBuild(int node_count); 
+  void _postBuild(); 
 
-class DfudsTrieLCP : public DfudsTrie {
-  public:
-  DfudsTrieLCP() {}
-  ~DfudsTrieLCP() {}
+  sdsl::bit_vector _dfuds;
+  dfuds_support _dfuds_support;
+  Vector<uint8_t> _labels;
 
-  virtual void read(std::istream &is);
-  // return the rank of the key in this trie. 
-  // return 0, if the key does not exist.
-  uint32_t findLCP(const char *key, uint8_t *lcp) const;
-  uint32_t rightNearFindLCP(const char *key, uint8_t *lcp) const;
+  uint32_t _dfuds_pos;
 
-  private:
-  ConstVector<uint32_t> _offsets;
-
+  friend class DfudsMap;
+  friend class DfudsPTrieMap;
 };
 
 #endif

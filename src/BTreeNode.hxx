@@ -6,8 +6,6 @@
 
 #define KEY_SIZE_MAX 256
 
-using namespace std;
-
 template <typename T>
 int BTreeNode<T>::lowerBound(const char *key) {
   int high = _keys.count() - 1;
@@ -63,7 +61,7 @@ bool BTreeNode<T>::find(const char *key, T &value) {
 }
 
 template <typename T>
-bool BTreeNode<T>::load(istream &is) {
+bool BTreeNode<T>::load(std::istream &is) {
   is.read((char *)&_isLeafNode, 1);
   _values.read(is);
   _string_buffer.read(is);
