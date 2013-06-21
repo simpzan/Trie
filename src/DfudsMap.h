@@ -1,53 +1,60 @@
-#ifndef DFUDS_MAP_H
-#define DFUDS_MAP_H
+#ifndef DFUDS_PTRIE_MAP_H
+#define DFUDS_PTRIE_MAP_H
 
-#include <vector>
-#include <stdint.h>
+#include <sdsl/int_vector.hpp> // for the bit_vector class
+#include <sdsl/bit_vectors.hpp>
+#include <sdsl/util.hpp> // for counting the set bits in a bit_vector 
+#include <sdsl/rank_support.hpp> // for rank data structures
+#include <sdsl/select_support_mcl.hpp>
+#include <sdsl/bp_support.hpp>
 
-#include "DfudsTrie.h"
+#include "PTrieNode.h"
 #include "Vector.h"
-#include "Interface.h"
 #include "DACWrapper.h"
+#include "SuccinctMap.h"
+#include "DfudsTrie.h"
 
-template <typename T>
-class DfudsMap : public MapInterface<T> {
+using namespace sdsl;
+
+class DfudsMap : public TrieNodeVisitorInterface, public SuccinctMap {
  public:
-  DfudsMap() : _is_leaf(true), _trie(new DfudsTrie) {}
-  DfudsMap(DfudsTrie *trie) : _is_leaf(true), _trie(trie) {}
-  virtual ~DfudsMap() {  delete _trie;  }
+  DfudsMap() {}
+  virtual ~DfudsMap() {}
 
+  virtual bool visitNode(TrieNodeInterface &node);
+
+  virtual bool build(TrieInterface &trie);
   virtual bool load(std::istream &is);
-  virtual bool mmap(const uint8_t *address);
-  virtual bool find(const char *key, T &value);
-  virtual bool lowerBound(const char *key, T &value);
+  virtual bool serialize(std::ostream &os);
+  virtual void clear() {  assert(false);  }
 
-  virtual bool is_leaf()  {  return _is_leaf;  }
+  // find the value associated with key.
+  // return true if found, false otherwise.
+  virtual bool findEntry(const char *key, TrieValueType &value);
+  // find the first entry whose key is greater than or equal to `pattern`.
+  virtual bool findEntryLowerBound(const char *pattern, 
+      std::string *key, TrieValueType &value) {  assert(false);  }
 
-  void clear();
-  void display(std::ostream &is);
-
- protected:
-  DfudsTrie *_trie;
-  //Vector<T> _values;
-  DACWrapper _values;
+  void updateLinks(const vector<uint32_t> &nodeIds); 
 
  private:
-  bool _is_leaf;
+  void _preBuild(int node_count);
+  void _postBuild();
+
+  DfudsTrie _trie;
+
+  sdsl::bit_vector _is_keys;
+  rank_support_v<> _is_keys_rank_support;
+  Vector<uint32_t> _values;
+  DACWrapper _values_DAC;
+
+  sdsl::bit_vector _has_links;
+  rank_support_v<> _has_links_support;
+  Vector<uint32_t> _links;
+  DACWrapper _links_DAC;
+
+  uint32_t _is_keys_pos;
+  uint32_t _has_links_pos;
 };
-
-template <typename T>
-class DfudsMapLCP : public DfudsMap<T> {
-  public:
-  DfudsMapLCP() : DfudsMap<T>(new DfudsTrieLCP) {}
-  ~DfudsMapLCP() {}
-
-  virtual bool findWithLCP(const char *key, T &value, uint8_t *lcp);
-  virtual bool lowerBoundWithLCP(const char *key, T &value, uint8_t *lcp);
-
-  private:
-  
-};
-
-#include "DfudsMap.hxx"
 
 #endif

@@ -8,40 +8,60 @@
 #include <assert.h>
 #include <cstring>
 #include <map>
+#include "TrieInterface.h"
 #include "TrieNode.h"
+#include "LinkedTrieNode.h"
+#include "LoudsTrie.h"
 
-class Trie {
+class Trie : public TrieInterface {
  public:
   Trie(TrieNode *node) : _root(node), _node_count(1), _value_count(0) {}
   virtual ~Trie() {  if (_root)  delete _root;  }
 
-  // add an entry with the key/value 
-  void addEntry(const char *key, TrieValueT value);
-  void undoAdd();
-  TrieValueT getEntry(const char *key);
-  // prefix search the pattern 
-  bool prefixSearch(const char *pattern, 
-      std::map<std::string, TrieValueT>& results);
-  void clear();
+  virtual void addEntry(const char *key, TrieValueType value);
+  virtual void clear();
 
-  uint64_t node_count() {  return _node_count;  }
-  uint32_t nodeCountAfterInsert(const char *key);
-  uint64_t value_count() {  return _value_count;  }
+  virtual bool findEntry(const char *key, TrieValueType &value);
+  virtual uint32_t getNodeCount() const {  return _node_count;  }
+  virtual uint32_t getKeyCount() const {  return _value_count;  }
 
-  const std::string &get_last_key() const {  return _last_key;  }
-  void traversePreorderly(TrieVisitorInterface &visitor) {
-    return _root->traversePreorderly(visitor);
+  virtual TrieNodeInterface *root() {  return _root;  }
+  virtual void traverseDFS(TrieNodeVisitorInterface &visitor) {
+    _root->traverseDFS(visitor);  
   }
 
+  uint32_t insertKey(const char *key);
+  void convert(LoudsTrie &louds, std::vector<uint32_t> &ids);
+  void computePrefix(TrieNode *node, std::string &label);
+  
  private:
+  TrieNode *addKey(const char *key);
+  void collectIds(std::vector<uint32_t> &ids);
   bool _followKey(const char *key, std::vector<TrieNode *> &nodes);
-  void createNodes(const char *key, TrieNode *node, 
+  void _createNodes(const char *key, TrieNode *node, 
       std::vector<TrieNode *> &nodes);
 
   TrieNode *_root;
   uint64_t _node_count;
   uint64_t _value_count;
-  std::string _last_key;
+};
+
+inline void Trie::clear() {
+  _root->clear();
+  _node_count = 1;
+  _value_count = 0;
+}
+
+inline void Trie::addEntry(const char *key, TrieValueType value) {
+  TrieNode *newNode = addKey(key);
+  newNode->setValue(value);
+  ++_value_count;
+}
+
+class LinkedTrie :public Trie {
+  public:
+	LinkedTrie() : Trie(new LinkedTrieNode) {}
+	virtual ~LinkedTrie() {}
 };
 
 #endif
