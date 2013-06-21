@@ -10,18 +10,8 @@
 #include "TrieNode.h"
 #include "PTrieNode.h"
 #include "TrieIteratorInterface.h"
+#include "Trie.h"
 
-class TrieBfsIterator : public TrieIteratorInterface {
- public:
-  TrieBfsIterator(TrieInterface &trie);
-  virtual ~TrieBfsIterator() {}
-
-  virtual TrieNodeInterface *next();
-
- private:
-  TrieInterface &_trie;
-  std::queue<TrieNodeInterface *> _nodes;
-};
 
 class PTrie : public TrieInterface {
  public:
@@ -50,19 +40,15 @@ class PTrie : public TrieInterface {
 
   virtual TrieNodeInterface *root() {  return _root;  }
 
-  TrieBfsIterator BfsIterator() {  return TrieBfsIterator(*this);  }
-
   // collect all labels and generate link info.
   // must called before transform to LoudsMap.
+  void collectLabels(LinkedTrie &labels);
   void collectLabels(std::vector<std::string> &labels);
   bool canAddEntry(const char *key, uint32_t value, int block_size);
-  void assignNodeIds() {  _root->assignNodeIds();  }
 
   friend class TrieBfsIterator;
 
  private:
-  
-
   PTrieNode *_root;
   uint32_t _node_count;
   uint32_t _key_count;

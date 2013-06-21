@@ -1,7 +1,8 @@
+#include <sdsl/util.hpp>
 #include "LoudsMap.h"
 #include "PTrie.h"
 #include "utils.h"
-#include <sdsl/util.hpp>
+#include "TrieIterator.h"
 
 using namespace std;
 using namespace sdsl;
@@ -46,7 +47,7 @@ bool LoudsMap::build(TrieInterface &aTrie) {
   uint32_t node_count = trie.getNodeCount() + 1; // + 1 for the super root.
   _preBuild(node_count);
 
-  TrieBfsIterator itr = trie.BfsIterator();
+  TrieBfsIterator itr(aTrie);
   PTrieNode *node;
   while (true) {
     node = (PTrieNode *)itr.next();
@@ -65,27 +66,38 @@ void LoudsMap::_postBuild() {
 
 void LoudsMap::display() {
   _trie.display();
-  cout << "is tails: " << _is_tails.size() << endl << _is_tails << endl;
+  cout << "is tails: " << _is_tails.size() << "  " << ratio(_is_tails_rank1) << endl
+    << _is_tails << endl;
   _values.display(cout);
-  cout << "has links: " << _has_links.size() << endl << _has_links << endl;
+  cout << "has links: " << _has_links.size() << "  " << ratio(_has_links_rank1) << endl 
+    << _has_links << endl;
   _links.display(cout);
 }
 
 bool LoudsMap::load(std::istream &is) {
   _trie.load(is);
 
+  cout << "is tails" << endl;
+  showOffset(is);
   _is_tails.load(is);
   _is_tails_rank1.load(is, &_is_tails);
+
+  cout << "values" << endl;
+  showOffset(is);
   _values.read(is);
 
   _has_links.load(is);
   _has_links_rank1.load(is, &_has_links);
+
+  cout << "links" << endl;
+  showOffset(is);
   _links.read(is);
 }
 
 bool LoudsMap::serialize(std::ostream &os) {
   _trie.serialize(os);
 
+  showOffset(os);
   _is_tails.serialize(os);
   _is_tails_rank1.serialize(os);
   _values.write(os);

@@ -2,6 +2,7 @@
 #include "TrieNodeInterface.h"
 #include "Trie.h"
 #include "DfudsTrie.h"
+#include "utils.h"
 
 using namespace std;
 
@@ -51,3 +52,32 @@ TEST(LinkedTrieTests, counts) {
   EXPECT_EQ(1, count);
 }
 
+TEST(LinkedTrieTests, insertKey) {
+  LinkedTrie trie;
+  const char *key = "test";
+  uint32_t rank = trie.insertKey(key);
+  EXPECT_EQ(1, rank);
+
+  rank = trie.insertKey("key");
+  EXPECT_EQ(2, rank);
+
+  rank = trie.insertKey(key);
+  EXPECT_EQ(1, rank);
+}
+
+TEST(LinkedTrieTests, convert) {
+  LinkedTrie trie;
+  trie.insertKey("er");
+  trie.insertKey("ing");
+  trie.insertKey("xyz");
+
+  LoudsTrie louds;
+  vector<uint32_t> ids;
+  trie.convert(louds, ids);
+
+  int count = ids.size();
+  for (int i = 0; i < count; ++i) {
+    cout << ids[i] << "\t";
+  }
+  cout << endl;
+}

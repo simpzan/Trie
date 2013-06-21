@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "PTrie.h"
 #include "utils.h"
+#include "TrieIterator.h"
 
 using namespace std;
 
@@ -67,7 +68,7 @@ TEST(PTrieTest, test) {
     trie.addEntry(token.c_str(), token.size());
   }
 
-  TrieBfsIterator itr = trie.BfsIterator();
+  TrieBfsIterator itr(trie);
   PTrieNode *node;
   while (true) {
     node = (PTrieNode *)itr.next();

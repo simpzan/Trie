@@ -1,5 +1,6 @@
 #include "Trie.h"
 #include "utils.h"
+#include "TrieIterator.h"
 
 using namespace std;
 
@@ -49,6 +50,44 @@ TrieNode *Trie::addKey(const char *key) {
   return nodes.back();
 }
 
+uint32_t Trie::insertKey(const char *key) {
+  string reversed;
+  reverseKey(key, reversed);
+  TrieNode *node = addKey(reversed.c_str());
+  uint32_t value = node->getValue();
+  if (value)  return value;
+  ++_value_count;
+  value = _value_count;
+  node->setValue(value);
+  return value;
+}
+
+void Trie::collectIds(std::vector<uint32_t> &ids) {
+  typedef map<uint32_t, uint32_t> Map;
+  Map id_map;
+  uint32_t value;
+  TrieNodeInterface *node;
+  TrieBfsIterator itr(*this);
+  while (true) {
+    node = itr.next();
+    if (node == NULL)  break;
+
+    value = node->getValue();
+    if (value != 0) {
+      id_map[value] = node->get_id();
+    }
+  }
+
+  for (Map::iterator itr = id_map.begin(); itr != id_map.end(); ++itr) {
+    ids.push_back(itr->second);
+  }
+}
+
+void Trie::convert(LoudsTrie &louds, std::vector<uint32_t> &ids) {
+  louds.build(*this);
+  collectIds(ids);
+}
+
 bool Trie::findEntry(const char *key, TrieValueType &value) {
   value = 0;
   if (strlen(key) == 0)  return false;
@@ -66,7 +105,8 @@ void Trie::computePrefix(TrieNode *node, std::string &label) {
   LinkedTrieNode *aNode = (LinkedTrieNode *)node;
   LinkedTrieNode *parent;
   while (1) {
-    parent = aNode->get_parent();
+    assert(false);
+    //parent = aNode->get_parent();
     if (parent == NULL)  break;
 
     uint8_t ch = parent->getLabelWithChild(aNode);

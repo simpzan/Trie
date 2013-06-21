@@ -55,7 +55,6 @@ class PTrieNode : public TrieNodeInterface {
     _parent = NULL;
   }
 
-  void assignNodeIds(uint32_t counter = 0);
   void traverseDFS(TrieNodeVisitorInterface &visitor);
 
   virtual TrieValueType getValue() {  return _value;  }

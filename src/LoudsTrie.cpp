@@ -1,11 +1,21 @@
 #include <cassert>
 #include <sdsl/util.hpp>
 #include "LoudsTrie.h"
-#include "Trie.h"
+#include "TrieIterator.h"
 #include "utils.h"
 
 using namespace std;
 using namespace sdsl;
+
+void showOffset(std::istream &is) {
+  uint32_t offset = is.tellg();
+  cout << "offset: " << offset << endl;
+}
+
+void showOffset(std::ostream &os) {
+  uint32_t offset = os.tellp();
+  cout << "offset: " << offset << endl;
+}
 
 void LoudsTrie::_preBuild(uint32_t node_count) {
   bit_vector louds(node_count * 2 -1);
@@ -28,12 +38,6 @@ void LoudsTrie::visitNode(TrieNodeInterface &node) {
   ++_louds_pos;
 }
 
-//void verify(bit_vector &louds) {
-  //uint32_t len = louds.size();
-  //assert(louds[len - 1] == 0);
-  //assert(louds[len - 2] == 0);
-//}
-
 void LoudsTrie::_postBuild() {
   util::init_support(_louds_rank0, &_louds);
   util::init_support(_louds_select0, &_louds);
@@ -53,6 +57,7 @@ bool LoudsTrie::build(TrieInterface &trie) {
     visitNode(*node);
   }
   _postBuild();
+  return true;
 }
 
 bool LoudsTrie::load(std::istream &is) {
@@ -61,6 +66,7 @@ bool LoudsTrie::load(std::istream &is) {
   _louds_select0.load(is, &_louds);
   _louds_select1.load(is, &_louds);
   _labels.read(is);
+  return true;
 }
 
 bool LoudsTrie::serialize(std::ostream &os) const {
@@ -69,6 +75,7 @@ bool LoudsTrie::serialize(std::ostream &os) const {
   _louds_select0.serialize(os);
   _louds_select1.serialize(os);
   _labels.write(os);
+  return true;
 }
 
 uint32_t LoudsTrie::startOfNode(uint32_t pos) {
@@ -76,10 +83,12 @@ uint32_t LoudsTrie::startOfNode(uint32_t pos) {
   return loudsSelect0(rank) + 1;
 }
 
-uint32_t LoudsTrie::parent(uint32_t child, uint32_t &parent, uint8_t &ch) {
+void LoudsTrie::parent(uint32_t child, uint32_t &parent, uint8_t &ch) {
   assert(child >= root());
+  parent = 0;
+
   uint32_t rank0 = loudsRank0(child - 1);
-  if (rank0 == 1)  return 0;
+  if (rank0 == 1)  return;
 
   uint32_t pos = loudsSelect1(rank0);
   parent = startOfNode(pos);
@@ -163,34 +172,9 @@ void LoudsTrie::computePrefix(uint32_t node, std::string &prefix) {
 }
 
 void LoudsTrie::display() {
-  cout << "louds:" << _louds.size() << endl << _louds << endl;
+  cout << "louds:" << _louds.size() << "  " << ratio(_louds_rank0) << endl << 
+    _louds << endl;
   cout << "labels" << endl;
   _labels.display(cout);
 }
 
-void addKeys(const vector<string> &labels, LinkedTrie &trie, 
-    vector<TrieNode *> &nodes) {
-  int count = labels.size();
-  for (int i = 0; i < count; ++i) {
-    string reversed;
-    reverseKey(labels[i].c_str(), reversed);
-    TrieNode *node = trie.addKey(reversed.c_str());
-    nodes.push_back(node);
-  }
-}
-
-void collectIds(const std::vector<TrieNode *> &nodes, std::vector<uint32_t> &ids) {
-  int count = nodes.size();
-  for (int i = 0; i < count; ++i) {
-    ids.push_back(nodes[i]->get_id());
-  }
-}
-
-void LoudsTrie::convert(const std::vector<std::string> &labels, 
-    std::vector<uint32_t> &ids) {
-  LinkedTrie trie;
-  vector<TrieNode *> nodes;
-  addKeys(labels, trie, nodes);
-  build(trie);
-  collectIds(nodes, ids);
-}

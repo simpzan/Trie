@@ -11,8 +11,6 @@ class LoudsTrie {
   LoudsTrie() {}
   ~LoudsTrie() {}
 
-  void convert(const std::vector<std::string> &labels, 
-      std::vector<uint32_t> &ids);
   bool build(TrieInterface &trie);
   bool load(std::istream &is);
   bool serialize(std::ostream &os) const;
@@ -26,7 +24,7 @@ class LoudsTrie {
   void visitNode(TrieNodeInterface &node);
   void _postBuild();
 
-  uint32_t parent(uint32_t child, uint32_t &parent, uint8_t &ch);
+  void parent(uint32_t child, uint32_t &parent, uint8_t &ch);
   uint8_t getChar(uint32_t node, int index);
   uint32_t startOfNode(uint32_t pos);
   uint32_t root() {  return 2;  }
@@ -69,4 +67,14 @@ inline void LoudsTrie::clear() {
   _louds_pos = 0;
 }
 
+void showOffset(std::ostream &os);
+void showOffset(std::istream &is);
+template <class T>
+double ratio(const T &rank)  {
+  uint32_t bitCount = rank.size();
+  uint32_t ones = rank.rank(bitCount - 1);
+  double r = (double)ones/ bitCount;
+
+  return r;
+}
 #endif

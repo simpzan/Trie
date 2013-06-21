@@ -65,14 +65,23 @@ void bench_time(BV &bv, Rank &rs, Select1 &s1, Select0 &s0) {
   
 }
 
+void flip(bit_vector &bv) {
+  int count = bv.size();
+  for (int i = 0; i < count; ++i) {
+    bv[i] = bv[i] ? 0 : 1;
+  }
+}
+
 void testNND() {
-  const char *filename = "has_links";
-  uint32_t offset = 675280;
+  const char *filename = "../enwiki.sbtrie";
+  uint32_t offset = 106968971;
   ifstream is(filename);
+  is.seekg(offset);
   assert(is.good());
 
   bit_vector bv;
   bv.load(is);
+  //flip(bv);
 
   rank_support_v<> rs(&bv);
   select_support_mcl<> ss1(&bv);
@@ -86,7 +95,7 @@ void testNND() {
   bench_size(bv, rs, ss1, ss0);
   bench_time(bv, rs, ss1, ss0);
 
-  cout << "rrr" << endl;
+  cout << "\nrrr" << endl;
   rrr_vector<> rrr(bv);
   rrr_rank_support<> rrr_rank(&rrr);
   rrr_select_support<> rrr_select(&rrr);
@@ -94,7 +103,7 @@ void testNND() {
   bench_size(rrr, rrr_rank, rrr_select, rrr_select0);
   bench_time(rrr, rrr_rank, rrr_select, rrr_select0);
 
-  cout << "gap" << endl;
+  cout << "\ngap" << endl;
   gap_vector<> gap(bv);
   gap_rank_support<> gap_r(&gap);
   gap_select_support<> gap_s(&gap);
@@ -102,7 +111,7 @@ void testNND() {
   bench_size(gap, gap_r, gap_s, gap_s0);
   bench_time(gap, gap_r, gap_s, gap_s0);
 
-  cout << "sd" << endl;
+  cout << "\nsd" << endl;
   sd_vector<> sd(bv);
   sd_rank_support<> sd_r(&sd);
   sd_select_support<> sd_s(&sd);

@@ -26,13 +26,13 @@ TEST(LoudsMapTest, findEntry) {
   cout << "build main trie" << endl;
   PTrie trie0;
   addEntries(tokens, trie0);
-  vector<string> labels;
+  LinkedTrie labels;
   trie0.collectLabels(labels);
 
   cout << "building label trie" << endl;
   LoudsTrie label_trie;
   vector<uint32_t> ids;
-  label_trie.convert(labels, ids);
+  labels.convert(label_trie, ids);
 
   cout << "transforming main trie" << endl;
   LoudsMap map;

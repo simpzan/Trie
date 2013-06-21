@@ -17,10 +17,10 @@ class TrieNode : public TrieNodeInterface {
   virtual void removeChildNodeWithLabel(uint8_t ch) = 0;
   virtual int childCount() = 0;
 
-  virtual void clear() {  _value = 0;  };
+  virtual void clear() {  _value = 0;  }
   virtual TrieNode *createNode() = 0;
 
-  virtual TrieValueType getValue() {  return _value;  };
+  virtual TrieValueType getValue() {  return _value;  }
   virtual void setValue(TrieValueType value) {  _value = value;  }
 
   virtual void traverseDFS(TrieNodeVisitorInterface &visitor) = 0;

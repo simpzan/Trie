@@ -11,7 +11,6 @@
 #include "TrieInterface.h"
 #include "TrieNode.h"
 #include "LinkedTrieNode.h"
-#include "PTrie.h"
 #include "LoudsTrie.h"
 
 class Trie : public TrieInterface {
@@ -31,10 +30,13 @@ class Trie : public TrieInterface {
     _root->traverseDFS(visitor);  
   }
 
-  TrieNode *addKey(const char *key);
+  uint32_t insertKey(const char *key);
+  void convert(LoudsTrie &louds, std::vector<uint32_t> &ids);
   void computePrefix(TrieNode *node, std::string &label);
   
  private:
+  TrieNode *addKey(const char *key);
+  void collectIds(std::vector<uint32_t> &ids);
   bool _followKey(const char *key, std::vector<TrieNode *> &nodes);
   void _createNodes(const char *key, TrieNode *node, 
       std::vector<TrieNode *> &nodes);

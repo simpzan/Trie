@@ -88,15 +88,6 @@ void PTrieNode::collectLabelNodes(vector<PTrieNode*> &nodes) {
   }
 }
 
-void PTrieNode::assignNodeIds(uint32_t counter) {
-  ++counter;
-  _id = counter;
-
-  for (ChildrenMapIterator itr = _children.begin(); itr != _children.end(); ++itr) {
-    itr->second->assignNodeIds(counter);
-  }
-}
-
 void PTrieNode::traverseDFS(TrieNodeVisitorInterface &visitor) {
   visitor.visitNode(*this);
 

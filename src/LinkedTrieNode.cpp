@@ -29,7 +29,7 @@ void LinkedTrieNode::setChildNodeWithLabel(uint8_t ch, TrieNode *node) {
   //removeChildNodeWithLabel(ch);
 	_children.insert(ch, node);
   LinkedTrieNode *child = (LinkedTrieNode *)node;
-  child->_parent = this;
+  //child->_parent = this;
 }
 
 void LinkedTrieNode::removeChildNodeWithLabel(uint8_t ch) {

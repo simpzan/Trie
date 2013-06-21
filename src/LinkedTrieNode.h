@@ -10,7 +10,7 @@ typedef ptr_map<uint8_t, TrieNode>::const_iterator ChildrenMapIterator;
 
 class LinkedTrieNode: public TrieNode {
  public:
-  LinkedTrieNode() : _parent(NULL) {}
+  //LinkedTrieNode() : _parent(NULL) {}
   virtual ~LinkedTrieNode();
 
   virtual TrieNodeInterface *getChildWithCharLabel(uint8_t ch) {
@@ -42,12 +42,12 @@ class LinkedTrieNode: public TrieNode {
   virtual void set_id(uint32_t id) {  _id = id;  }
   virtual uint32_t get_id() {  return _id;  }
 
-  LinkedTrieNode *get_parent() {  return _parent;  }
+  //LinkedTrieNode *get_parent() {  return _parent;  }
   uint8_t getLabelWithChild(TrieNode *child);
 
  private:
   uint32_t _id;
-  LinkedTrieNode *_parent;
+  //LinkedTrieNode *_parent;
   boost::ptr_map<uint8_t, TrieNode> _children;
 };
 

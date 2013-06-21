@@ -2,31 +2,10 @@
 #include <cassert>
 #include <queue>
 #include "utils.h"
-#include "DfudsPTrieMap.h"
+#include "TrieIterator.h"
 
 using namespace std;
 
-TrieBfsIterator::TrieBfsIterator(TrieInterface &trie) : _trie(trie) {
-  _nodes.push(trie.root());
-}
-
-TrieNodeInterface *TrieBfsIterator::next() {
-  if (_nodes.empty())  return NULL;
-
-  TrieNodeInterface *node = _nodes.front();
-  _nodes.pop();
-
-  vector<uint8_t> labels;
-  node->getCharLabels(labels);
-
-  int count = labels.size();
-  for (int i = 0; i < count; ++i) {
-    TrieNodeInterface *child = node->getChildWithCharLabel(labels[i]);
-    _nodes.push(child);
-  }
-
-  return node;
-}
 
 void _followKeyViaString(PTrieNode *root, const char *key, 
     PTrieNode *&result, int &matchedCount) {
@@ -113,13 +92,27 @@ bool PTrie::findEntry(const char *key, TrieValueType &value) {
   return true;
 }
 
+void PTrie::collectLabels(LinkedTrie &labels) {
+  vector<PTrieNode *> nodes;
+  _root->collectLabelNodes(nodes);
+
+  int count = nodes.size();
+  for (int i = 0; i < count; ++i) {
+    PTrieNode *node = nodes[i];
+    uint32_t link = labels.insertKey(node->get_label().c_str());
+    node->set_link(link);
+  }
+}
+
 void PTrie::collectLabels(std::vector<std::string> &labels) {
   vector<PTrieNode *> nodes;
   _root->collectLabelNodes(nodes);
   int count = nodes.size();
   for (int i = 0; i < count; ++i) {
     PTrieNode *node = nodes[i];
-    uint32_t offset = insertString(node->get_label(), labels);
+    labels.push_back(node->get_label());
+    uint32_t offset = labels.size();
+    //uint32_t offset = insertString(node->get_label(), labels);
     node->set_link(offset);
   }
 }
@@ -147,7 +140,7 @@ void PTrie::traverseDFS(TrieNodeVisitorInterface &visitor) {
 }
 
 void PTrie::traverseBFS(TrieNodeVisitorInterface &visitor) {
-  TrieBfsIterator itr = BfsIterator();
+  TrieBfsIterator itr(*this);
   PTrieNode *node;
   while (true) {
     node = (PTrieNode *)itr.next();
