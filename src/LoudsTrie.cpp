@@ -8,6 +8,16 @@ using namespace std;
 using namespace sdsl;
 
 
+void LoudsTrie::init(LoudsTrieBuilder &builder) {
+  bit_vector louds(builder.louds());
+  _louds.swap(louds);
+
+  Vector<uint8_t> labels(builder.labels());
+  _labels.swap(labels);
+
+  _postBuild();
+}
+
 void LoudsTrie::_preBuild(uint32_t node_count) {
   bit_vector louds(node_count * 2 -1);
   _louds.swap(louds);

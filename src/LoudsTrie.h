@@ -5,14 +5,15 @@
 #include <iostream>
 #include "Vector.h"
 #include "TrieInterface.h"
+#include "LoudsTrieBuilder.h"
 
 class LoudsTrie {
  public:
   LoudsTrie() {}
   virtual ~LoudsTrie() {}
 
+  void init(LoudsTrieBuilder &builder);
   bool build(TrieInterface &trie);
-  void postBuild() {  _postBuild();  }
   bool load(std::istream &is);
   bool serialize(std::ostream &os) const;
 
