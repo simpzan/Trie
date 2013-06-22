@@ -7,21 +7,13 @@
 using namespace std;
 using namespace sdsl;
 
-void showOffset(std::istream &is) {
-  uint32_t offset = is.tellg();
-  cout << "offset: " << offset << endl;
-}
-
-void showOffset(std::ostream &os) {
-  uint32_t offset = os.tellp();
-  cout << "offset: " << offset << endl;
-}
 
 void LoudsTrie::_preBuild(uint32_t node_count) {
   bit_vector louds(node_count * 2 -1);
   _louds.swap(louds);
   _louds[0] = 1;
   _louds_pos = 2;
+  _labels.clear();
 }
 
 void LoudsTrie::visitNode(TrieNodeInterface &node) {

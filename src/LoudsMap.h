@@ -18,7 +18,6 @@ class LoudsMap : public SuccinctMap, public TrieNodeVisitorInterface {
   virtual bool build(TrieInterface &trie);
   virtual bool load(std::istream &is);
   virtual bool serialize(std::ostream &os);
-  virtual void clear();
 
   // find the value associated with key.
   // return true if found, false otherwise.
@@ -84,15 +83,5 @@ class LoudsMap : public SuccinctMap, public TrieNodeVisitorInterface {
   LoudsTrie *_label_trie;
   LoudsTrie _trie;
 };
-
-inline void LoudsMap::clear() {
-  _trie.clear();
-  _is_tails.resize(0);
-  _has_links.resize(0);
-  _values.clear();
-  _links.clear();
-  _is_tails_pos = 0;
-  _has_links_pos = 0;
-}
 
 #endif

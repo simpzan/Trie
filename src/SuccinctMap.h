@@ -12,7 +12,6 @@ class SuccinctMap {
   virtual bool build(TrieInterface &trie) = 0;
   virtual bool load(std::istream &is) = 0;
   virtual bool serialize(std::ostream &os) = 0;
-  virtual void clear() = 0;
 
   // find the value associated with key.
   // return true if found, false otherwise.

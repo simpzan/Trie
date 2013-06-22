@@ -9,12 +9,12 @@
 class LoudsTrie {
  public:
   LoudsTrie() {}
-  ~LoudsTrie() {}
+  virtual ~LoudsTrie() {}
 
   bool build(TrieInterface &trie);
+  void postBuild() {  _postBuild();  }
   bool load(std::istream &is);
   bool serialize(std::ostream &os) const;
-  void clear();
 
   void computePrefix(uint32_t node, std::string &prefix);
   void display();
@@ -58,23 +58,8 @@ class LoudsTrie {
   Vector<uint8_t> _labels;
 
   uint32_t _louds_pos;
+  
   friend class LoudsMap;
 };
 
-inline void LoudsTrie::clear() {
-  _louds.resize(0);
-  _labels.clear();
-  _louds_pos = 0;
-}
-
-void showOffset(std::ostream &os);
-void showOffset(std::istream &is);
-template <class T>
-double ratio(const T &rank)  {
-  uint32_t bitCount = rank.size();
-  uint32_t ones = rank.rank(bitCount - 1);
-  double r = (double)ones/ bitCount;
-
-  return r;
-}
 #endif

@@ -37,6 +37,9 @@ void LoudsMap::_preBuild(uint32_t node_count) {
   _has_links.swap(has_links);
   _is_tails_pos = 0;
   _has_links_pos = 0;
+
+  _values.clear();
+  _links.clear();
 }
 
 bool LoudsMap::build(TrieInterface &aTrie) {
