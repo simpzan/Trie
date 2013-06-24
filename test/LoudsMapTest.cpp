@@ -6,6 +6,7 @@
 #include "utils.h"
 #include "LoudsMapBuilder.h"
 #include "LoudsTrieBuilder.h"
+#include "timer.h"
 
 using namespace std;
 
@@ -55,6 +56,7 @@ TEST(LoudsMapTest, findEntry) {
 
   TrieValueType value;
   //map.display();
+  Timer timer;
   int count = tokens.size();
   for (int i = 0; i < count; ++i) {
     const char *key = tokens[i].c_str();
@@ -62,6 +64,8 @@ TEST(LoudsMapTest, findEntry) {
     EXPECT_TRUE(found);
     EXPECT_EQ(value, i+ 1);
   }
+  timer.Stop();
+  cout << "time(us):" << timer.ElapsedTimeCPU()/count << endl;
 
   for (int i = 0; i < count; ++i) {
     const char *key = tokens[i].c_str();
