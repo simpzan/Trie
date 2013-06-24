@@ -46,20 +46,12 @@ template <typename BitVector, typename Container, typename TrieT>
 bool LoudsMap<BitVector, Container, TrieT>::load(std::istream &is) {
   _trie.load(is);
 
-  cout << "is tails" << endl;
-  showOffset(is);
   _is_tails.load(is);
   _is_tails_rank1.load(is, &_is_tails);
-
-  cout << "values" << endl;
-  showOffset(is);
   _values.read(is);
 
   _has_links.load(is);
   _has_links_rank1.load(is, &_has_links);
-
-  cout << "links" << endl;
-  showOffset(is);
   _links.read(is);
 }
 
@@ -164,7 +156,7 @@ void LoudsMap<BitVector, Container, TrieT>::computeLabel(uint32_t node, string &
 
 template <typename BitVector, typename Container, typename TrieT>
 uint32_t LoudsMap<BitVector, Container, TrieT>::getLink(uint32_t node) {
-  uint32_t has_links_pos = loudsRank0(node - 1) - 1;
+  uint32_t has_links_pos = loudsRank1(node) - 1 - 1;
   if (_has_links[has_links_pos] == 0)  return 0;
 
   uint32_t links_pos = hasLinksRank1(has_links_pos) - 1;
@@ -175,7 +167,7 @@ uint32_t LoudsMap<BitVector, Container, TrieT>::getLink(uint32_t node) {
 template <typename BitVector, typename Container, typename TrieT>
 TrieValueType LoudsMap<BitVector, Container, TrieT>::getValue(uint32_t node) {
   // -1 turn rank to offset, -1 for super root
-  uint32_t is_tails_pos = loudsRank0(node - 1) - 1;
+  uint32_t is_tails_pos = loudsRank1(node) - 1 - 1;
   if (_is_tails[is_tails_pos] == 0)  return 0;
 
   uint32_t values_pos = isTailsRank1(is_tails_pos) - 1;
