@@ -13,6 +13,7 @@ class LoudsTrieBuilder {
   bool build(TrieInterface &trie);
   bool load(std::istream &is);
   bool serialize(std::ostream &os) const;
+  void display() const;
 
   sdsl::bit_vector &louds() {  return _louds;  }
   Vector<uint8_t> &labels() {  return _labels;  }

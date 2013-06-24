@@ -61,9 +61,10 @@ class LoudsMap : public SuccinctMap {
   uint32_t sibling(uint32_t node) {  return _trie.sibling(node);  }
   uint32_t generalSibling(uint32_t node) {  return _trie.generalSibling(node);  }
 
-  uint32_t loudsRank0(uint32_t pos) {
-    return _trie.loudsRank0(pos);
+  uint32_t loudsRank1(uint32_t pos) {
+    return _trie.loudsRank1(pos);
   }
+ 
   uint32_t isTailsRank1(uint32_t pos) {
     return _is_tails_rank1(pos + 1);
   }

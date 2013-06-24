@@ -2,10 +2,10 @@
 #include <sdsl/util.hpp>
 #include "LoudsTrieBuilder.h"
 #include "TrieIterator.h"
+#include "utils.h"
 
 using namespace sdsl;
 using namespace std;
-
 
 void LoudsTrieBuilder::_preBuild(uint32_t node_count) {
   bit_vector louds(node_count * 2 -1);
@@ -20,13 +20,13 @@ void LoudsTrieBuilder::visitNode(TrieNodeInterface &node) {
 
   vector<uint8_t> labels;
   node.getCharLabels(labels);
+  _labels.appendValues(labels);
+
   int count = labels.size();
-  for (int i = 0; i < count; ++i) {
-    _louds[_louds_pos] = 1;
-    ++_louds_pos;
-    _labels.append(labels[i]);
-  }
+  _louds[_louds_pos] = 1;
   ++_louds_pos;
+
+  _louds_pos += count;
 }
 
 bool LoudsTrieBuilder::build(TrieInterface &trie) {
@@ -54,4 +54,12 @@ bool LoudsTrieBuilder::serialize(std::ostream &os) const {
   _louds.serialize(os);
   _labels.write(os);
   return true;
+}
+
+void LoudsTrieBuilder::display() const {
+  cout << "louds:" << _louds.size() << endl;
+  cout << _louds << endl;
+
+  cout << "labels" << endl;
+  _labels.display(cout);
 }

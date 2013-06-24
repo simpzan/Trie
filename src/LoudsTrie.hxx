@@ -50,48 +50,50 @@ bool LoudsTrie<BitVector>::serialize(std::ostream &os) const {
 
 template <typename BitVector>
 uint32_t LoudsTrie<BitVector>::startOfNode(uint32_t pos) {
-  uint32_t rank = loudsRank0(pos);
-  return loudsSelect0(rank) + 1;
+  uint32_t rank = loudsRank1(pos);
+  return loudsSelect1(rank);
 }
 
 template <typename BitVector>
 void LoudsTrie<BitVector>::parent(uint32_t child, uint32_t &parent, uint8_t &ch) {
   assert(child >= root());
-  parent = 0;
+  if (child == root()) {
+    parent = 0;
+    return;
+  }
 
-  uint32_t rank0 = loudsRank0(child - 1);
-  if (rank0 == 1)  return;
-
-  uint32_t pos = loudsSelect1(rank0);
+  uint32_t rank = loudsRank1(child) - 1;
+  uint32_t pos = loudsSelect0(rank);
   parent = startOfNode(pos);
-  int index = pos - parent + 1;
+  int index = pos - parent;
   ch = getChar(parent, index);
 }
 
 template <typename BitVector>
 uint8_t LoudsTrie<BitVector>::getChar(uint32_t node, int index) {
-  uint32_t labels_base = loudsRank1(node) - 1 - 1;
+  uint32_t labels_base = loudsRank0(node) - 1;
   uint32_t labels_pos = labels_base + index - 1;
   return _labels[labels_pos];
 }
 
 template <typename BitVector>
 uint32_t LoudsTrie<BitVector>::sibling(uint32_t node) {
-  uint32_t rank0 = loudsRank0(node - 1);
-  if (rank0 == 1)  return 0;
+  if (node == root())  return 0;
 
-  uint32_t pos = loudsSelect1(rank0);
-  if (_louds[pos + 1] == 0)  return 0;
+  uint32_t rank = loudsRank1(node);
 
-  return loudsSelect0(rank0 + 1) + 1;
+  uint32_t pos = loudsSelect0(rank - 1);
+  if (_louds[pos + 1] == 1)  return 0;
+
+  return loudsSelect1(rank + 1);
 }
 
 template <typename BitVector>
 void LoudsTrie<BitVector>::getCharLowerBound(uint32_t node, uint8_t ch,
     int &index, uint8_t &fetched_ch) {
-  uint32_t labels_base = loudsRank1(node) - 1 - 1;
+  uint32_t labels_base = loudsRank0(node) - 1;
   
-  for (int i = 0; _louds[node + i]; ++i) {
+  for (int i = 0; !_louds[node + i + 1]; ++i) {
     fetched_ch = _labels[labels_base + i];
     if (fetched_ch >= ch) {
       index = i + 1;
@@ -117,10 +119,9 @@ uint32_t LoudsTrie<BitVector>::generalSibling(uint32_t node) {
 template <typename BitVector>
 uint32_t LoudsTrie<BitVector>::childSelect(uint32_t node, int index) {
   assert(index > 0);
-  int offset = index - 1;
-  uint32_t pos = node + offset;
-  uint32_t rank1 = loudsRank1(pos);
-  uint32_t child = loudsSelect0(rank1) + 1;
+  uint32_t pos = node + index;
+  uint32_t rank = loudsRank0(pos) + 1;
+  uint32_t child = loudsSelect1(rank);
   return child;
 }
 

@@ -72,6 +72,32 @@ void flip(bit_vector &bv) {
   }
 }
 
+void testIds() {
+  const char *filename = "../BTree/words.sorted.idx";
+  uint32_t offset = 4;
+  ifstream is(filename);
+  is.seekg(offset);
+  assert(is.good());
+
+  rrr_vector<> bv;
+  bv.load(is);
+  rrr_select_support<> select(&bv);
+  uint32_t size = util::get_size_in_bytes(select);
+  cout << size << endl;
+
+
+  uint32_t id = 0;
+  int count = bv.size();
+  for (int i = 0; i < count; ++i) {
+    if (bv[i] == 0) {
+      ++id;
+      cout << id << "-" << i << "\t";
+
+      if (id % 1000 == 0)  getchar();
+    }
+  }
+}
+
 void testNND() {
   const char *filename = "../enwiki.sbtrie";
   uint32_t offset = 106968971;
@@ -124,5 +150,6 @@ void testNND() {
 int main(int argc, const char *argv[]) {
   //test();
   testNND();
+  //testIds();
   return 0;
 }
