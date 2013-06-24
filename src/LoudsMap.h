@@ -2,20 +2,25 @@
 #define LOUDS_MAP_H
 
 #include <sdsl/bit_vectors.hpp>
+#include "LoudsMapBuilder.h"
 #include "SuccinctMap.h"
 #include "TrieNodeInterface.h"
 #include "Vector.h"
 #include "PTrieNode.h"
-#include "LoudsTrie.h"
+#include "DACWrapper.h"
 
-class LoudsMap : public SuccinctMap, public TrieNodeVisitorInterface {
+template <class BitVector>
+class LoudsTrie;
+
+template <typename BitVector = sdsl::rrr_vector<>,
+         typename Container = DACWrapper,
+         typename TrieT = LoudsTrie<sdsl::rrr_vector<> > >
+class LoudsMap : public SuccinctMap {
  public:
   LoudsMap() {}
   virtual ~LoudsMap() {}
 
-  virtual bool visitNode(TrieNodeInterface &node);
-
-  virtual bool build(TrieInterface &trie);
+  void init(LoudsMapBuilder &builder);
   virtual bool load(std::istream &is);
   virtual bool serialize(std::ostream &os);
 
@@ -26,8 +31,7 @@ class LoudsMap : public SuccinctMap, public TrieNodeVisitorInterface {
   virtual bool findEntryLowerBound(const char *pattern, 
       std::string *key, TrieValueType &value);
 
-  void set_label_trie(LoudsTrie *trie) {  _label_trie = trie;  }
-  void updateLinks(const std::vector<uint32_t> &nodeIds);
+  void set_label_trie(TrieT *trie) {  _label_trie = trie;  }
   void display();
 
  private:
@@ -36,7 +40,6 @@ class LoudsMap : public SuccinctMap, public TrieNodeVisitorInterface {
   uint32_t findChildLowerBound(uint32_t node, const char *key);
   uint32_t leftMostChild(uint32_t node);
 
-  void _preBuild(uint32_t node_count);
   void _postBuild();
   void computeLabel(uint32_t node, std::string &label);
   uint32_t getLink(uint32_t node);
@@ -68,20 +71,22 @@ class LoudsMap : public SuccinctMap, public TrieNodeVisitorInterface {
     return _has_links_rank1(pos + 1);
   }
 
-  sdsl::bit_vector _is_tails;
-  sdsl::bit_vector::rank_1_type _is_tails_rank1;
-  Vector<uint32_t> _values;
+  BitVector _is_tails;
+  typename BitVector::rank_1_type _is_tails_rank1;
+  Container _values;
 
-  sdsl::bit_vector _has_links;
-  sdsl::bit_vector::rank_1_type _has_links_rank1;
-  Vector<uint32_t> _links;
+  BitVector _has_links;
+  typename BitVector::rank_1_type _has_links_rank1;
+  Container _links;
 
   // pos used when build bit_vectors.
   uint32_t _is_tails_pos;
   uint32_t _has_links_pos;
 
-  LoudsTrie *_label_trie;
-  LoudsTrie _trie;
+  TrieT *_label_trie;
+  LoudsTrie<BitVector> _trie;
 };
+
+#include "LoudsMap.hxx"
 
 #endif

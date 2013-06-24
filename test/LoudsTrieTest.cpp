@@ -3,6 +3,7 @@
 #include "LoudsTrie.h"
 #include "Trie.h"
 #include "utils.h"
+#include "LoudsTrieBuilder.h"
 
 using namespace std;
 
@@ -22,10 +23,12 @@ TEST(LoudsTrieTest, computePrefix) {
   LinkedTrie trie;
   insertTokens(tokens, trie);
 
-  LoudsTrie louds;
+  LoudsTrieBuilder builder;
   vector<uint32_t> ids;
-  trie.convert(louds, ids);
+  trie.convert(builder, ids);
 
+  LoudsTrie<> louds;
+  louds.init(builder);
   louds.display();
   int count = tokens.size();
   for (int i = 0; i < count; ++i) {

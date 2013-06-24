@@ -6,21 +6,22 @@
 #include "Vector.h"
 #include "TrieInterface.h"
 #include "LoudsTrieBuilder.h"
+#include "LoudsMap.h"
 
+template <class BitVector = sdsl::rrr_vector<> >
 class LoudsTrie {
  public:
   LoudsTrie() {}
   virtual ~LoudsTrie() {}
 
   void init(LoudsTrieBuilder &builder);
-  bool build(TrieInterface &trie);
   bool load(std::istream &is);
   bool serialize(std::ostream &os) const;
 
   void computePrefix(uint32_t node, std::string &prefix);
   void display();
 
- protected:
+ private:
   void _preBuild(uint32_t node_count);
   void visitNode(TrieNodeInterface &node);
   void _postBuild();
@@ -52,15 +53,16 @@ class LoudsTrie {
   }
 
  private:
-  sdsl::bit_vector _louds;
-  sdsl::bit_vector::rank_0_type _louds_rank0;
-  sdsl::bit_vector::select_1_type _louds_select1;
-  sdsl::bit_vector::select_0_type _louds_select0;
+  BitVector _louds;
+  typename BitVector::rank_0_type _louds_rank0;
+  typename BitVector::select_1_type _louds_select1;
+  typename BitVector::select_0_type _louds_select0;
   Vector<uint8_t> _labels;
 
-  uint32_t _louds_pos;
-  
-  friend class LoudsMap;
+  friend class LoudsMap<>;
+  friend class LoudsMap<sdsl::bit_vector, Vector<uint32_t>, LoudsTrie<sdsl::bit_vector> >;
 };
+
+#include "LoudsTrie.hxx"
 
 #endif

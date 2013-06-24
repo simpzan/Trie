@@ -1,3 +1,6 @@
+#ifndef LOUDS_MAP_HXX
+#define LOUDS_MAP_HXX
+
 #include <sdsl/util.hpp>
 #include "LoudsMap.h"
 #include "PTrie.h"
@@ -7,67 +10,29 @@
 using namespace std;
 using namespace sdsl;
 
-bool LoudsMap::visitNode(TrieNodeInterface &node_r) {
-  _trie.visitNode(node_r);
-  PTrieNode *node = (PTrieNode *) &node_r;
-
-  uint32_t value = (*node).getValue();
-  if (value != 0) {
-    _is_tails[_is_tails_pos] = 1;
-    _values.append(value);
-  }
-  ++_is_tails_pos;
-
-  uint32_t link = (*node).get_link();
-  if (link != 0) {
-    _has_links[_has_links_pos] = 1;
-    _links.append(link);
-  }
-  ++_has_links_pos;
-
-  return true;
-}
-
-void LoudsMap::_preBuild(uint32_t node_count) {
-  _trie._preBuild(node_count);
-  
-  bit_vector is_tails(node_count);
+template <typename BitVector, typename Container, typename TrieT>
+void LoudsMap<BitVector, Container, TrieT>::init(LoudsMapBuilder &builder) {
+  _trie.init(builder.trie());
+  BitVector is_tails(builder.is_tails());
   _is_tails.swap(is_tails);
-  bit_vector has_links(node_count);
+  Container values(builder.values().vector());
+  _values.swap(values);
+  BitVector has_links(builder.has_links());
   _has_links.swap(has_links);
-  _is_tails_pos = 0;
-  _has_links_pos = 0;
-
-  _values.clear();
-  _links.clear();
-}
-
-bool LoudsMap::build(TrieInterface &aTrie) {
-  PTrie *trie_p = dynamic_cast<PTrie *>(&aTrie);
-  if (trie_p == NULL)  return false;
-
-  PTrie trie = *trie_p;
-  uint32_t node_count = trie.getNodeCount() + 1; // + 1 for the super root.
-  _preBuild(node_count);
-
-  TrieBfsIterator itr(aTrie);
-  PTrieNode *node;
-  while (true) {
-    node = (PTrieNode *)itr.next();
-    if (node == NULL)  break;
-
-    visitNode(*node);
-  }
+  Container links(builder.links().vector());
+  _links.swap(links);
   _postBuild();
 }
 
-void LoudsMap::_postBuild() {
+template <typename BitVector, typename Container, typename TrieT>
+void LoudsMap<BitVector, Container, TrieT>::_postBuild() {
   _trie._postBuild();
   util::init_support(_is_tails_rank1, &_is_tails);
   util::init_support(_has_links_rank1, &_has_links);
 }
 
-void LoudsMap::display() {
+template <typename BitVector, typename Container, typename TrieT>
+void LoudsMap<BitVector, Container, TrieT>::display() {
   _trie.display();
   cout << "is tails: " << _is_tails.size() << "  " << ratio(_is_tails_rank1) << endl
     << _is_tails << endl;
@@ -77,7 +42,8 @@ void LoudsMap::display() {
   _links.display(cout);
 }
 
-bool LoudsMap::load(std::istream &is) {
+template <typename BitVector, typename Container, typename TrieT>
+bool LoudsMap<BitVector, Container, TrieT>::load(std::istream &is) {
   _trie.load(is);
 
   cout << "is tails" << endl;
@@ -97,7 +63,8 @@ bool LoudsMap::load(std::istream &is) {
   _links.read(is);
 }
 
-bool LoudsMap::serialize(std::ostream &os) {
+template <typename BitVector, typename Container, typename TrieT>
+bool LoudsMap<BitVector, Container, TrieT>::serialize(std::ostream &os) {
   _trie.serialize(os);
 
   showOffset(os);
@@ -110,7 +77,8 @@ bool LoudsMap::serialize(std::ostream &os) {
   _links.write(os);
 }
 
-bool LoudsMap::findEntry(const char *key, TrieValueType &value) {
+template <typename BitVector, typename Container, typename TrieT>
+bool LoudsMap<BitVector, Container, TrieT>::findEntry(const char *key, TrieValueType &value) {
   value = 0;
   uint32_t node;
   uint32_t matched_count;
@@ -121,7 +89,8 @@ bool LoudsMap::findEntry(const char *key, TrieValueType &value) {
   return value != 0;
 }
 
-bool LoudsMap::findEntryLowerBound(const char *pattern, 
+template <typename BitVector, typename Container, typename TrieT>
+bool LoudsMap<BitVector, Container, TrieT>::findEntryLowerBound(const char *pattern, 
     std::string *key, TrieValueType &value) {
   value = 0;
   uint32_t node;
@@ -148,7 +117,8 @@ bool LoudsMap::findEntryLowerBound(const char *pattern,
 }
 
 
-void LoudsMap::computeKey(string &key, uint32_t node) {
+template <typename BitVector, typename Container, typename TrieT>
+void LoudsMap<BitVector, Container, TrieT>::computeKey(string &key, uint32_t node) {
   uint32_t child = node;
   uint32_t parent;
   uint8_t ch;
@@ -165,7 +135,8 @@ void LoudsMap::computeKey(string &key, uint32_t node) {
   }
 }
 
-void LoudsMap::_followKey(const char *key, uint32_t &node, uint32_t &matched_count) {
+template <typename BitVector, typename Container, typename TrieT>
+void LoudsMap<BitVector, Container, TrieT>::_followKey(const char *key, uint32_t &node, uint32_t &matched_count) {
   matched_count = 0;
   node = root();
   int key_len = strlen(key);
@@ -182,7 +153,8 @@ void LoudsMap::_followKey(const char *key, uint32_t &node, uint32_t &matched_cou
   }
 }
 
-void LoudsMap::computeLabel(uint32_t node, string &label) {
+template <typename BitVector, typename Container, typename TrieT>
+void LoudsMap<BitVector, Container, TrieT>::computeLabel(uint32_t node, string &label) {
   uint32_t link = getLink(node);
   if (link == 0)  return;
 
@@ -190,7 +162,8 @@ void LoudsMap::computeLabel(uint32_t node, string &label) {
   _label_trie->computePrefix(link, label);
 }
 
-uint32_t LoudsMap::getLink(uint32_t node) {
+template <typename BitVector, typename Container, typename TrieT>
+uint32_t LoudsMap<BitVector, Container, TrieT>::getLink(uint32_t node) {
   uint32_t has_links_pos = loudsRank0(node - 1) - 1;
   if (_has_links[has_links_pos] == 0)  return 0;
 
@@ -199,7 +172,8 @@ uint32_t LoudsMap::getLink(uint32_t node) {
   return link;
 }
 
-TrieValueType LoudsMap::getValue(uint32_t node) {
+template <typename BitVector, typename Container, typename TrieT>
+TrieValueType LoudsMap<BitVector, Container, TrieT>::getValue(uint32_t node) {
   // -1 turn rank to offset, -1 for super root
   uint32_t is_tails_pos = loudsRank0(node - 1) - 1;
   if (_is_tails[is_tails_pos] == 0)  return 0;
@@ -209,12 +183,8 @@ TrieValueType LoudsMap::getValue(uint32_t node) {
   return _values[values_pos];
 }
 
-bool stringStartsWtih(const char *str_long, const char *str_short) {
-  int lcp = computeLCP(str_long, str_short);
-  return lcp == strlen(str_short);
-}
-
-void LoudsMap::findChild(uint32_t node, const char *key, 
+template <typename BitVector, typename Container, typename TrieT>
+void LoudsMap<BitVector, Container, TrieT>::findChild(uint32_t node, const char *key, 
     uint32_t &child, uint32_t &matched_count) {
   matched_count = 0;
   uint8_t ch = key[0];
@@ -236,7 +206,8 @@ void LoudsMap::findChild(uint32_t node, const char *key,
   matched_count = label.size() + 1;
 }
 
-uint32_t LoudsMap::findChildLowerBound(uint32_t node, const char *key) {
+template <typename BitVector, typename Container, typename TrieT>
+uint32_t LoudsMap<BitVector, Container, TrieT>::findChildLowerBound(uint32_t node, const char *key) {
   uint32_t child;
   uint8_t ch = key[0];
   uint8_t fetched_ch;
@@ -253,7 +224,8 @@ uint32_t LoudsMap::findChildLowerBound(uint32_t node, const char *key) {
   return sibling(child);
 }
 
-uint32_t LoudsMap::leftMostChild(uint32_t node) {
+template <typename BitVector, typename Container, typename TrieT>
+uint32_t LoudsMap<BitVector, Container, TrieT>::leftMostChild(uint32_t node) {
   uint32_t child = node;
   TrieValueType value;
   while (true) {
@@ -264,11 +236,4 @@ uint32_t LoudsMap::leftMostChild(uint32_t node) {
   return child;
 }
 
-void LoudsMap::updateLinks(const std::vector<uint32_t> &nodeIds) {
-  int count = _links.count();
-  for (int i = 0; i < count; ++i) {
-    uint32_t link = _links[i] - 1;
-    assert(link < nodeIds.size());
-    _links[i] = nodeIds[link];
-  }
-}
+#endif

@@ -11,7 +11,7 @@
 #include "TrieInterface.h"
 #include "TrieNode.h"
 #include "LinkedTrieNode.h"
-#include "LoudsTrie.h"
+#include "LoudsTrieBuilder.h"
 
 class Trie : public TrieInterface {
  public:
@@ -31,7 +31,7 @@ class Trie : public TrieInterface {
   }
 
   uint32_t insertKey(const char *key);
-  void convert(LoudsTrie &louds, std::vector<uint32_t> &ids);
+  void convert(LoudsTrieBuilder &louds, std::vector<uint32_t> &ids);
   void computePrefix(TrieNode *node, std::string &label);
   
  private:

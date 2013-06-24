@@ -83,7 +83,7 @@ void Trie::collectIds(std::vector<uint32_t> &ids) {
   }
 }
 
-void Trie::convert(LoudsTrie &louds, std::vector<uint32_t> &ids) {
+void Trie::convert(LoudsTrieBuilder &louds, std::vector<uint32_t> &ids) {
   louds.build(*this);
   collectIds(ids);
 }

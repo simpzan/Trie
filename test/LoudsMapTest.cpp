@@ -4,6 +4,8 @@
 #include "PTrie.h"
 #include "Trie.h"
 #include "utils.h"
+#include "LoudsMapBuilder.h"
+#include "LoudsTrieBuilder.h"
 
 using namespace std;
 
@@ -20,24 +22,34 @@ void addEntries(const vector<string> &tokens, PTrie &trie0) {
 }
 
 TEST(LoudsMapTest, findEntry) {
+  typedef LoudsTrie<sdsl::bit_vector> LoudsTrie;
+  typedef LoudsMap<sdsl::bit_vector, Vector<uint32_t>, LoudsTrie> LoudsMap;
+
   vector<string> tokens;
   loadTokensFromFile("block", tokens);
 
   cout << "build main trie" << endl;
   PTrie trie0;
   addEntries(tokens, trie0);
+
   LinkedTrie labels;
   trie0.collectLabels(labels);
 
   cout << "building label trie" << endl;
-  LoudsTrie label_trie;
+  LoudsTrieBuilder builder;
   vector<uint32_t> ids;
-  labels.convert(label_trie, ids);
+  labels.convert(builder, ids);
+
+  LoudsTrie label_trie;
+  label_trie.init(builder);
 
   cout << "transforming main trie" << endl;
+  LoudsMapBuilder builder1;
+  builder1.build(trie0);
+  builder1.updateLinks(ids);
+
   LoudsMap map;
-  map.build(trie0);
-  map.updateLinks(ids);
+  map.init(builder1);
   map.set_label_trie(&label_trie);
   cout << "done" << endl;
 

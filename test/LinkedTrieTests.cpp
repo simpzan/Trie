@@ -71,13 +71,13 @@ TEST(LinkedTrieTests, convert) {
   trie.insertKey("ing");
   trie.insertKey("xyz");
 
-  LoudsTrie louds;
-  vector<uint32_t> ids;
-  trie.convert(louds, ids);
+/*  LoudsTrie<> louds;*/
+  //vector<uint32_t> ids;
+  //trie.convert(louds, ids);
 
-  int count = ids.size();
-  for (int i = 0; i < count; ++i) {
-    cout << ids[i] << "\t";
-  }
-  cout << endl;
+  //int count = ids.size();
+  //for (int i = 0; i < count; ++i) {
+    //cout << ids[i] << "\t";
+  //}
+  /*cout << endl;*/
 }

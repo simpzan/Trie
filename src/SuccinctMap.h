@@ -9,7 +9,6 @@ class SuccinctMap {
   SuccinctMap() {}
   virtual ~SuccinctMap() {}
 
-  virtual bool build(TrieInterface &trie) = 0;
   virtual bool load(std::istream &is) = 0;
   virtual bool serialize(std::ostream &os) = 0;
 
