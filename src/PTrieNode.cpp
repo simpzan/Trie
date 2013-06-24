@@ -78,14 +78,43 @@ void PTrieNode::findChildViaLabel(const char *key, PTrieNode *&nextNode, int &ma
   }
 }
 
-void PTrieNode::collectLabelNodes(vector<PTrieNode*> &nodes) {
-  if (_label.size() != 0) {
+uint8_t PTrieNode::getCharLabelWithChild(PTrieNode *child) {
+  for (ChildrenMapIterator itr = _children.begin(); itr != _children.end(); ++itr) {
+    if (itr->second == child)  return itr->first;
+  }
+  assert(false);
+}
+
+void expandLabel(PTrieNode *parent, PTrieNode *child) {
+  string label = child->get_label();
+  uint8_t ch = parent->getCharLabelWithChild(child);
+  label = (char)ch + label;
+
+  int count = label.size();
+  for (int i = 0; i < count - 1; ++i) {
+    PTrieNode *new_node = child->createNode();
+    parent->setChildNodeWithLabel(label[i], new_node);
+    parent = new_node;
+  }
+  parent->setChildNodeWithLabel(label[count - 1], child);
+  child->set_label("");
+}
+
+uint32_t PTrieNode::collectNodesRecursively(vector<PTrieNode *> &nodes, PTrieNode *parent) {
+  int len_min = 5;
+  int len = _label.size();
+  uint32_t node_added = 0;
+  if (len > len_min) {
     nodes.push_back(this);
+  } else if (len > 0){
+    expandLabel(parent, this);
+    node_added = len;
   }
 
   for (ChildrenMapIterator itr = _children.begin(); itr != _children.end(); ++itr) {
-    itr->second->collectLabelNodes(nodes);
+    node_added += itr->second->collectNodesRecursively(nodes, this);
   }
+  return node_added;
 }
 
 void PTrieNode::traverseDFS(TrieNodeVisitorInterface &visitor) {

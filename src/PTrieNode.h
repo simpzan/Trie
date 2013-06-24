@@ -10,7 +10,7 @@
 #include "TrieNode.h"
 
 class PTrieNode : public TrieNodeInterface {
-  public:
+ public:
   PTrieNode() : _value(0), _label(""), _link(0), 
   _link_node(NULL), _parent(NULL), _id(0) {
     _id = ++counter;
@@ -36,6 +36,7 @@ class PTrieNode : public TrieNodeInterface {
     }
     node->_parent = this;
   }
+  uint8_t getCharLabelWithChild(PTrieNode *child);
 
   virtual PTrieNode *createNode() {
     PTrieNode *node = new PTrieNode;
@@ -44,8 +45,7 @@ class PTrieNode : public TrieNodeInterface {
 
   void findChildViaLink(const char *key, PTrieNode *&nextNode, int &matched_count);
   void findChildViaLabel(const char *key, PTrieNode *&nextNode, int &matched_count);
-  void collectLabels(std::vector<std::string> &labels);
-  void collectLabelNodes(std::vector<PTrieNode *> &nodes);
+  uint32_t collectNodesRecursively(std::vector<PTrieNode *> &nodes, PTrieNode *parent);
   void clear() {
     _children.clear();
     _value = 0;
@@ -83,8 +83,8 @@ class PTrieNode : public TrieNodeInterface {
     }
   }
 
-  private:
-typedef boost::ptr_map<uint8_t, PTrieNode>::iterator ChildrenMapIterator;
+ private:
+  typedef boost::ptr_map<uint8_t, PTrieNode>::iterator ChildrenMapIterator;
   boost::ptr_map<uint8_t, PTrieNode> _children;
   TrieValueType _value;
   std::string _label;

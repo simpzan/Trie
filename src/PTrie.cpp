@@ -94,7 +94,8 @@ bool PTrie::findEntry(const char *key, TrieValueType &value) {
 
 void PTrie::collectLabels(LinkedTrie &labels) {
   vector<PTrieNode *> nodes;
-  _root->collectLabelNodes(nodes);
+  uint32_t node_added = _root->collectNodesRecursively(nodes, NULL);
+  _node_count += node_added;
 
   int count = nodes.size();
   for (int i = 0; i < count; ++i) {
@@ -106,13 +107,14 @@ void PTrie::collectLabels(LinkedTrie &labels) {
 
 void PTrie::collectLabels(std::vector<std::string> &labels) {
   vector<PTrieNode *> nodes;
-  _root->collectLabelNodes(nodes);
+  uint32_t node_added = _root->collectNodesRecursively(nodes, NULL);
+  _node_count += node_added;
+
   int count = nodes.size();
   for (int i = 0; i < count; ++i) {
     PTrieNode *node = nodes[i];
     labels.push_back(node->get_label());
     uint32_t offset = labels.size();
-    //uint32_t offset = insertString(node->get_label(), labels);
     node->set_link(offset);
   }
 }
