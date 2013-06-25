@@ -13,10 +13,13 @@ void LoudsTrieBuilder::_preBuild(uint32_t node_count) {
   _louds[0] = 1;
   _louds_pos = 2;
   _labels.clear();
+
+  _node_counter = 0;
 }
 
 void LoudsTrieBuilder::visitNode(TrieNodeInterface &node) {
-  node.set_id(_louds_pos);
+  ++_node_counter;
+  node.set_id(_node_counter);
 
   vector<uint8_t> labels;
   node.getCharLabels(labels);

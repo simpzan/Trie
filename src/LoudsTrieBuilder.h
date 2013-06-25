@@ -25,6 +25,7 @@ class LoudsTrieBuilder {
   sdsl::bit_vector _louds;
   Vector<uint8_t> _labels;
   uint32_t _louds_pos;
+  uint32_t _node_counter;
 
   friend class LoudsMapBuilder;
 };

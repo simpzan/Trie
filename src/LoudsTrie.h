@@ -22,6 +22,7 @@ class LoudsTrie {
   void display();
 
  private:
+  void _computePrefix(uint32_t node, std::string &prefix);
   void _preBuild(uint32_t node_count);
   void visitNode(TrieNodeInterface &node);
   void _postBuild();

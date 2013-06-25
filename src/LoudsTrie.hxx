@@ -139,6 +139,12 @@ void LoudsTrie<BitVector>::findChildViaChar(uint32_t node, uint8_t ch,
 
 template <typename BitVector>
 void LoudsTrie<BitVector>::computePrefix(uint32_t node, std::string &prefix) {
+  uint32_t pos = loudsSelect1(node + 1);
+  _computePrefix(pos, prefix);
+}
+
+template <typename BitVector>
+void LoudsTrie<BitVector>::_computePrefix(uint32_t node, std::string &prefix) {
   uint32_t child = node;
   uint32_t parent;
   uint8_t ch;
