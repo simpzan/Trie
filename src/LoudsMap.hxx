@@ -59,7 +59,6 @@ template <typename BitVector, typename Container, typename TrieT>
 bool LoudsMap<BitVector, Container, TrieT>::serialize(std::ostream &os) {
   _trie.serialize(os);
 
-  showOffset(os);
   _is_tails.serialize(os);
   _is_tails_rank1.serialize(os);
   _values.write(os);

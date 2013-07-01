@@ -147,9 +147,24 @@ void testNND() {
 
 }
 
+void test_select() {
+  bit_vector bv(5);
+  bv[1] = 1;
+
+  rrr_vector<> rrr(bv);
+  rrr_rank_support<> rrr_rank(&rrr);
+  rrr_select_support<> rrr_select(&rrr);
+  rrr_select_support<0> rrr_select0(&rrr);
+
+  uint32_t pos = rrr_select(3);
+  cout << pos << endl;
+
+ 
+}
+
 int main(int argc, const char *argv[]) {
   //test();
-  testNND();
+  test_select();
   //testIds();
   return 0;
 }
