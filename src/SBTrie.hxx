@@ -28,9 +28,8 @@ uint32_t saveLeafNode(PTrie *trie, ostream &os, LinkedTrie &labels) {
   return offset;
 }
 
-
 void buildLeafNodes(const char *filename, ostream &os,
-    map<string, uint32_t> &entries, LinkedTrie &labels) {
+    vector<string> &entries, LinkedTrie &labels) {
   EntryFileReader reader(filename);
   int block_size = 4096;
   PTrie trie;
@@ -38,33 +37,24 @@ void buildLeafNodes(const char *filename, ostream &os,
   string lastKey;
   string separator;
   uint64_t value;
-  uint32_t leaf_count = 0;
   while (reader.nextEntry(key, value)) {
     bool canAdd = trie.canAddEntry(key.c_str(), value, block_size);
     if (!canAdd) {
-      ++leaf_count;
-      uint32_t offset = leaf_count;
       saveLeafNode(&trie, os, labels);
 
-      shortestSeparator(lastKey, key, separator);
-//      assert(lastKey <= separator && separator < key);
-      //cout << lastKey << " " << key << " " << separator << endl;
-      //entries[separator] = offset;
-      entries[lastKey] = offset;
+      entries.push_back(lastKey);
     }
     trie.addEntry(key.c_str(), value);
     lastKey = key;
   }
   uint32_t offset = saveLeafNode(&trie, os, labels);
-  ++leaf_count;
-  entries[lastKey] = leaf_count;
+  entries.push_back(lastKey);
 }
 
-void buildTopTrie(const map<string, uint32_t> &entries, PTrie &trie) {
-  for (map<string, uint32_t>::const_iterator itr = entries.begin(); 
-      itr != entries.end();
-      ++itr) {
-    trie.addEntry(itr->first.c_str(), itr->second);
+void buildTopTrie(const vector<string> &entries, PTrie &trie) {
+  int count = entries.size();
+  for (int i = 0; i < count; ++i) {
+    trie.addEntry(entries[i].c_str(), i + 1);
   }
 }
 
@@ -100,7 +90,7 @@ void SBTrie<LoudsMapT, LoudsTrieT>::build(const char *data_source_filename, cons
 
   // build leaf level to get a set of string labels L and a map KVs.
   cout << "building leaf nodes" << endl;
-  map<string, uint32_t> entries;
+  vector<string> entries;
   LinkedTrie label_trie;
   buildLeafNodes(data_source_filename, io, entries, label_trie);
 
