@@ -1,7 +1,8 @@
 #ifndef LOUDS_MAP_H
 #define LOUDS_MAP_H
 
-#include <sdsl/bit_vectors.hpp>
+#include <sdsl/int_vector.hpp>
+#include <sdsl/rrr_vector.hpp>
 #include "LoudsMapBuilder.h"
 #include "SuccinctMap.h"
 #include "TrieNodeInterface.h"
@@ -89,5 +90,9 @@ class LoudsMap : public SuccinctMap {
 };
 
 #include "LoudsMap.hxx"
+
+typedef LoudsMap<> LoudsMapCompressed;
+typedef LoudsMap<sdsl::bit_vector, Vector<uint32_t>, LoudsTrie<sdsl::bit_vector> >
+LoudsMapUncompressed;
 
 #endif

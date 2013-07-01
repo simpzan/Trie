@@ -1,7 +1,7 @@
 #ifndef LOUDS_TRIE_BUILDER_H
 #define LOUDS_TRIE_BUILDER_H
 
-#include <sdsl/bit_vectors.hpp>
+#include <sdsl/int_vector.hpp>
 #include "Vector.h"
 #include "TrieInterface.h"
 

@@ -39,6 +39,12 @@ class LoudsTrie {
   void findChildViaChar(uint32_t node, uint8_t ch,
       uint32_t &child, uint8_t &fetched_ch);
 
+  uint32_t degree(uint32_t node) {
+    uint32_t id = loudsRank1(node) + 1;
+    uint32_t next_node = loudsSelect1(id);
+    uint32_t degree = next_node - node - 1;
+    return degree;
+  }
   uint32_t loudsRank1(uint32_t pos) {
     uint32_t rank0 = loudsRank0(pos);
     return pos + 1 - rank0;
@@ -65,5 +71,9 @@ class LoudsTrie {
 };
 
 #include "LoudsTrie.hxx"
+
+typedef LoudsTrie<> LoudsTrieCompressed;
+typedef LoudsTrie<sdsl::bit_vector> LoudsTrieUncompressed;
+
 
 #endif

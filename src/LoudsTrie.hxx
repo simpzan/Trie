@@ -93,7 +93,8 @@ void LoudsTrie<BitVector>::getCharLowerBound(uint32_t node, uint8_t ch,
     int &index, uint8_t &fetched_ch) {
   uint32_t labels_base = loudsRank0(node) - 1;
   
-  for (int i = 0; !_louds[node + i + 1]; ++i) {
+  int count = degree(node);
+  for (int i = 0; i < count; i++) {
     fetched_ch = _labels[labels_base + i];
     if (fetched_ch >= ch) {
       index = i + 1;

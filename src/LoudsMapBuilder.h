@@ -1,7 +1,7 @@
 #ifndef LOUDS_MAP_BUILDER_H
 #define LOUDS_MAP_BUILDER_H
 
-#include <sdsl/bit_vectors.hpp>
+#include <sdsl/int_vector.hpp>
 #include "TrieInterface.h"
 #include "Vector.h"
 #include "LoudsTrieBuilder.h"
@@ -16,6 +16,10 @@ class LoudsMapBuilder {
   virtual bool build(TrieInterface &trie);
   virtual bool load(std::istream &is);
   virtual bool serialize(std::ostream &os);
+  void display() {
+    _trie.display();
+
+  }
 
   void updateLinks(const std::vector<uint32_t> &nodeIds);
   void updateValues(const std::vector<uint32_t> &offsets);

@@ -2,7 +2,6 @@
 #define DFUDS_TRIE_H
 
 #include <sdsl/int_vector.hpp> // for the bit_vector class
-#include <sdsl/bit_vectors.hpp>
 #include <sdsl/util.hpp> // for counting the set bits in a bit_vector 
 #include <sdsl/rank_support.hpp> // for rank data structures
 #include <sdsl/select_support_mcl.hpp>
