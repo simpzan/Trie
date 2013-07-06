@@ -26,28 +26,35 @@ void encode(const vector<uint8_t> &labels, vector<uint32_t> &encoded) {
 
 int main(int argc, const char *argv[])
 {
-  ifstream is("labels.vector");
+  ifstream is("enwiki.idx");
   assert(is.good());
-
+  is.seekg(3031375);
   Vector<uint8_t> labels;
   labels.read(is);
 
   vector<uint32_t> encoded;
   encode(labels.vector(), encoded);
 
-  int count = labels.count();
-  for (int i = 0; i < count; ++i) {
-    cout << labels[i] << " - " << encoded[i] << endl;
-  }
-  
+  //int count = labels.count();
+  //for (int i = 0; i < count; ++i) {
+    //cout << labels[i] << " - " << encoded[i] << endl;
+  //}
+
+
 
   DACWrapper dac(encoded);
   dac[0];
   dac[1];
+
   string suffix2 = ".com";
   string filename = '9' + suffix2;
   ofstream os_compressed(filename.c_str());
   assert(os_compressed);
   dac.write(os_compressed);
+
+  ofstream os2("labels");
+  assert(os2.good());
+  labels.write(os2);
+
   return 0;
 }

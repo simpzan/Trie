@@ -76,13 +76,13 @@ void benchmark(const char *fname) {
 
   bool loaded;
 
-  //cout << "SBTrieCompressed" << endl;
-  //SBTrieCompressed sbtriec;
-  //string filename_idx = string(fname) + ".idx";
-  //loaded = sbtriec.load(filename_idx.c_str());
-  //assert(loaded);
+  cout << "SBTrieCompressed" << endl;
+  SBTrieCompressed sbtriec;
+  string filename_idx = string(fname) + ".idx";
+  loaded = sbtriec.load(filename_idx.c_str());
+  assert(loaded);
   //timing(sbtriec, tokens);
-  //return;
+  return;
   //cout << "SBTrieUncompressed" << endl;
   //SBTrieUncompressed sbtrieu;
   //string filename_idx_uncompressed = string(fname) + ".idxu";
@@ -128,6 +128,5 @@ int main(int argc, const char *argv[])
 {
   assert(argc == 2);
   const char *fname = argv[1];
-  fname = "/Volumes/Docs/workspace/testbed/BTree/words.sorted";
   benchmark(fname);
 }
