@@ -134,7 +134,7 @@ bool SBTrie<LoudsMapT, LoudsTrieT>::findEntry(const char *key, TrieValueType &va
   // search the top trie to find the first key K >= key. get the value V associated with K.
   uint32_t offset;
   string key_found;
-  bool found = _root->findEntryLowerBound(key, &key_found, offset);
+  bool found = _root->findEntryLowerBound(key, NULL, offset);
   if (!found)  return false;
 
   // fetch the leaf node at position V.

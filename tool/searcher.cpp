@@ -20,7 +20,7 @@ void loadTokens(const char *fname, vector<string> &tokens) {
 
 template <class SBTrieT>
 void timing(SBTrieT &builder, const vector<string> &tokens) {
-  int step = 10000;
+  int step = 100;
   uint32_t value;
   int count = tokens.size();
   Timer t;
@@ -30,7 +30,7 @@ void timing(SBTrieT &builder, const vector<string> &tokens) {
     assert(found);
     assert(value == token.size());
 
-    if (i % 10000 == 0)  cout << i << endl;
+    if (i % 100000 == 0)  cout << i << endl;
   }
   t.Stop();
   count /= step;
@@ -81,15 +81,15 @@ void benchmark(const char *fname) {
   string filename_idx = string(fname) + ".idx";
   loaded = sbtriec.load(filename_idx.c_str());
   assert(loaded);
-  //timing(sbtriec, tokens);
-  //return;
+  timing(sbtriec, tokens);
+  return;
 
   cout << "SBTrieUncompressed" << endl;
   SBTrieUncompressed sbtrieu;
   string filename_idx_uncompressed = string(fname) + ".idxu";
   loaded = sbtrieu.load(filename_idx_uncompressed.c_str());
   assert(loaded);
-  //timing(sbtrieu, tokens);
+  timing(sbtrieu, tokens);
   return;
 
   MapFactoryInterface<ValueT> *map = NULL;
