@@ -149,16 +149,23 @@ bool SBTrie<LoudsMapT, LoudsTrieT>::findEntry(const char *key, TrieValueType &va
   return true;
 }
 
+
 template <class LoudsMapT, class LoudsTrieT>
 bool SBTrie<LoudsMapT, LoudsTrieT>::load(const char *idx_filename) {
   _idx.open(idx_filename, ios::in|ios::binary);
   assert(_idx.good());
   
   _idx.read((char *)&_root_offset, sizeof(uint32_t));
+
+  uint32_t offset = _idx.tellg();
   _label_trie->load(_idx);
+  uint32_t size = (uint32_t)_idx.tellg() - offset;
+  cout << "label trie:" << size << endl;
 
   _idx.seekg(_root_offset);
   _root->load(_idx);
+  size = (uint32_t)_idx.tellg() - _root_offset;
+  cout << "root:" << size << endl;
   //_root->display();
 }
 
