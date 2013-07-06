@@ -27,6 +27,8 @@ class LoudsTrieBuilder {
   uint32_t _louds_pos;
   uint32_t _node_counter;
 
+  Vector<uint32_t> _labels_encoded;
+
   friend class LoudsMapBuilder;
 };
 

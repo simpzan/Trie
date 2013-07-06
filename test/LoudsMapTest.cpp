@@ -28,11 +28,11 @@ TEST(LoudsMapTest, findEntry) {
   typedef LoudsMap<sdsl::bit_vector, Vector<uint32_t>, LoudsTrie> LoudsMap;
 
   vector<string> tokens;
-  tokens.push_back("tester");
-  tokens.push_back("testing");
-  tokens.push_back("xyz");
-  tokens.push_back("xyzing");
-  //loadTokensFromFile("block", tokens);
+  //tokens.push_back("tester");
+  //tokens.push_back("testing");
+  //tokens.push_back("xyz");
+  //tokens.push_back("xyzing");
+  loadTokensFromFile("block", tokens);
 
   cout << "build main trie" << endl;
   PTrie trie0;
@@ -53,7 +53,7 @@ TEST(LoudsMapTest, findEntry) {
   LoudsMapBuilder builder1;
   builder1.build(trie0);
   builder1.updateLinks(ids);
-  builder1.display();
+  //builder1.display();
 
   LoudsMap map;
   map.init(builder1);
@@ -62,7 +62,6 @@ TEST(LoudsMapTest, findEntry) {
 
   TrieValueType value;
   //map.display();
-  Timer timer;
   int count = tokens.size();
   for (int i = 0; i < count; ++i) {
     const char *key = tokens[i].c_str();
@@ -71,8 +70,6 @@ TEST(LoudsMapTest, findEntry) {
     ASSERT_TRUE(found);
     EXPECT_EQ(value, i+ 1);
   }
-  timer.Stop();
-  cout << "time(us):" << timer.ElapsedTimeCPU()/count << endl;
 
   for (int i = 0; i < count; ++i) {
     const char *key = tokens[i].c_str();

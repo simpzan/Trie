@@ -3,6 +3,7 @@
 #include "LoudsTrieBuilder.h"
 #include "TrieIterator.h"
 #include "utils.h"
+#include "DACWrapper.h"
 
 using namespace sdsl;
 using namespace std;
@@ -24,6 +25,9 @@ void LoudsTrieBuilder::visitNode(TrieNodeInterface &node) {
   vector<uint8_t> labels;
   node.getCharLabels(labels);
   _labels.appendValues(labels);
+
+  vector<uint32_t> encoded;
+  _labels_encoded.appendValues(encoded);
 
   int count = labels.size();
   _louds[_louds_pos] = 1;

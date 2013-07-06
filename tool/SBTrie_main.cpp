@@ -4,10 +4,11 @@
 int main(int argc, const char *argv[])
 {
   SBTrieCompressed builder;
-  builder.build("words.sorted", "words.sorted.idx");
-//  builder.load("words.sorted.idx");
-  //builder.load("../enwiki.sbtrie");
+  //builder.build("words.sorted", "words.sorted.idx");
+  builder.load("words.sorted.idx");
+  //builder.load("enwiki.idx");
   cout << "build done" << endl;
+  return 0;
 
   vector<string> tokens;
   loadTokensFromFile("words.sorted", tokens);
