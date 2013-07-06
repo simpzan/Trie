@@ -56,6 +56,7 @@ uint32_t Trie::insertKey(const char *key) {
   TrieNode *node = addKey(reversed.c_str());
   uint32_t value = node->getValue();
   if (value)  return value;
+
   ++_value_count;
   value = _value_count;
   node->setValue(value);
@@ -63,6 +64,7 @@ uint32_t Trie::insertKey(const char *key) {
 }
 
 void Trie::collectIds(std::vector<uint32_t> &ids) {
+  // use map to sort ids in insertion order.
   typedef map<uint32_t, uint32_t> Map;
   Map id_map;
   uint32_t value;

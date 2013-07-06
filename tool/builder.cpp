@@ -60,7 +60,6 @@ void sliceFile(const char *file, int part, string &out) {
 }
 
 int build(const char *fname) {
-
   MapFactoryInterface<ValueT> *map = NULL;
   string idxName;
 

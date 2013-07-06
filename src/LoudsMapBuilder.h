@@ -18,7 +18,6 @@ class LoudsMapBuilder {
   virtual bool serialize(std::ostream &os);
   void display() {
     _trie.display();
-
   }
 
   void updateLinks(const std::vector<uint32_t> &nodeIds);

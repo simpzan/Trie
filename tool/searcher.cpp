@@ -13,6 +13,9 @@ typedef uint32_t ValueT;
 using namespace std;
 
 void loadTokens(const char *fname, vector<string> &tokens) {
+  //tokens.push_back("!!!Fuck_You!!!");
+  //tokens.push_back("!!!Fuck_You!!!");
+  //return;
   loadTokensFromFile(fname, tokens);
   string last = tokens.back();
   if (last.size() == 0)  tokens.erase(tokens.end() - 1);
@@ -20,24 +23,25 @@ void loadTokens(const char *fname, vector<string> &tokens) {
 
 template <class SBTrieT>
 void timing(SBTrieT &builder, const vector<string> &tokens) {
-  int step = 1;
+  int step = 10000;
   uint32_t value;
+  bool found = builder.findEntry("not_found", value);
+  assert(!found);
   int count = tokens.size();
   Timer t;
-  for (int i = 0; i < count; i+=step) {
+  for (int i = 1; i < count; i+=step) {
     string token = tokens[i];
     bool found = builder.findEntry(token.c_str(), value);
     assert(found);
     assert(value == token.size());
 
-    if (i % 10000 == 0)  cout << i << endl;
+    if (i % 10001 == 0) {
+      cout << i << endl;
+    }
   }
-  t.Stop();
   count /= step;
-  cout << "cpu time(s):" << t.ElapsedTimeCPU() / 1000000
-    << " avg(us):" << t.ElapsedTimeCPU()/count << endl
-    << "wall time(s):" << t.ElapsedTime() / 1000000
-    << " avg(us):" << t.ElapsedTime()/count << endl;
+  cout << count << endl;
+  t.Report(count);
 }
 
 void search(const string &idxName, MapFactoryInterface<ValueT> &map, 
@@ -75,21 +79,22 @@ void benchmark(const char *fname) {
   loadTokens(fname, tokens);
 
   bool loaded;
+  cout << "SBTrieUncompressed" << endl;
+  SBTrieUncompressed sbtrieu;
+  string filename_idx_uncompressed = string(fname) + ".idxu";
+  loaded = sbtrieu.load(filename_idx_uncompressed.c_str());
+  assert(loaded);
+  timing(sbtrieu, tokens);
+  //return;
 
-  //cout << "SBTrieCompressed" << endl;
-  //SBTrieCompressed sbtriec;
-  //string filename_idx = string(fname) + ".idx";
-  //loaded = sbtriec.load(filename_idx.c_str());
-  //assert(loaded);
-  //timing(sbtriec, tokens);
+  cout << "SBTrieCompressed" << endl;
+  SBTrieCompressed sbtriec;
+  string filename_idx = string(fname) + ".idx";
+  loaded = sbtriec.load(filename_idx.c_str());
+  assert(loaded);
+  timing(sbtriec, tokens);
   //return;
-  //cout << "SBTrieUncompressed" << endl;
-  //SBTrieUncompressed sbtrieu;
-  //string filename_idx_uncompressed = string(fname) + ".idxu";
-  //loaded = sbtrieu.load(filename_idx_uncompressed.c_str());
-  //assert(loaded);
-  //timing(sbtrieu, tokens);
-  //return;
+  
 
   MapFactoryInterface<ValueT> *map = NULL;
   string idxName;
@@ -128,6 +133,5 @@ int main(int argc, const char *argv[])
 {
   assert(argc == 2);
   const char *fname = argv[1];
-  fname = "/Volumes/Docs/workspace/testbed/BTree/words.sorted";
   benchmark(fname);
 }

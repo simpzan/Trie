@@ -10,8 +10,8 @@
 using namespace std;
 using namespace sdsl;
 
-template <typename BitVector>
-void LoudsTrie<BitVector>::init(LoudsTrieBuilder &builder) {
+template <typename BitVector> template <class LoudsTrieT>
+void LoudsTrie<BitVector>::init(LoudsTrieT &builder) {
   BitVector louds(builder.louds());
   _louds.swap(louds);
 
@@ -94,6 +94,7 @@ void LoudsTrie<BitVector>::getCharLowerBound(uint32_t node, uint8_t ch,
   uint32_t labels_base = loudsRank0(node) - 1;
   
   int count = degree(node);
+
   for (int i = 0; i < count; i++) {
     fetched_ch = _labels[labels_base + i];
     if (fetched_ch >= ch) {

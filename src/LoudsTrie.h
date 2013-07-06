@@ -14,12 +14,17 @@ class LoudsTrie {
   LoudsTrie() {}
   virtual ~LoudsTrie() {}
 
-  void init(LoudsTrieBuilder &builder);
+  template <class LoudsTrieT>
+  void init(LoudsTrieT &builder);
+
   bool load(std::istream &is);
   bool serialize(std::ostream &os) const;
 
   void computePrefix(uint32_t node, std::string &prefix);
   void display();
+
+  BitVector &louds() {  return _louds;  }
+  Vector<uint8_t> &labels() {  return _labels;  }
 
  private:
   void _computePrefix(uint32_t node, std::string &prefix);
@@ -66,8 +71,7 @@ class LoudsTrie {
   typename BitVector::select_0_type _louds_select0;
   Vector<uint8_t> _labels;
 
-  friend class LoudsMap<>;
-  friend class LoudsMap<sdsl::bit_vector, Vector<uint32_t>, LoudsTrie<sdsl::bit_vector> >;
+  template <typename BV, typename C, typename T> friend class LoudsMap;
 };
 
 #include "LoudsTrie.hxx"

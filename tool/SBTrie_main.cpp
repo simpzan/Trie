@@ -5,7 +5,7 @@ int main(int argc, const char *argv[])
 {
   SBTrieCompressed builder;
   builder.build("words.sorted", "words.sorted.idx");
-//  builder.load("words.sorted.idx");
+  //builder.load("words.sorted.idx");
   //builder.load("../enwiki.sbtrie");
   cout << "build done" << endl;
 

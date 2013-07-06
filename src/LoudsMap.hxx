@@ -10,17 +10,21 @@
 using namespace std;
 using namespace sdsl;
 
-template <typename BitVector, typename Container, typename TrieT>
-void LoudsMap<BitVector, Container, TrieT>::init(LoudsMapBuilder &builder) {
+template <typename BitVector, typename Container, typename TrieT> 
+template <class LoudsMapT>
+void LoudsMap<BitVector, Container, TrieT>::init(LoudsMapT &builder) {
   _trie.init(builder.trie());
+
   BitVector is_tails(builder.is_tails());
   _is_tails.swap(is_tails);
   Container values(builder.values().vector());
   _values.swap(values);
+
   BitVector has_links(builder.has_links());
   _has_links.swap(has_links);
   Container links(builder.links().vector());
   _links.swap(links);
+
   _postBuild();
 }
 
@@ -33,12 +37,10 @@ void LoudsMap<BitVector, Container, TrieT>::_postBuild() {
 
 template <typename BitVector, typename Container, typename TrieT>
 void LoudsMap<BitVector, Container, TrieT>::display() {
-  _trie.display();
-  cout << "is tails: " << _is_tails.size() << "  " << ratio(_is_tails_rank1) << endl
-    << _is_tails << endl;
-  _values.display(cout);
-  cout << "has links: " << _has_links.size() << "  " << ratio(_has_links_rank1) << endl 
-    << _has_links << endl;
+  //_trie.display();
+  //cout << "is tails: " << _is_tails.size() << "  " << ratio(_is_tails_rank1) << endl;
+  //_values.display(cout);
+  //cout << "has links: " << _has_links.size() << "  " << ratio(_has_links_rank1) << endl;
   _links.display(cout);
 }
 
@@ -53,6 +55,7 @@ bool LoudsMap<BitVector, Container, TrieT>::load(std::istream &is) {
   _has_links.load(is);
   _has_links_rank1.load(is, &_has_links);
   _links.read(is);
+  return true;
 }
 
 template <typename BitVector, typename Container, typename TrieT>

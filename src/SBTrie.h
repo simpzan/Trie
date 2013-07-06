@@ -23,6 +23,8 @@ class SBTrie {
   ~SBTrie() {}
 
   void build(const char *data_source_filename, const char *idx_filename);
+  void compress(const char *idx_filename_new);
+
   bool load(const char *idx_filename);
 
   bool findEntry(const char *key, TrieValueType &value);

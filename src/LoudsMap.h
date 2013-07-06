@@ -21,7 +21,8 @@ class LoudsMap : public SuccinctMap {
   LoudsMap() {}
   virtual ~LoudsMap() {}
 
-  void init(LoudsMapBuilder &builder);
+  template <class LoudsMapT>
+  void init(LoudsMapT &builder);
   virtual bool load(std::istream &is);
   virtual bool serialize(std::ostream &os);
 
@@ -34,6 +35,21 @@ class LoudsMap : public SuccinctMap {
 
   void set_label_trie(TrieT *trie) {  _label_trie = trie;  }
   void display();
+
+  sdsl::bit_vector &is_tails() {  return _is_tails;  }
+  Vector<uint32_t> &values() {  return _values;  }
+  sdsl::bit_vector &has_links() {  return _has_links;  }
+  Vector<uint32_t> &links() {  return _links;  }
+  LoudsTrie<BitVector> &trie() {  return _trie;  }
+  void updateValues(std::map<uint32_t, uint32_t> &offsets) {
+    std::vector<uint32_t> values(offsets.size());
+    int count = _values.count();
+    for (int i = 0; i < count; ++i) {
+      values[i] = offsets[_values[i]];
+    }
+    Container values_new(values);
+    _values.swap(values_new);
+  }
 
  private:
   void _followKey(const char *key, uint32_t &node, uint32_t &matched_count);
@@ -80,10 +96,6 @@ class LoudsMap : public SuccinctMap {
   BitVector _has_links;
   typename BitVector::rank_1_type _has_links_rank1;
   Container _links;
-
-  // pos used when build bit_vectors.
-  uint32_t _is_tails_pos;
-  uint32_t _has_links_pos;
 
   TrieT *_label_trie;
   LoudsTrie<BitVector> _trie;

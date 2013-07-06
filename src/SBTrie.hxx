@@ -58,10 +58,21 @@ void buildTopTrie(const vector<string> &entries, PTrie &trie) {
   }
 }
 
+void reportProgress(uint32_t offset) {
+  uint32_t unit = 1024 * 1024;
+  uint32_t block = offset / unit;
+  static uint32_t block_last = 0;
+  if (block == block_last)  return;
+
+  block_last = block;
+  cout << block << endl;
+}
+
 } // namespace
 
 template <class LoudsMapT, class LoudsTrieT>
-void SBTrie<LoudsMapT, LoudsTrieT>::updateLinksForLeafNodes(const vector<uint32_t> nodeIds, istream &is, ostream &os, vector<uint32_t> &offsets) {
+void SBTrie<LoudsMapT, LoudsTrieT>::updateLinksForLeafNodes(const vector<uint32_t> nodeIds, 
+    istream &is, ostream &os, vector<uint32_t> &offsets) {
   is.seekg(0);
   LoudsMapBuilder builder;
   LoudsMapT map;
@@ -73,32 +84,35 @@ void SBTrie<LoudsMapT, LoudsTrieT>::updateLinksForLeafNodes(const vector<uint32_
     uint32_t offset = os.tellp();
     offsets.push_back(offset);
 
+    reportProgress(offset);
+
     map.serialize(os);
     is.peek();
   }
 }
 
 template <class LoudsMapT, class LoudsTrieT>
-void SBTrie<LoudsMapT, LoudsTrieT>::build(const char *data_source_filename, const char *idx_filename) {
+void SBTrie<LoudsMapT, LoudsTrieT>::build(const char *data_source_filename, 
+    const char *idx_filename) {
   _idx.open(idx_filename, ios::in|ios::out|ios::trunc|ios::binary);
   assert(_idx.good());
   _idx.write((char *)&_root_offset, sizeof(uint32_t));
 
   string tmp_file = string(data_source_filename) + ".tmp";
-  fstream io(tmp_file.c_str(), ios::in|ios::out|ios::trunc|ios::binary);
-  assert(io.good());
+  fstream tmp_stream(tmp_file.c_str(), ios::in|ios::out|ios::trunc|ios::binary);
+  assert(tmp_stream.good());
 
   // build leaf level to get a set of string labels L and a map KVs.
   cout << "building leaf nodes" << endl;
   vector<string> entries;
   LinkedTrie label_trie;
-  buildLeafNodes(data_source_filename, io, entries, label_trie);
+  buildLeafNodes(data_source_filename, tmp_stream, entries, label_trie);
 
   // build the top trie using the map of KVs. get labels and merge with previouds labels.
   cout << "root node" << endl;
-  PTrie trie;
-  buildTopTrie(entries, trie);
-  trie.collectLabels(label_trie);
+  PTrie top_trie;
+  buildTopTrie(entries, top_trie);
+  top_trie.collectLabels(label_trie);
 
   cout << "building and writing label trie" << endl;
   // convert labels to louds trie and ids.
@@ -111,12 +125,12 @@ void SBTrie<LoudsMapT, LoudsTrieT>::build(const char *data_source_filename, cons
   // update link of the leaf nodes.
   cout << "updating leaf nodes" << endl;
   vector<uint32_t> offsets;
-  updateLinksForLeafNodes(nodeIds, io, _idx, offsets);
+  updateLinksForLeafNodes(nodeIds, tmp_stream, _idx, offsets);
 
   // build and update link of the top trie.
   cout << "converting root node to louds and writing" << endl;
   LoudsMapBuilder mapBuilder;
-  mapBuilder.build(trie);
+  mapBuilder.build(top_trie);
   mapBuilder.updateLinks(nodeIds);
   mapBuilder.updateValues(offsets);
   _root->init(mapBuilder);
@@ -155,11 +169,54 @@ bool SBTrie<LoudsMapT, LoudsTrieT>::load(const char *idx_filename) {
   assert(_idx.good());
   
   _idx.read((char *)&_root_offset, sizeof(uint32_t));
-  _label_trie->load(_idx);
+  bool loaded = _label_trie->load(_idx);
+  if (!loaded)  return false;
 
   _idx.seekg(_root_offset);
-  _root->load(_idx);
+  loaded = _root->load(_idx);
   //_root->display();
+  return loaded;
+}
+
+template <class LoudsMapT, class LoudsTrieT>
+void SBTrie<LoudsMapT, LoudsTrieT>::compress(const char *idx_filename_new) {
+
+  ofstream stream_new(idx_filename_new);
+  assert(stream_new.good());
+
+  uint32_t offset_root = 0;
+  stream_new.write((char *)&offset_root, sizeof(uint32_t));
+  
+  cout << "label trie" << endl;
+  _idx.seekg(sizeof(uint32_t));
+  _label_trie->load(_idx);
+
+  LoudsTrieCompressed label_trie;
+  label_trie.init(*_label_trie);
+  label_trie.serialize(stream_new);
+
+  cout << "leaf nodes" << endl;
+  map<uint32_t, uint32_t> offset_leaves;
+  LoudsMapCompressed node;
+  while (true) {
+    uint32_t offset = _idx.tellg();
+    if (offset == _root_offset)  break;
+    offset_leaves[offset] = stream_new.tellp();
+    cout << offset / 1024 / 1024 << endl;
+
+    _leafNode->load(_idx);
+    node.init(*_leafNode);
+    node.serialize(stream_new);
+  }
+
+  cout << "root node" << endl;
+  offset_root = stream_new.tellp();
+  node.init(*_root);
+  node.updateValues(offset_leaves);
+  node.serialize(stream_new);
+
+  stream_new.seekp(0);
+  stream_new.write((char *)&offset_root, sizeof(uint32_t));
 }
 
 #endif
