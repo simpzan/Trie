@@ -81,10 +81,6 @@ class LoudsMap : public SuccinctMap {
   typename BitVector::rank_1_type _has_links_rank1;
   Container _links;
 
-  // pos used when build bit_vectors.
-  uint32_t _is_tails_pos;
-  uint32_t _has_links_pos;
-
   TrieT *_label_trie;
   LoudsTrie<BitVector> _trie;
 };
