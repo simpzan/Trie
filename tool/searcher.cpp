@@ -20,7 +20,7 @@ void loadTokens(const char *fname, vector<string> &tokens) {
 
 template <class SBTrieT>
 void timing(SBTrieT &builder, const vector<string> &tokens) {
-  int step = 100;
+  int step = 1000;
   uint32_t value;
   int count = tokens.size();
   Timer t;
@@ -73,8 +73,12 @@ void benchmark(const char *fname) {
   uint32_t filesize_original = filesizeOfFile(fname);
   vector<string> tokens;
   loadTokens(fname, tokens);
+ 
+cout << "token loaded" << endl;
+getchar();
 
   bool loaded;
+
 
   cout << "SBTrieCompressed" << endl;
   SBTrieCompressed sbtriec;
