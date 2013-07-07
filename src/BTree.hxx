@@ -29,6 +29,11 @@ bool BTree<T>::load(const char *idx_filename) {
   bool loadresult = _root->load(_idxStream);
   assert(loadresult);
 
+  uint32_t offset = _idxStream.tellg();
+  uint32_t size = offset - rootOffset;
+  using namespace std;
+  cout << "root: " << size << endl;
+
   _bufNode = _factory->newMap();
   return true;
 }
