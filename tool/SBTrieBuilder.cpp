@@ -9,17 +9,17 @@ void pauseForAWhile() {
 
 int main(int argc, const char *argv[])
 {
-  assert(argc >= 3);
+  assert(argc == 2);
   pauseForAWhile();
   const char *src = argv[1];
-  const char *dst = argv[2];
-  if (argc >= 4) {
-    SBTrieUncompressed builder;
-    builder.build(src, dst);
-    return 0;
-  }
+  string fname = src;
+
+  string fname_u = fname + ".idxu";
+  SBTrieUncompressed builder_u;
+  builder_u.build(src, fname_u.c_str());
+
+  string fname_c = fname + ".idx";
   SBTrieCompressed builder;
-  builder.build(src, dst);
-//  builder.load("words.sorted.idx");
+  builder.build(src, fname_c.c_str());
   return 0;
 }
