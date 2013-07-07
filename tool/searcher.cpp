@@ -82,7 +82,7 @@ void benchmark(const char *fname) {
   loaded = sbtriec.load(filename_idx.c_str());
   assert(loaded);
   timing(sbtriec, tokens);
-  return;
+  //return;
 
   cout << "SBTrieUncompressed" << endl;
   SBTrieUncompressed sbtrieu;
@@ -90,7 +90,7 @@ void benchmark(const char *fname) {
   loaded = sbtrieu.load(filename_idx_uncompressed.c_str());
   assert(loaded);
   timing(sbtrieu, tokens);
-  return;
+  //return;
 
   MapFactoryInterface<ValueT> *map = NULL;
   string idxName;

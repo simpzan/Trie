@@ -167,6 +167,7 @@ bool SBTrie<LoudsMapT, LoudsTrieT>::load(const char *idx_filename) {
   size = (uint32_t)_idx.tellg() - _root_offset;
   cout << "root:" << size << endl;
   //_root->display();
+  return true;
 }
 
 #endif
