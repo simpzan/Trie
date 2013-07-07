@@ -72,6 +72,7 @@ void SBTrie<LoudsMapT, LoudsTrieT>::updateLinksForLeafNodes(const vector<uint32_
 
     uint32_t offset = os.tellp();
     offsets.push_back(offset);
+    cout << offset / 1024 / 1024 << endl;
 
     map.serialize(os);
     is.peek();
@@ -167,6 +168,7 @@ bool SBTrie<LoudsMapT, LoudsTrieT>::load(const char *idx_filename) {
   size = (uint32_t)_idx.tellg() - _root_offset;
   cout << "root:" << size << endl;
   //_root->display();
+  return true;
 }
 
 #endif

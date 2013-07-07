@@ -30,7 +30,7 @@ void timing(SBTrieT &builder, const vector<string> &tokens) {
     assert(found);
     assert(value == token.size());
 
-    if (i % 100000 == 0)  cout << i << endl;
+    if (i % 1000000 == 0)  cout << i << endl;
   }
   t.Stop();
   count /= step;
@@ -82,7 +82,6 @@ void benchmark(const char *fname) {
   loaded = sbtriec.load(filename_idx.c_str());
   assert(loaded);
   timing(sbtriec, tokens);
-  return;
 
   cout << "SBTrieUncompressed" << endl;
   SBTrieUncompressed sbtrieu;
@@ -90,7 +89,6 @@ void benchmark(const char *fname) {
   loaded = sbtrieu.load(filename_idx_uncompressed.c_str());
   assert(loaded);
   timing(sbtrieu, tokens);
-  return;
 
   MapFactoryInterface<ValueT> *map = NULL;
   string idxName;
