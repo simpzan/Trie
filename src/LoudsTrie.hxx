@@ -81,7 +81,6 @@ uint32_t LoudsTrie<BitVector>::sibling(uint32_t node) {
   if (node == root())  return 0;
 
   uint32_t rank = loudsRank1(node);
-
   uint32_t pos = loudsSelect0(rank - 1);
   if (_louds[pos + 1] == 1)  return 0;
 
