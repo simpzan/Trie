@@ -1,4 +1,5 @@
 #include <cassert>
+#include <gflags/gflags.h>
 #include "utils.h"
 #include "BTree.h"
 #include "BTreeBuilder.h"
@@ -18,9 +19,12 @@ void loadTokens(const char *fname, vector<string> &tokens) {
   if (last.size() == 0)  tokens.erase(tokens.end() - 1);
 }
 
+DEFINE_int32(step, 1, "step of tokens");
+DEFINE_int32(interval, 1000, "interval of progress report");
 template <class SBTrieT>
 void timing(SBTrieT &builder, const vector<string> &tokens) {
-  int step = 100;
+  int step = FLAGS_step;
+  int interval = FLAGS_interval;
   uint32_t value;
   int count = tokens.size();
   Timer t;
@@ -30,14 +34,10 @@ void timing(SBTrieT &builder, const vector<string> &tokens) {
     assert(found);
     assert(value == token.size());
 
-    if (i % 100000 == 0)  cout << i << endl;
+    if (i % interval == 0)  cout << i << endl;
   }
-  t.Stop();
   count /= step;
-  cout << "cpu time(s):" << t.ElapsedTimeCPU() / 1000000
-    << " avg(us):" << t.ElapsedTimeCPU()/count << endl
-    << "wall time(s):" << t.ElapsedTime() / 1000000
-    << " avg(us):" << t.ElapsedTime()/count << endl;
+  t.Report(count);
 }
 
 void search(const string &idxName, MapFactoryInterface<ValueT> &map, 
@@ -122,12 +122,12 @@ void benchmark(const char *fname) {
   search(idxName, *map, tokens);
   delete map;
   cout << endl;
-
 }
 
-int main(int argc, const char *argv[])
+int main(int argc, char *argv[])
 {
-  assert(argc == 2);
+  google::ParseCommandLineFlags(&argc, &argv, true);
+  
   const char *fname = argv[1];
   benchmark(fname);
 }

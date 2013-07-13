@@ -2,7 +2,7 @@ CC=g++
 CFLAGS=-ggdb
 SUFFIX=cpp
 INCLUDE= -I src/ -I ../include/
-LIBS=-L ../lib -lleveldb -lutils -pthread -lsdsl -lcds -lsnappy
+LIBS=-L ../lib -lleveldb -lutils -pthread -lsdsl -lcds -lsnappy -lgflags -lmarisa
 BIN=libArrayTrie.a
 RUN=dfuds_trie
 

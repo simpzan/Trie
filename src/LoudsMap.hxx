@@ -107,7 +107,6 @@ bool LoudsMap<BitVector, Container, TrieT>::findEntryLowerBound(const char *patt
   return true;
 }
 
-
 template <typename BitVector, typename Container, typename TrieT>
 void LoudsMap<BitVector, Container, TrieT>::computeKey(string &key, uint32_t node) {
   uint32_t child = node;
