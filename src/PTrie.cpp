@@ -117,6 +117,15 @@ void PTrie::collectLabels(std::vector<std::string> &labels) {
   }
 }
 
+void PTrie::collectLabels(std::map<std::string, uint32_t> &labels) {
+  vector<PTrieNode *> nodes;
+  _root->collectLabelNodes(nodes);
+  for (int i = 0; i < nodes.size(); ++i) {
+    PTrieNode *node = nodes[i];
+    ++labels[node->get_label()];
+  }
+}
+
 bool PTrie::canAddEntry(const char *key, uint32_t value, int block_size) {
   uint32_t node_count = strlen(key) + _node_count;
   uint32_t key_count = 1 + _key_count;

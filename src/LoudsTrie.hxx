@@ -6,6 +6,7 @@
 #include "LoudsTrie.h"
 #include "TrieIterator.h"
 #include "utils.h"
+#include "Utilities.h"
 
 using namespace std;
 using namespace sdsl;
@@ -30,11 +31,17 @@ void LoudsTrie<BitVector>::_postBuild() {
 
 template <typename BitVector>
 bool LoudsTrie<BitVector>::load(std::istream &is) {
+  uint32_t offset = is.tellg();
   _louds.load(is);
+  reportLength(is, offset, "Louds Trie LOUDS");
+
   _louds_rank0.load(is, &_louds);
   _louds_select0.load(is, &_louds);
   _louds_select1.load(is, &_louds);
+
+  offset = is.tellg();
   _labels.read(is);
+  reportLength(is, offset, "LOUDS Trie. labels");
   return true;
 }
 

@@ -44,6 +44,7 @@ class PTrie : public TrieInterface {
   // must called before transform to LoudsMap.
   void collectLabels(LinkedTrie &labels);
   void collectLabels(std::vector<std::string> &labels);
+  void collectLabels(std::map<std::string, uint32_t> &labels);
   bool canAddEntry(const char *key, uint32_t value, int block_size);
 
   friend class TrieBfsIterator;
