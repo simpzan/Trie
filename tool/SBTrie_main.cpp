@@ -3,11 +3,14 @@
 
 int main(int argc, const char *argv[])
 {
+  assert(argc == 2);
+
   SBTrieCompressed builder;
-  builder.build("words.sorted", "words.sorted.idx");
+  //builder.build("words.sorted", "words.sorted.idx");
 //  builder.load("words.sorted.idx");
-  //builder.load("../enwiki.sbtrie");
+  builder.load(argv[1]);
   cout << "build done" << endl;
+  return 0;
 
   vector<string> tokens;
   loadTokensFromFile("words.sorted", tokens);

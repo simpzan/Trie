@@ -14,7 +14,7 @@ class LoudsTrie {
   LoudsTrie() {}
   virtual ~LoudsTrie() {}
 
-  void init(LoudsTrieBuilder &builder);
+  void init(ILoudsTrieBuilder &builder);
   bool load(std::istream &is);
   bool serialize(std::ostream &os) const;
 

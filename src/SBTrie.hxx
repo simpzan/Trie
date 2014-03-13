@@ -9,6 +9,7 @@
 #include "PTrieNode.h"
 #include "Trie.h"
 #include "utils.h"
+#include "Utilities.h"
 
 using namespace std;
 
@@ -58,10 +59,13 @@ void buildTopTrie(const vector<string> &entries, PTrie &trie) {
   }
 }
 
+
+
 } // namespace
 
 template <class LoudsMapT, class LoudsTrieT>
-void SBTrie<LoudsMapT, LoudsTrieT>::updateLinksForLeafNodes(const vector<uint32_t> nodeIds, istream &is, ostream &os, vector<uint32_t> &offsets) {
+void SBTrie<LoudsMapT, LoudsTrieT>::updateLinksForLeafNodes(const vector<uint32_t> nodeIds, 
+  istream &is, ostream &os, vector<uint32_t> &offsets) {
   is.seekg(0);
   LoudsMapBuilder builder;
   LoudsMapT map;
@@ -83,46 +87,45 @@ template <class LoudsMapT, class LoudsTrieT>
 void SBTrie<LoudsMapT, LoudsTrieT>::build(const char *data_source_filename, const char *idx_filename) {
   _idx.open(idx_filename, ios::in|ios::out|ios::trunc|ios::binary);
   assert(_idx.good());
+
+  // root offset placeholder.
   _idx.write((char *)&_root_offset, sizeof(uint32_t));
 
   string tmp_file = string(data_source_filename) + ".tmp";
   fstream io(tmp_file.c_str(), ios::in|ios::out|ios::trunc|ios::binary);
   assert(io.good());
 
-  // build leaf level to get a set of string labels L and a map KVs.
-  cout << "building leaf nodes" << endl;
-  vector<string> entries;
+  vector<string> entries;   // entries for root trie.
   LinkedTrie label_trie;
+  // build intermediate leaf nodes and store in 'io', get entries for top trie and labels in label trie.
   buildLeafNodes(data_source_filename, io, entries, label_trie);
 
-  // build the top trie using the map of KVs. get labels and merge with previouds labels.
-  cout << "root node" << endl;
+  // build root trie from entries and collect labels in label trie.
   PTrie trie;
   buildTopTrie(entries, trie);
   trie.collectLabels(label_trie);
 
-  cout << "building and writing label trie" << endl;
-  // convert labels to louds trie and ids.
+  // stablize label trie to get id for each node.
   vector<uint32_t> nodeIds;
   LoudsTrieBuilder builder;
   label_trie.convert(builder, nodeIds);
+  // save label trie in the final file.
   _label_trie->init(builder);
   _label_trie->serialize(_idx);
 
-  // update link of the leaf nodes.
-  cout << "updating leaf nodes" << endl;
-  vector<uint32_t> offsets;
+  // update links in the leaf nodes, save leaf node in the final file.
+  vector<uint32_t> offsets; // offset of each leaf node.
   updateLinksForLeafNodes(nodeIds, io, _idx, offsets);
 
-  // build and update link of the top trie.
-  cout << "converting root node to louds and writing" << endl;
+  // build and update links and values of the top trie.
   LoudsMapBuilder mapBuilder;
   mapBuilder.build(trie);
   mapBuilder.updateLinks(nodeIds);
   mapBuilder.updateValues(offsets);
-  _root->init(mapBuilder);
 
   _root_offset = _idx.tellp();
+  // save root trie in the final file.
+  _root->init(mapBuilder);
   _root->serialize(_idx);
 
   // update root offset.
@@ -154,20 +157,24 @@ bool SBTrie<LoudsMapT, LoudsTrieT>::findEntry(const char *key, TrieValueType &va
 template <class LoudsMapT, class LoudsTrieT>
 bool SBTrie<LoudsMapT, LoudsTrieT>::load(const char *idx_filename) {
   _idx.open(idx_filename, ios::in|ios::binary);
-  assert(_idx.good());
+
+  assertWithString(_idx.good(), string("open file failed: ") + idx_filename);
   
   _idx.read((char *)&_root_offset, sizeof(uint32_t));
 
   uint32_t offset = _idx.tellg();
   _label_trie->load(_idx);
-  uint32_t size = (uint32_t)_idx.tellg() - offset;
-  cout << "label trie:" << size << endl;
+  reportLength(_idx, offset, "label trie");
+  offset = _idx.tellg();
 
   _idx.seekg(_root_offset);
+  reportLength(_idx, offset, "leaf nodes");
+
   _root->load(_idx);
-  size = (uint32_t)_idx.tellg() - _root_offset;
-  cout << "root:" << size << endl;
-  //_root->display();
+  reportLength(_idx, _root_offset, "root");
+
+  cout << "file size: " << _idx.tellg() << endl;
+
   return true;
 }
 
