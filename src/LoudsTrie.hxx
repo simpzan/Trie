@@ -12,7 +12,7 @@ using namespace std;
 using namespace sdsl;
 
 template <typename BitVector>
-void LoudsTrie<BitVector>::init(LoudsTrieBuilder &builder) {
+void LoudsTrie<BitVector>::init(ILoudsTrieBuilder &builder) {
   BitVector louds(builder.louds());
   _louds.swap(louds);
 
@@ -167,8 +167,10 @@ void LoudsTrie<BitVector>::_computePrefix(uint32_t node, std::string &prefix) {
 template <typename BitVector>
 void LoudsTrie<BitVector>::display() {
   cout << "louds:" << _louds.size() << "  " << ratio(_louds_rank0) << endl;
-  cout << "labels" << endl;
+//    cout << _louds << endl;
+  cout << "labels:";
   _labels.display(cout);
+    cout << endl;
 }
 
 #endif

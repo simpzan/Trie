@@ -11,7 +11,7 @@ using namespace std;
 using namespace sdsl;
 
 template <typename BitVector, typename Container, typename TrieT>
-void LoudsMap<BitVector, Container, TrieT>::init(LoudsMapBuilder &builder) {
+void LoudsMap<BitVector, Container, TrieT>::init(ILoudsMapBuilder &builder) {
   _trie.init(builder.trie());
   BitVector is_tails(builder.is_tails());
   _is_tails.swap(is_tails);
@@ -33,13 +33,17 @@ void LoudsMap<BitVector, Container, TrieT>::_postBuild() {
 
 template <typename BitVector, typename Container, typename TrieT>
 void LoudsMap<BitVector, Container, TrieT>::display() {
-  _trie.display();
-  cout << "is tails: " << _is_tails.size() << "  " << ratio(_is_tails_rank1) << endl
-    << _is_tails << endl;
-  _values.display(cout);
-  cout << "has links: " << _has_links.size() << "  " << ratio(_has_links_rank1) << endl 
+    _trie.display();
+    
+    cout << "has links: " << _has_links.size() << "  " << ratio(_has_links_rank1) << endl
     << _has_links << endl;
-  _links.display(cout);
+    cout << "links:";
+    _links.display(cout);
+    
+    cout << endl << "is tails: " << _is_tails.size() << "  " << ratio(_is_tails_rank1) << endl
+    << _is_tails << endl;
+    cout << "values:";
+    _values.display(cout);
 }
 
 template <typename BitVector, typename Container, typename TrieT>

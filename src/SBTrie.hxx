@@ -64,7 +64,8 @@ void buildTopTrie(const vector<string> &entries, PTrie &trie) {
 } // namespace
 
 template <class LoudsMapT, class LoudsTrieT>
-void SBTrie<LoudsMapT, LoudsTrieT>::updateLinksForLeafNodes(const vector<uint32_t> nodeIds, istream &is, ostream &os, vector<uint32_t> &offsets) {
+void SBTrie<LoudsMapT, LoudsTrieT>::updateLinksForLeafNodes(const vector<uint32_t> nodeIds, 
+  istream &is, ostream &os, vector<uint32_t> &offsets) {
   is.seekg(0);
   LoudsMapBuilder builder;
   LoudsMapT map;

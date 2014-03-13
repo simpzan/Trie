@@ -21,7 +21,7 @@ class LoudsMap : public SuccinctMap {
   LoudsMap() {}
   virtual ~LoudsMap() {}
 
-  void init(LoudsMapBuilder &builder);
+  void init(ILoudsMapBuilder &builder);
   virtual bool load(std::istream &is);
   virtual bool serialize(std::ostream &os);
 
@@ -34,6 +34,7 @@ class LoudsMap : public SuccinctMap {
 
   void set_label_trie(TrieT *trie) {  _label_trie = trie;  }
   void display();
+  void setContainsValues(bool containsValues) {  _containsValues = containsValues; }
 
  private:
   void _followKey(const char *key, uint32_t &node, uint32_t &matched_count);
@@ -83,6 +84,8 @@ class LoudsMap : public SuccinctMap {
 
   TrieT *_label_trie;
   LoudsTrie<BitVector> _trie;
+
+  bool _containsValues;
 };
 
 #include "LoudsMap.hxx"

@@ -8,7 +8,7 @@ using namespace sdsl;
 using namespace std;
 
 void LoudsTrieBuilder::_preBuild(uint32_t node_count) {
-  bit_vector louds(node_count * 2 -1);
+  bit_vector louds(node_count * 2 - 1);
   _louds.swap(louds);
   _louds[0] = 1;
   _louds_pos = 2;
