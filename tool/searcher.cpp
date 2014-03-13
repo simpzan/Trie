@@ -19,6 +19,7 @@ void loadTokens(const char *fname, vector<string> &tokens) {
   if (last.size() == 0)  tokens.erase(tokens.end() - 1);
 }
 
+
 DEFINE_int32(step, 1, "step of tokens");
 DEFINE_int32(interval, 1000, "interval of progress report");
 template <class SBTrieT>
@@ -34,7 +35,7 @@ void timing(SBTrieT &builder, const vector<string> &tokens) {
     assert(found);
     assert(value == token.size());
 
-    if (i % interval == 0)  cout << i << endl;
+    if (interval && i % interval == 0)  cout << i << endl;
   }
   count /= step;
   t.Report(count);
@@ -67,12 +68,15 @@ void reportSpace(const string &filename, uint32_t original) {
   cout << "idx size: " << filesize << " ratio: " << ratio << endl;
 }
 
+DEFINE_string(token_file, "", "the token file used to benchmark");
 void benchmark(const char *fname) {
   cout << "benchmarking file:" << fname << endl;
 
   uint32_t filesize_original = filesizeOfFile(fname);
   vector<string> tokens;
-  loadTokens(fname, tokens);
+  string token_file = FLAGS_token_file.size() ? FLAGS_token_file : fname;
+  loadTokens(token_file.c_str(), tokens);
+  random_shuffle(tokens.begin(), tokens.end());
 
   bool loaded;
 

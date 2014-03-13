@@ -5,8 +5,10 @@ using namespace std;
 
 int main(int argc, const char *argv[])
 {
+  assert(argc = 2);
+  string file = argv[1];
   vector<string> tokens;
-  loadTokensFromFile("words.sorted", tokens);
+  loadTokensFromFile(file, tokens);
 
   LinkedTrie trie;
   int count = tokens.size();

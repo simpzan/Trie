@@ -47,8 +47,6 @@ void queryData(const vector<string> &tokens, leveldb::DB *db) {
   for (int i = 0; i < count; i+=step) {
     string token = tokens[i];
     db->Get(leveldb::ReadOptions(), token, &value);
-    int value_int = String2Int(value);
-    assert(value_int == token.size());
   }
   t.Report(count/step);
 }
