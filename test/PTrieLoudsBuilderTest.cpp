@@ -12,18 +12,7 @@ TEST(PTrieLoudsBuilderTest, test) {
     v.push_back("then");
 	PTrieLoudsBuilder builder(v);
 	builder.build("tmp");
-	PTrieLouds trie;
-	trie.load("tmp");
-    
-	uint32_t value;
-	bool found = trie.find("then", value);
-    EXPECT_EQ(true, found);
-    EXPECT_EQ(2, value);
-    
-    value = 0;
-    found = trie.find("kkk", value);
-    EXPECT_EQ(false, found);
-    EXPECT_EQ(0, value);
+
 }
 
 void checkStrings(vector<string> &tokens) {

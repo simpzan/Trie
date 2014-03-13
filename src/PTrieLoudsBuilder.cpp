@@ -34,6 +34,7 @@ bool PTrieLoudsBuilder::build(const std::string &filename) {
     t.Restart();
   saveToFile();
     t.Report(1);
+  t.Report(1);
 }
 
 void PTrieLoudsBuilder::saveToFile() {
