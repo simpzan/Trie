@@ -12,6 +12,7 @@ TEST(PTrieLoudsBuilderTest, test) {
     v.push_back("then");
 	PTrieLoudsBuilder builder(v);
 	builder.build("tmp");
+
 	PTrieLouds trie;
 	trie.load("tmp");
     
