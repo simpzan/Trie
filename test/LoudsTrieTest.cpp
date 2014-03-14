@@ -29,7 +29,7 @@ TEST(LoudsTrieTest, computePrefix) {
 
   LoudsTrie<> louds;
   louds.init(builder);
-  louds.display();
+//  louds.display();
   int count = tokens.size();
   for (int i = 0; i < count; ++i) {
     string label;

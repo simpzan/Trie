@@ -10,34 +10,35 @@ bool PTrieLoudsBuilder::build(const std::string &filename) {
   _outputStream.open(filename.c_str());
   assert(_outputStream.good());
 
-    cout << "extract strings" << endl;
-    Timer t;
+  cout << "extract strings" << endl;
+  Timer t;
   extractStringLabels();
-    t.Report(1);
-    
-    cout << "label trie" << endl;
-    t.Restart();
-    generateLabelTrieLouds();
-    t.Report(1);
-    
-    cout << "main trie" << endl;
-    t.Restart();
+  t.Report(1);
+
+  cout << "label trie" << endl;
+  t.Restart();
+  generateLabelTrieLouds();
+  t.Report(1);
+
+  cout << "main trie" << endl;
+  t.Restart();
   generateMainTrieLouds();
-    t.Report(1);
-    
-    cout << "links update" << endl;
-    t.Restart();
+  t.Report(1);
+
+  cout << "links update" << endl;
+  t.Restart();
   updateLinks();
-    t.Report(1);
-    
-    cout << "saving" << endl;
-    t.Restart();
+  t.Report(1);
+
+  cout << "saving" << endl;
+  t.Restart();
   saveToFile();
-    t.Report(1);
+  t.Report(1);
+
 }
 
 void PTrieLoudsBuilder::saveToFile() {
-  
+
   _labelTrieLouds.serialize(_outputStream);
 
   cout << _outputStream.tellp() << endl;
@@ -45,14 +46,22 @@ void PTrieLoudsBuilder::saveToFile() {
   LoudsMapT mainTrieLouds;
   mainTrieLouds.init(*this);
   mainTrieLouds.serialize(_outputStream);
+  _outputStream.flush();
 
   cout << _outputStream.tellp() << endl;
 }
 
 void PTrieLoudsBuilder::updateLinks() {
   for (int i=0; i<_links.count(); ++i) {
-    _links[i] = nodeIds[_links[i]-1];
+    _links[i] = nodeIds[_links[i]];
   }
+}
+
+void PTrieLoudsBuilder::generateLabelTrieLouds() {
+  _labelMap.build();
+  _labelTrieLouds.init(_labelMap);
+  std::vector<uint32_t> v(_labelMap.newIds());
+  nodeIds.swap(v);
 }
 
 void PTrieLoudsBuilder::generateMainTrieLouds() {
@@ -85,15 +94,8 @@ void PTrieLoudsBuilder::generateMainTrieLouds() {
   }
 }
 
-void PTrieLoudsBuilder::generateLabelTrieLouds() {
-  LoudsTrieBuilder builder;
-  _labelMap.convert(builder, nodeIds);
-  _labelTrieLouds.init(builder);
-}
-
-
 void PTrieLoudsBuilder::extractStringLabels() {
-    _hasLinks.addBit(false);
+  _hasLinks.addBit(false);
   queue<Range> queue;
   queue.push(Range(0, _keys.size(), 0));
   while (!queue.empty()) {
@@ -120,15 +122,14 @@ void PTrieLoudsBuilder::extractStringLabels() {
 
 void PTrieLoudsBuilder::recordLabel(const string &label) {
   if (label.length() == 1) {
-    _hasLinks.addBit(false);   
+    _hasLinks.addBit(false);
     return;
   }
 
   _hasLinks.addBit(true);
 
   const char *suffix = label.c_str() + 1;
-  uint32_t id = _labelMap.insertKey(suffix);
-    assert(id);
+  uint32_t id = _labelMap.findOrInsert(suffix);
   _links.append(id);
 }
 
@@ -149,9 +150,9 @@ bool PTrieLoudsBuilder::isSameOnThisDepth(Range &range) {
 }
 
 void PTrieLoudsBuilder::getSubranges(Range &range, vector<Range> &subranges) {
-    while (!range.isEmpty() && isTerminalNode(range)) {
-        range.left += 1;
-    }
+  while (!range.isEmpty() && isTerminalNode(range)) {
+    range.left += 1;
+  }
 //  if (isTerminalNode(range)) {
 //    range.left += 1;
 //  }

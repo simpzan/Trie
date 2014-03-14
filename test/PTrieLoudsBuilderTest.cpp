@@ -40,19 +40,19 @@ void checkStrings(vector<string> &tokens) {
 //    tokens.resize(tokens.size() - 1);
 }
 
-TEST(PTrieLoudsBuilderTest, run) {
-    PTrieLouds trie;
-    trie.load("testdata/words.ptrielouds");
-   	uint32_t value;
-	bool found = trie.find("then", value);
-    EXPECT_EQ(true, found);
-    EXPECT_EQ(2, value);
-    
-    value = 0;
-    found = trie.find("kkk", value);
-    EXPECT_EQ(false, found);
-    EXPECT_EQ(0, value);
-}
+//TEST(PTrieLoudsBuilderTest, run) {
+//    PTrieLouds trie;
+//    trie.load("testdata/words.ptrielouds");
+//   	uint32_t value;
+//	bool found = trie.find("then", value);
+//    EXPECT_EQ(true, found);
+//    EXPECT_EQ(2, value);
+//    
+//    value = 0;
+//    found = trie.find("kkk", value);
+//    EXPECT_EQ(false, found);
+//    EXPECT_EQ(0, value);
+//}
 
 TEST(PTrieLoudsBuilderTest, build) {
     string filename("testdata/words");

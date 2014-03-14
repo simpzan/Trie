@@ -10,14 +10,8 @@
 #include "LoudsTrie.h"
 #include "BitVectorBuilder.h"
 #include "PTrieLouds.h"
-
-struct Range {
-  int left;
-  int right;
-  int depth;
-  Range(int l, int r, int d) : left(l), right(r), depth(d) {}
-  bool isEmpty() {  return left == right;  }
-};
+#include "Range.h"
+#include "StringPool.h"
 
 
 class PTrieLoudsBuilder : public ILoudsMapBuilder, public ILoudsTrieBuilder {
@@ -42,16 +36,16 @@ class PTrieLoudsBuilder : public ILoudsMapBuilder, public ILoudsTrieBuilder {
   void saveToFile();
 
   virtual sdsl::bit_vector &is_tails() { return _isTerminal.underlyingBV(); }
-  virtual Vector<uint32_t> &values() {  return _values;  } 
+  virtual Vector<uint32_t> &values() {  return _values;  }
   virtual sdsl::bit_vector &has_links() {  return _hasLinks.underlyingBV(); }
   virtual Vector<uint32_t> &links() { return _links; }
-  virtual ILoudsTrieBuilder &trie() {  return *this;  } 
+  virtual ILoudsTrieBuilder &trie() {  return *this;  }
 
   virtual sdsl::bit_vector &louds() {  return _louds.underlyingBV();  }
   virtual Vector<uint8_t> &labels() { return _branchChars; }
 
  private:
-  typedef LinkedTrie MapT;
+  typedef StringPool MapT;
   typedef std::vector<std::string> Strings;
 
   Strings &_keys;

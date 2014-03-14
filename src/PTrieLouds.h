@@ -7,8 +7,8 @@
 typedef LoudsTrieCompressed LoudsTrieT;
 typedef LoudsMapCompressed LoudsMapT;
 
-//typedef LoudsTrieUncompressed LoudsTrieT;
-//typedef LoudsMapUncompressed LoudsMapT;
+// typedef LoudsTrieUncompressed LoudsTrieT;
+// typedef LoudsMapUncompressed LoudsMapT;
 
 class PTrieLouds {
 public:
@@ -17,6 +17,7 @@ public:
 
 	bool load(const char *indexFile);
 	bool find(const char *key, uint32_t &value);
+  void display();
 
 private:
 	LoudsMapT mainTrie;

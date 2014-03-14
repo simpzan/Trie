@@ -34,14 +34,14 @@ void LoudsMap<BitVector, Container, TrieT>::_postBuild() {
 template <typename BitVector, typename Container, typename TrieT>
 void LoudsMap<BitVector, Container, TrieT>::display() {
     _trie.display();
-    
-    cout << "has links: " << _has_links.size() << "  " << ratio(_has_links_rank1) << endl
-    << _has_links << endl;
+
+    cout << "has links: " << _has_links.size() << "  " << ratio(_has_links_rank1) << endl;
+    // cout << _has_links << endl;
     cout << "links:";
     _links.display(cout);
-    
-    cout << endl << "is tails: " << _is_tails.size() << "  " << ratio(_is_tails_rank1) << endl
-    << _is_tails << endl;
+
+    cout << endl << "is tails: " << _is_tails.size() << "  " << ratio(_is_tails_rank1) << endl;
+    // cout << _is_tails << endl;
     cout << "values:";
     _values.display(cout);
 }
@@ -85,7 +85,7 @@ bool LoudsMap<BitVector, Container, TrieT>::findEntry(const char *key, TrieValue
 }
 
 template <typename BitVector, typename Container, typename TrieT>
-bool LoudsMap<BitVector, Container, TrieT>::findEntryLowerBound(const char *pattern, 
+bool LoudsMap<BitVector, Container, TrieT>::findEntryLowerBound(const char *pattern,
     std::string *key, TrieValueType &value) {
   value = 0;
   uint32_t node;
@@ -178,7 +178,7 @@ TrieValueType LoudsMap<BitVector, Container, TrieT>::getValue(uint32_t node) {
 }
 
 template <typename BitVector, typename Container, typename TrieT>
-void LoudsMap<BitVector, Container, TrieT>::findChild(uint32_t node, const char *key, 
+void LoudsMap<BitVector, Container, TrieT>::findChild(uint32_t node, const char *key,
     uint32_t &child, uint32_t &matched_count) {
   matched_count = 0;
   uint8_t ch = key[0];

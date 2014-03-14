@@ -98,7 +98,7 @@ template <typename BitVector>
 void LoudsTrie<BitVector>::getCharLowerBound(uint32_t node, uint8_t ch,
     int &index, uint8_t &fetched_ch) {
   uint32_t labels_base = loudsRank0(node) - 1;
-  
+
   int count = degree(node);
   for (int i = 0; i < count; i++) {
     fetched_ch = _labels[labels_base + i];
@@ -133,7 +133,7 @@ uint32_t LoudsTrie<BitVector>::childSelect(uint32_t node, int index) {
 }
 
 template <typename BitVector>
-void LoudsTrie<BitVector>::findChildViaChar(uint32_t node, uint8_t ch, 
+void LoudsTrie<BitVector>::findChildViaChar(uint32_t node, uint8_t ch,
     uint32_t &child, uint8_t &fetched_ch) {
   int index;
   getCharLowerBound(node, ch, index, fetched_ch);
@@ -167,7 +167,7 @@ void LoudsTrie<BitVector>::_computePrefix(uint32_t node, std::string &prefix) {
 template <typename BitVector>
 void LoudsTrie<BitVector>::display() {
   cout << "louds:" << _louds.size() << "  " << ratio(_louds_rank0) << endl;
-//    cout << _louds << endl;
+    // cout << _louds << endl;
   cout << "labels:";
   _labels.display(cout);
     cout << endl;
