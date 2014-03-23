@@ -78,7 +78,8 @@ void STrieBuilder::generateMainTrieLouds() {
     bool isTerminal = isTerminalNode(thisRange);
     _isTerminal.addBit(isTerminal);
     if (isTerminal) {
-      _values.append(thisRange.left);
+      // _values.append(thisRange.left);
+      _values.append(1);
     }
 
     vector<Range> subranges;

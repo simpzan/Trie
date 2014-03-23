@@ -28,7 +28,7 @@ void StringPool::build() {
   }
 
   generateData();
-  display();
+  // display();
 }
 
 void StringPool::generateData() {
