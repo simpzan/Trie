@@ -33,7 +33,7 @@ template <typename BitVector>
 bool LoudsTrie<BitVector>::load(std::istream &is) {
   uint32_t offset = is.tellg();
   _louds.load(is);
-  reportLength(is, offset, "Louds Trie LOUDS");
+  // reportLength(is, offset, "Louds Trie LOUDS");
 
   _louds_rank0.load(is, &_louds);
   _louds_select0.load(is, &_louds);
@@ -41,7 +41,7 @@ bool LoudsTrie<BitVector>::load(std::istream &is) {
 
   offset = is.tellg();
   _labels.read(is);
-  reportLength(is, offset, "LOUDS Trie. labels");
+  // reportLength(is, offset, "LOUDS Trie. labels");
   return true;
 }
 
