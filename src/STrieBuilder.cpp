@@ -1,4 +1,4 @@
-#include "PTrieLoudsBuilder.h"
+#include "STrieBuilder.h"
 
 #include <queue>
 #include "Trie.h"
@@ -6,7 +6,7 @@
 
 using namespace std;
 
-bool PTrieLoudsBuilder::build(const std::string &filename) {
+bool STrieBuilder::build(const std::string &filename) {
   _outputStream.open(filename.c_str());
   assert(_outputStream.good());
 
@@ -37,7 +37,7 @@ bool PTrieLoudsBuilder::build(const std::string &filename) {
 
 }
 
-void PTrieLoudsBuilder::saveToFile() {
+void STrieBuilder::saveToFile() {
 
   _labelTrieLouds.serialize(_outputStream);
 
@@ -51,20 +51,20 @@ void PTrieLoudsBuilder::saveToFile() {
   cout << _outputStream.tellp() << endl;
 }
 
-void PTrieLoudsBuilder::updateLinks() {
+void STrieBuilder::updateLinks() {
   for (int i=0; i<_links.count(); ++i) {
     _links[i] = nodeIds[_links[i]];
   }
 }
 
-void PTrieLoudsBuilder::generateLabelTrieLouds() {
+void STrieBuilder::generateLabelTrieLouds() {
   _labelMap.build();
   _labelTrieLouds.init(_labelMap);
   std::vector<uint32_t> v(_labelMap.newIds());
   nodeIds.swap(v);
 }
 
-void PTrieLoudsBuilder::generateMainTrieLouds() {
+void STrieBuilder::generateMainTrieLouds() {
   _louds.addBit(true);
   _louds.addBit(false);
 
@@ -94,7 +94,7 @@ void PTrieLoudsBuilder::generateMainTrieLouds() {
   }
 }
 
-void PTrieLoudsBuilder::extractStringLabels() {
+void STrieBuilder::extractStringLabels() {
   _hasLinks.addBit(false);
   queue<Range> queue;
   queue.push(Range(0, _keys.size(), 0));
@@ -120,7 +120,7 @@ void PTrieLoudsBuilder::extractStringLabels() {
   }
 }
 
-void PTrieLoudsBuilder::recordLabel(const string &label) {
+void STrieBuilder::recordLabel(const string &label) {
   if (label.length() == 1) {
     _hasLinks.addBit(false);
     return;
@@ -133,7 +133,7 @@ void PTrieLoudsBuilder::recordLabel(const string &label) {
   _links.append(id);
 }
 
-int PTrieLoudsBuilder::findNextDepth(const Range &range) {
+int STrieBuilder::findNextDepth(const Range &range) {
   int length = _keys[range.left].length();
   for (int i = range.depth; i<length; ++i) {
     Range aRange(range.left, range.right, i);
@@ -142,14 +142,14 @@ int PTrieLoudsBuilder::findNextDepth(const Range &range) {
   return length;
 }
 
-bool PTrieLoudsBuilder::isSameOnThisDepth(Range &range) {
+bool STrieBuilder::isSameOnThisDepth(Range &range) {
   for (int i=range.left+1; i<range.right; ++i) {
     if (_keys[i-1][range.depth] != _keys[i][range.depth]) return false;
   }
   return true;
 }
 
-void PTrieLoudsBuilder::getSubranges(Range &range, vector<Range> &subranges) {
+void STrieBuilder::getSubranges(Range &range, vector<Range> &subranges) {
   while (!range.isEmpty() && isTerminalNode(range)) {
     range.left += 1;
   }

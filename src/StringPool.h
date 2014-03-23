@@ -11,7 +11,7 @@
 #include "Range.h"
 #include "LoudsTrie.h"
 #include "LoudsTrieBuilder.h"
-#include "PTrieLouds.h"
+#include "STrie.h"
 
 class StringPool : public ILoudsTrieBuilder {
 public:

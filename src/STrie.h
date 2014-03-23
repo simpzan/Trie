@@ -10,10 +10,10 @@ typedef LoudsMapCompressed LoudsMapT;
 // typedef LoudsTrieUncompressed LoudsTrieT;
 // typedef LoudsMapUncompressed LoudsMapT;
 
-class PTrieLouds {
+class STrie {
 public:
-	PTrieLouds() {}
-	~PTrieLouds() {}
+	STrie() {}
+	~STrie() {}
 
 	bool load(const char *indexFile);
 	bool find(const char *key, uint32_t &value);

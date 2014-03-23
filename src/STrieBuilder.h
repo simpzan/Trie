@@ -9,15 +9,15 @@
 #include "Trie.h"
 #include "LoudsTrie.h"
 #include "BitVectorBuilder.h"
-#include "PTrieLouds.h"
+#include "STrie.h"
 #include "Range.h"
 #include "StringPool.h"
 
 
-class PTrieLoudsBuilder : public ILoudsMapBuilder, public ILoudsTrieBuilder {
+class STrieBuilder : public ILoudsMapBuilder, public ILoudsTrieBuilder {
  public:
-  PTrieLoudsBuilder(std::vector<std::string> &keys) : _keys(keys) {}
-  ~PTrieLoudsBuilder() {}
+  STrieBuilder(std::vector<std::string> &keys) : _keys(keys) {}
+  ~STrieBuilder() {}
 
   bool build(const std::string &filename);
 

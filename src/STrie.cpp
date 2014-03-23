@@ -1,8 +1,8 @@
-#include "PTrieLouds.h"
+#include "STrie.h"
 
 using namespace std;
 
-bool PTrieLouds::load(const char *indexFile) {
+bool STrie::load(const char *indexFile) {
 	ifstream is(indexFile);
 	assert(is.good());
 
@@ -16,7 +16,7 @@ bool PTrieLouds::load(const char *indexFile) {
 	return true;
 }
 
-void PTrieLouds::display() {
+void STrie::display() {
     cout << "====label trie:====" << endl;
     labelTrie.display();
     cout << "====main trie:====" << endl;
@@ -24,7 +24,7 @@ void PTrieLouds::display() {
     cout << "====end====" << endl;
 }
 
-bool PTrieLouds::find(const char *key, uint32_t &value) {
+bool STrie::find(const char *key, uint32_t &value) {
 	bool found = mainTrie.findEntry(key, value);
 	return found;
 }
